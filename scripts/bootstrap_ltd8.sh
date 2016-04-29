@@ -36,7 +36,6 @@ DEBIAN_FRONTEND=noninteractive apt-get autoremove -y
 
 # Install pre-requisites
 echo 'Install prerequisites'
-echo 'Install prerequisites' >> $LOGFILE
 DEBIAN_FRONTEND=noninteractive apt-get install -y zsh \
 	tmux \
 	unattended-upgrades \
@@ -133,7 +132,7 @@ else
 fi
 
 # Setup some helper tools
-echo 'Downloading ps_mem.py, mysqltd7ner and tuning-primer, etc'
+echo 'Downloading ps_mem.py, mysqltuner and tuning-primer, etc'
 
 PSMEMURL=http://www.pixelbeat.org/scripts/ps_mem.py
 wget -q -O /root/ps_mem.py $PSMEMURL

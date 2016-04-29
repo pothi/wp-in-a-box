@@ -11,7 +11,7 @@ Tweaks on bash, zsh, vim, tmux, AWScli etc
 # as root
 
 mkdir ~/scripts
-curl -Sso ~/scripts/bootstrap_ltd7.sh https://raw.githubusercontent.com/pothi/linux-tweaks-debian-8/master/scripts/bootstrap_ltd8.sh
+curl -Sso ~/scripts/bootstrap_ltd8.sh https://raw.githubusercontent.com/pothi/linux-tweaks-debian-8/master/scripts/bootstrap_ltd8.sh
 chmod +x ~/scripts/bootstrap_ltd8.sh
 
 # go through the script to understand what it does. you are warned!
