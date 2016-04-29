@@ -1,0 +1,93 @@
+
+" set this in /etc/vimrc.local or directly in /etc/vimrc
+" preferably in your $HOME
+
+" -----------------------------------------------------------------------------------------------
+
+" Turn on syntax highlighting
+syntax on
+
+" Pathogen
+if has("autocmd")
+    execute pathogen#infect()
+endif
+
+" -----------------------------------------------------------------------------------------------
+
+" indentation - purely with hard tabs
+set tabstop=4
+set shiftwidth=4
+" set noexpandtab
+" tip - :%retab! to convert spaces to tabs
+
+" while editing content for Github - purely without hard tabs
+" ref: http://vim.wikia.com/wiki/Indenting_source_code
+set expandtab
+set softtabstop=4
+" :%retab to replace existing tabs to spaces
+
+" indentation
+set autoindent
+set smartindent
+if has("autocmd")
+    filetype plugin indent on
+endif
+
+" for pasting indented text
+nnoremap <F2> :set invpaste paste?<CR>
+set pastetoggle=<F2>
+set showmode
+
+" -----------------------------------------------------------------------------------------------
+
+" To have Vim jump to the last position when reopening a file
+if has("autocmd")
+    au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
+
+" -----------------------------------------------------------------------------------------------
+
+" Search
+" don't highlight searched pattern
+set nohlsearch
+set incsearch
+set ignorecase
+
+" -----------------------------------------------------------------------------------------------
+
+" set NO backups
+set nobackup
+set nowritebackup " ref: http://stackoverflow.com/a/607475/1004587
+set updatecount=0 " no swap file creation
+
+" -----------------------------------------------------------------------------------------------
+
+" For solorized colorscheme
+" let g:solarized_termcolors=256
+" set background=light
+" colorscheme solarized
+
+" -----------------------------------------------------------------------------------------------
+
+" listchars
+" set list lcs=trail:·,tab:»·
+
+" -----------------------------------------------------------------------------------------------
+
+" For CentOS and its derivatives
+set nohls
+
+" -----------------------------------------------------------------------------------------------
+
+" PATH to 'find' faster
+set path+=.,/etc/varnish/,/etc/nginx/,/etc/httpd24/
+
+" -----------------------------------------------------------------------------------------------
+
+set rtp+=/usr/share/vim/vim74/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'mattn/emmet-vim'
+call vundle#end()
+
+" -----------------------------------------------------------------------------------------------
