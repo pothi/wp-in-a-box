@@ -112,7 +112,7 @@ fi
 touch /etc/skel/.vimrc
 if ! grep '" Custom Code - PK' /etc/skel/.vimrc ; then
 	# attempt to create a log directory, if not exists
-	echo "# Custom Code - PK" >> /etc/skel/.vimrc
+	echo '" Custom Code - PK' >> /etc/skel/.vimrc
 	# Change the path to viminfo; from ~/.viminfo to ~/log/viminfo
 	echo "set viminfo+=n~/log/viminfo" >> /etc/skel/.vimrc
 fi
