@@ -109,7 +109,7 @@ if ! grep '# Custom Code - PK' /etc/skel/.zshrc ; then
 fi
 
 touch /etc/skel/.vimrc
-if ! grep '# Custom Code - PK' /etc/skel/.vimrc ; then
+if ! grep '" Custom Code - PK' /etc/skel/.vimrc ; then
 	# attempt to create a log directory, if not exists
 	echo "# Custom Code - PK" >> /etc/skel/.vimrc
 	# Change the path to viminfo; from ~/.viminfo to ~/log/viminfo
