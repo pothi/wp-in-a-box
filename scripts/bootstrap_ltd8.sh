@@ -37,6 +37,7 @@ DEBIAN_FRONTEND=noninteractive apt-get autoremove -y
 # Install pre-requisites
 echo 'Install prerequisites'
 DEBIAN_FRONTEND=noninteractive apt-get install -y zsh \
+	vim \
 	tmux \
 	unattended-upgrades \
 	dnsutils \
