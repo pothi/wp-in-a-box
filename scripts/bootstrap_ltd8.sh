@@ -42,7 +42,8 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y zsh \
 	dnsutils \
 	git \
 	python-pip \
-	fail2ban
+	fail2ban \
+	ufw
 
 	# vim vim-scripts \
 	# logwatch postfix mailutils \
@@ -99,6 +100,7 @@ rm -rf /root/ltd8/
 # Common for all users
 echo 'Setting up skel'
 touch /etc/skel/.viminfo
+touch /etc/skel/.zshrc
 if ! grep '# Custom Code - PK' /etc/skel/.zshrc ; then
 	echo '# Custom Code - PK' >> /etc/skel/.zshrc
 	echo 'HISTFILE=~/log/zsh_history' >> /etc/skel/.zshrc
@@ -106,9 +108,10 @@ if ! grep '# Custom Code - PK' /etc/skel/.zshrc ; then
 	echo 'export VISUAL=vim' >> /etc/skel/.zshrc
 fi
 
+touch /etc/skel/.vimrc
 if ! grep '# Custom Code - PK' /etc/skel/.vimrc ; then
 	# attempt to create a log directory, if not exists
-	echo "# Custom Code - PK"" >> /etc/skel/.vimrc
+	echo "# Custom Code - PK" >> /etc/skel/.vimrc
 	# Change the path to viminfo; from ~/.viminfo to ~/log/viminfo
 	echo "set viminfo+=n~/log/viminfo" >> /etc/skel/.vimrc
 fi
