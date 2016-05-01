@@ -99,14 +99,19 @@ rm -rf /root/ltd8/
 # Common for all users
 echo 'Setting up skel'
 touch /etc/skel/.viminfo
-echo 'HISTFILE=~/log/zsh_history' >> /etc/skel/.zshrc
-echo 'export EDITOR=vim' >> /etc/skel/.zshrc
-echo 'export VISUAL=vim' >> /etc/skel/.zshrc
+if ! grep '# Custom Code - PK' /etc/skel/.zshrc ; then
+	echo '# Custom Code - PK' >> /etc/skel/.zshrc
+	echo 'HISTFILE=~/log/zsh_history' >> /etc/skel/.zshrc
+	echo 'export EDITOR=vim' >> /etc/skel/.zshrc
+	echo 'export VISUAL=vim' >> /etc/skel/.zshrc
+fi
 
-# attempt to create a log directory, if not exists
-echo "set silent !mkdir ~/log > /dev/null 2>&1" >> /etc/skel/.vimrc
-# Change the path to viminfo; from ~/.viminfo to ~/log/viminfo
-echo "set viminfo+=n~/log/viminfo" >> /etc/skel/.vimrc
+if ! grep '# Custom Code - PK' /etc/skel/.vimrc ; then
+	# attempt to create a log directory, if not exists
+	echo "# Custom Code - PK"" >> /etc/skel/.vimrc
+	# Change the path to viminfo; from ~/.viminfo to ~/log/viminfo
+	echo "set viminfo+=n~/log/viminfo" >> /etc/skel/.vimrc
+fi
 
 # Copy common files to root
 cp /etc/skel/.viminfo /root/
@@ -120,15 +125,21 @@ chsh --shell /usr/bin/zsh
 
 
 #### Update Pathogen (optional)
-echo 'Updating Pathogen (for VIM)'
-PATHOGENURL=https://raw.github.com/tpope/vim-pathogen/master/autoload/pathogen.vim
-#### Update Pathogen (optional)
-echo 'Updating Pathogen (for VIM)'
-wget -q -O /root/pathogen.vim $PATHOGENURL
-if [ -s /root/pathogen.vim ]; then
-	mv /root/pathogen.vim /usr/share/vim/vim74/autoload/pathogen.vim
-else
-	rm /root/pathogen.vim
+if [ ! -a "/usr/share/vim/vim74/autoload/pathogen.vim" ]; then
+	echo 'Updating Pathogen (for VIM)'
+	PATHOGENURL=https://raw.github.com/tpope/vim-pathogen/master/autoload/pathogen.vim
+
+	echo 'Updating Pathogen (for VIM)'
+	wget -q -O /root/pathogen.vim $PATHOGENURL
+
+	# if the file exists AND has a size greater than zero.
+	# zero means the download failed
+	if [ -s /root/pathogen.vim ]; then
+		mv /root/pathogen.vim /usr/share/vim/vim74/autoload/pathogen.vim
+	else
+		rm /root/pathogen.vim
+		echo 'Failed to download pathogen' >> $LOG_FILE
+	fi
 fi
 
 # Setup some helper tools
@@ -146,15 +157,14 @@ PRIMERURL=https://launchpad.net/mysql-tuning-primer/trunk/1.6-r1/+download/tunin
 wget -q -O /root/scripts/tuning-primer.sh $PRIMERURL
 chmod +x /root/scripts/tuning-primer.sh
 
-
 # Setup wp cli
-echo 'Setting up WP CLI'
-
-WPCLIURL=https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-curl --silent -O $WPCLIURL
-chmod +x wp-cli.phar
-mv wp-cli.phar /usr/local/bin/wp
-
+if [ ! -a /usr/local/bin/wp ]; then
+	echo 'Setting up WP CLI'
+	WPCLIURL=https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+	curl --silent -O $WPCLIURL
+	chmod +x wp-cli.phar
+	mv wp-cli.phar /usr/local/bin/wp
+fi
 
 # take a backup, after doing everything
 echo 'Taking a final backup'
