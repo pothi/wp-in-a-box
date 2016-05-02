@@ -91,3 +91,11 @@ Plugin 'mattn/emmet-vim'
 call vundle#end()
 
 " -----------------------------------------------------------------------------------------------
+
+" Disable highlighting matching parenthesis
+" comment it out if you need it back
+" see :help matchparen
+let loaded_matchparen = 1
+
+" -----------------------------------------------------------------------------------------------
+
