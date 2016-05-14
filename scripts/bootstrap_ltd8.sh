@@ -10,13 +10,12 @@
 
 # TODO - change the default repo, if needed - mostly not needed on most hosts
 
+# take a backup
+mkdir -p /root/{backups,log,scripts,tmp,git,src,others} &> /dev/null
+
 LOG_FILE=/root/log/linux-tweaks.log
 exec > >(tee -a ${LOG_FILE} )
 exec 2> >(tee -a ${LOG_FILE} >&2)
-
-
-# take a backup
-mkdir -p /root/{backups,log,scripts,tmp,git,src,others} &> /dev/null
 
 # take a backup
 echo 'Taking an initial backup'
@@ -44,12 +43,9 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y zsh \
 	git \
 	python-pip \
 	fail2ban \
+	unzip zip \
+	logwatch postfix mailutils \
 	ufw
-
-	# vim vim-scripts \
-	# logwatch postfix mailutils \
-	# unzip zip \
-
 
 echo 'Install AWS CLI tools'
 pip install awscli
