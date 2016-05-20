@@ -92,3 +92,6 @@ zstyle ':completion:*' verbose true
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
+# alias to find the flag info
+# modified from https://coderwall.com/p/gtgxww/intuitive-flags-information-of-nginx
+alias ngx_flags='nginx -V 2>&1 | /bin/sed "s: --:\n\t&:g"'
