@@ -38,7 +38,7 @@ echo 'Install prerequisites'
 DEBIAN_FRONTEND=noninteractive apt-get install -y zsh \
 	vim \
 	tmux \
-	unattended-upgrades \
+	unattended-upgrades apt-listchanges \
 	dnsutils \
 	git \
 	python-pip \
@@ -55,6 +55,15 @@ timedatectl set-timezone UTC
 if [ $? != 0 ]; then
 	echo 'Error setting up timezone'
 fi
+
+# Unattended Upgrades
+echo 'APT::Periodic::Update-Package-Lists "1";' > /etc/apt/apt.conf.d/20auto-upgrades
+echo 'APT::Periodic::Unattended-Upgrade "1";' > /etc/apt/apt.conf.d/20auto-upgrades
+
+# sed -i '/Unattended\-Upgrade::Mail/ s:^//::' /etc/apt/apt.conf.d/50unattended-upgrades
+# sed -i '/Unattended-Upgrade::MailOnlyOnError/ s:^//::' /etc/apt/apt.conf.d/50unattended-upgrades
+# if the following doesn't work, comment it and then uncomment the above two lines
+sed -i '/Unattended-Upgrade::Mail\(OnlyOnError\)\?/ s:^//::' /etc/apt/apt.conf.d/50unattended-upgrades
 
 # UFW
 ufw default deny incoming
