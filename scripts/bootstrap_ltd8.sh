@@ -19,7 +19,7 @@ exec 2> >(tee -a ${LOG_FILE} >&2)
 
 # take a backup
 echo 'Taking an initial backup'
-LT_DIRECTORY="/root/backups/etc-linux-tweaks-before-$(date +%F)"
+LT_DIRECTORY="/root/backups/etc-v1-linux-tweaks-before-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
 	cp -a /etc $LT_DIRECTORY
 fi
@@ -49,6 +49,12 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y zsh \
 
 echo 'Install AWS CLI tools'
 pip install awscli
+
+echo 'Taking another backup after installing packages'
+LT_DIRECTORY="/root/backups/etc-v2-after-installing-standard-packages-$(date +%F)"
+if [ ! -d "$LT_DIRECTORY" ]; then
+	cp -a /etc $LT_DIRECTORY
+fi
 
 # setup timezone
 timedatectl set-timezone UTC
