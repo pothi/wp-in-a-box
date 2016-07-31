@@ -98,8 +98,7 @@ endif
 call plug#begin('/etc/vim/plugged')
 
 Plug 'https://github.com/timakro/vim-searchant.git'
-" Plug 'https://github.com/jiangmiao/auto-pairs'
-Plug 'https://github.com/Townk/vim-autoclose'
+Plug 'https://github.com/jiangmiao/auto-pairs'
 Plug 'https://github.com/mattn/emmet-vim'
 
 call plug#end()
