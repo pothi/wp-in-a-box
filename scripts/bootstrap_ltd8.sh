@@ -98,8 +98,6 @@ cp /root/ltd8/zshrc /etc/zsh/zshrc
 # Vim related configs
 cp /root/ltd8/vimrc.local /etc/vim/vimrc.local
 cp -a /root/ltd8/vim/* /usr/share/vim/vim74/
-git clone https://github.com/VundleVim/Vundle.vim.git /usr/share/vim/vim74/bundle/Vundle.vim
-git clone https://github.com/mattn/emmet-vim.git /usr/share/vim/vim74/bundle/emmet-vim
 
 # Misc files
 cp /root/ltd8/tmux.conf /etc/tmux.conf
@@ -137,25 +135,6 @@ cp /etc/skel/.vimrc /root/
 # Change Shell
 echo 'Changing shell for root to ZSH'
 chsh --shell /usr/bin/zsh
-
-
-#### Update Pathogen (optional)
-if [ ! -a "/usr/share/vim/vim74/autoload/pathogen.vim" ]; then
-	echo 'Updating Pathogen (for VIM)'
-	PATHOGENURL=https://raw.github.com/tpope/vim-pathogen/master/autoload/pathogen.vim
-
-	echo 'Updating Pathogen (for VIM)'
-	wget -q -O /root/pathogen.vim $PATHOGENURL
-
-	# if the file exists AND has a size greater than zero.
-	# zero means the download failed
-	if [ -s /root/pathogen.vim ]; then
-		mv /root/pathogen.vim /usr/share/vim/vim74/autoload/pathogen.vim
-	else
-		rm /root/pathogen.vim
-		echo 'Failed to download pathogen' >> $LOG_FILE
-	fi
-fi
 
 # Setup some helper tools
 echo 'Downloading ps_mem.py, mysqltuner and tuning-primer, etc'

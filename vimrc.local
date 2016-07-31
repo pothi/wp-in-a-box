@@ -7,11 +7,6 @@
 " Turn on syntax highlighting
 syntax on
 
-" Pathogen
-if has("autocmd")
-    execute pathogen#infect()
-endif
-
 " -----------------------------------------------------------------------------------------------
 
 " indentation - purely with hard tabs
@@ -84,11 +79,41 @@ set path+=.,/etc/varnish/,/etc/nginx/,/etc/httpd24/
 
 " -----------------------------------------------------------------------------------------------
 
-set rtp+=/usr/share/vim/vim74/bundle/Vundle.vim
-call vundle#begin()
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'mattn/emmet-vim'
-call vundle#end()
+" Plugin Loader - Vim Plug - https://github.com/junegunn/vim-plug
+" auto-install on new environments
+" for local user installation, uncomment the following two lines
+" if empty(glob('~/.vim/autoload/plug.vim'))
+" silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+" to install vim-plu globally
+if empty(glob('/usr/share/vim/vim74/autoload/plug.vim'))
+  silent !curl -fLo /usr/share/vim/vim74/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall | source $MYVIMRC
+endif
+
+" plugins
+" for local user 
+" call plug#begin('~/.vim/plugged')
+" to install plugins globally
+call plug#begin('/etc/vim/plugged')
+
+Plug 'https://github.com/timakro/vim-searchant.git'
+Plug 'https://github.com/jiangmiao/auto-pairs'
+Plug 'https://github.com/mattn/emmet-vim'
+
+call plug#end()
+
+" autoinstall plugins
+autocmd VimEnter *
+  \  if !empty(filter(copy(g:plugs), '!isdirectory(v:val.dir)'))
+  \|   PlugInstall | q
+  \| endif
+
+" -----------------------------------------------------------------------------------------------
+"  Plugin specific settings
+
+" SearchAnt plugin settings
+highlight SearchCurrent ctermbg=lightblue
 
 " -----------------------------------------------------------------------------------------------
 
@@ -98,4 +123,7 @@ call vundle#end()
 let loaded_matchparen = 1
 
 " -----------------------------------------------------------------------------------------------
-
+let hi MatchParen ctermbg=lightgray
+" set nu "number
+" set cursorline
+" -----------------------------------------------------------------------------------------------
