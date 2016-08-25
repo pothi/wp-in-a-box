@@ -28,6 +28,8 @@ if has("autocmd")
     filetype plugin indent on
 endif
 
+autocmd FileType html :setlocal sw=2 ts=2 sts=2 expandtab " Two spaces for HTML files "
+
 " for pasting indented text
 nnoremap <F2> :set invpaste paste?<CR>
 set pastetoggle=<F2>
