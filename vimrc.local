@@ -125,7 +125,7 @@ highlight SearchCurrent ctermbg=lightblue
 let loaded_matchparen = 1
 
 " -----------------------------------------------------------------------------------------------
-let hi MatchParen ctermbg=lightgray
+" let hi MatchParen ctermbg=lightgray
 " set nu "number
 " set cursorline
 " -----------------------------------------------------------------------------------------------
