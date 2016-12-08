@@ -45,7 +45,8 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y zsh \
 	fail2ban \
 	unzip zip \
 	logwatch postfix mailutils \
-	ufw
+	ufw \
+    redis-server
 
 echo 'Install AWS CLI tools'
 pip install awscli
