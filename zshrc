@@ -7,8 +7,8 @@ promptinit
 prompt walters
 setopt PROMPT_SUBST
 export PROMPT="%B%(?..[%?] )%b%n@%U$(hostname -f | awk -F . '{print $2"."$3}')%u> "
-# PROMPT=%B%\(\?..\[%\?\]\ \)%b%n@%U%M%u\>\ 
-# PROMPT=%B%\(\?..\[%\?\]\ \)%b%n@%U$(hostname -f | awk -F $(hostname). '{print $2}')%u\>\  
+# export PROMPT=%B%\(\?..\[%\?\]\ \)%b%n@%U%M%u\>\ 
+# export PROMPT=%B%\(\?..\[%\?\]\ \)%b%n@%U$(hostname -f | awk -F $(hostname). '{print $2}')%u\>\  
 
 #-- History Tweaks --#
 HISTSIZE=10000

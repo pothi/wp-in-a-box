@@ -11,7 +11,7 @@
 # TODO - change the default repo, if needed - mostly not needed on most hosts
 
 # take a backup
-mkdir -p /root/{backups,log,scripts,tmp,git,src,others} &> /dev/null
+mkdir -p /root/{backups,git,log,others,scripts,src,tmp} &> /dev/null
 
 LOG_FILE=/root/log/linux-tweaks.log
 exec > >(tee -a ${LOG_FILE} )
@@ -44,6 +44,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y zsh \
 	python-pip \
 	fail2ban \
 	unzip zip \
+    mlocate \
 	logwatch postfix mailutils \
 	ufw \
     redis-server
@@ -87,25 +88,25 @@ fi
 # get the source from Github
 LTREPO=https://github.com/pothi/linux-tweaks-debian-8.git
 echo 'Downloading Linux Tweaks from Github repo at '$LTREPO
-rm -rf /root/ltd8 &> /dev/null
-git clone --recursive $LTREPO /root/ltd8
+rm -rf /root/ltweaks &> /dev/null
+git clone --recursive $LTREPO /root/ltweaks
 
 # Shell related configs
-cp /root/ltd8/tiny_* /etc/profile.d/
+cp /root/ltweaks/tiny_* /etc/profile.d/
 
-cp /root/ltd8/zprofile /etc/zsh/zprofile
-cp /root/ltd8/zshrc /etc/zsh/zshrc
+cp /root/ltweaks/zprofile /etc/zsh/zprofile
+cp /root/ltweaks/zshrc /etc/zsh/zshrc
 
 # Vim related configs
-cp /root/ltd8/vimrc.local /etc/vim/vimrc.local
-cp -a /root/ltd8/vim/* /usr/share/vim/vim74/
+cp /root/ltweaks/vimrc.local /etc/vim/
+cp -a /root/ltweaks/vim/* /usr/share/vim/vim74/
 
 # Misc files
-cp /root/ltd8/tmux.conf /etc/tmux.conf
-cp /root/ltd8/gitconfig /etc/gitconfig
+cp /root/ltweaks/tmux.conf /etc/tmux.conf
+cp /root/ltweaks/gitconfig /etc/gitconfig
 
 # Clean up
-rm -rf /root/ltd8/
+rm -rf /root/ltweaks/
 
 
 # Common for all users
@@ -121,9 +122,7 @@ fi
 
 touch /etc/skel/.vimrc
 if ! grep '" Custom Code - PK' /etc/skel/.vimrc ; then
-	# attempt to create a log directory, if not exists
 	echo '" Custom Code - PK' >> /etc/skel/.vimrc
-	# Change the path to viminfo; from ~/.viminfo to ~/log/viminfo
 	echo "set viminfo+=n~/log/viminfo" >> /etc/skel/.vimrc
 fi
 
@@ -153,6 +152,7 @@ wget -q -O /root/scripts/tuning-primer.sh $PRIMERURL
 chmod +x /root/scripts/tuning-primer.sh
 
 # Setup wp cli
+echo 'Setting up WP CLI'
 if [ ! -a /usr/local/bin/wp ]; then
 	echo 'Setting up WP CLI'
 	WPCLIURL=https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
@@ -168,3 +168,7 @@ if [ ! -d "$LT_DIRECTORY" ]; then
 	cp -a /etc $LT_DIRECTORY
 fi
 
+# logout and then login to see the changes
+echo 'All done.'
+echo 'You may logout and then log back in to see all the changes'
+echo

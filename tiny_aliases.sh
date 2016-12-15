@@ -43,9 +43,14 @@ alias digs='dig +short'
 # alias digns='dig +short NS'
 # alias digmx='dig +short MX'
 
+# Nginx
+alias ngx_flags='nginx -V 2>&1 | /bin/sed "s: --:\n\t&:g"'
+
+# WP
 alias wp='/usr/local/bin/wp'
 
-alias ngx_flags='nginx -V 2>&1 | /bin/sed "s: --:\n\t&:g"'
+# PHP
+alias findinphp="find * -type f -name '*.php' -print | xargs grep -inr"
 
 ### end of custom aliases by pothi ###
 
