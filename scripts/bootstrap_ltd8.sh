@@ -11,7 +11,7 @@
 # TODO - change the default repo, if needed - mostly not needed on most hosts
 
 # take a backup
-mkdir -p /root/{backups,git,log,others,scripts,src,tmp} &> /dev/null
+mkdir -p /root/{backups,git,log,others,scripts,src,tmp,bin} &> /dev/null
 
 LOG_FILE=/root/log/linux-tweaks.log
 exec > >(tee -a ${LOG_FILE} )
@@ -47,6 +47,7 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y zsh \
     mlocate \
 	logwatch postfix mailutils \
 	ufw \
+    nodejs npm \
     redis-server
 
 echo 'Install AWS CLI tools'
