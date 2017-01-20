@@ -34,7 +34,7 @@ apt-get install redis-server -y
 
 # php${PHP_VER}-mysqlnd package is not found in Ubuntu
 PHP_VER=7.0
-PHP_PACKAGES="php${PHP_VER}-fpm php${PHP_VER}-mysql php${PHP_VER}-gd php${PHP_VER}-mcrypt php${PHP_VER}-xml php${PHP_VER}-mbstring php-curl php-xdebug"
+PHP_PACKAGES="php${PHP_VER}-fpm php${PHP_VER}-mysql php${PHP_VER}-gd php${PHP_VER}-mcrypt php${PHP_VER}-xml php${PHP_VER}-mbstring php${PHP_VER}-soap php-curl php-xdebug"
 
 # at times the version number is not included for memcache(d) extension; let's check it
 # if apt-cache show php-memcached &> /dev/null ; then
