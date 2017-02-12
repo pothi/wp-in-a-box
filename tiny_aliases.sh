@@ -1,4 +1,3 @@
-
 ### custom aliases by pothi @ tinywp.com
 
 # Aliases for `ls`
@@ -17,7 +16,6 @@ alias lal='l -lh --almost-all'
 alias lla='lal'
 alias llh='ll'
 
-# alias wl='wc -l'
 alias fm='free -m'
 alias c='cd'
 # alias ping='ping -c 1'
@@ -39,18 +37,16 @@ alias curlm='curl -H "Accept-Encoding:gzip,deflate" -s -D- -o /dev/null -A "Mozi
 
 # Dig aliases
 alias digs='dig +short'
-# alias digc='dig +short CNAME'
-# alias digns='dig +short NS'
-# alias digmx='dig +short MX'
 
 # Nginx
+# alias to find the flag info
+# modified from https://coderwall.com/p/gtgxww/intuitive-flags-information-of-nginx
 alias ngx_flags='nginx -V 2>&1 | /bin/sed "s: --:\n\t&:g"'
 
 # WP
-alias wp='/usr/local/bin/wp'
+# alias wp='/usr/local/bin/wp'
 
 # PHP
 alias findinphp="find * -type f -name '*.php' -print | xargs grep -inr"
 
 ### end of custom aliases by pothi ###
-

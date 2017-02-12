@@ -4,7 +4,7 @@
 export HISTCONTROL=$HISTCONTROL:erasedups:ignorespace
 
 # for grep to output with colors
-export GREP_OPTIONS='--color=always'
+# export GREP_OPTIONS='--color=always'
 
 # for visudo, svn and others
 export EDITOR=vi
