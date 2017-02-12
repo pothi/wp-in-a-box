@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Version: 1.0
+
+# Changelog
+# 2017-02-12 - version 1.0
+#   Tmux is not going to be installed and its config will be removed in a future version - just use screen going forward
+
 # to be run as root, probably as a user-script just after a server is installed
 
 # as root
@@ -37,7 +43,6 @@ DEBIAN_FRONTEND=noninteractive apt-get autoremove -y
 echo 'Install prerequisites'
 DEBIAN_FRONTEND=noninteractive apt-get install -y zsh \
 	vim \
-	tmux \
 	unattended-upgrades apt-listchanges \
 	dnsutils \
 	git \
@@ -103,8 +108,9 @@ cp /root/ltweaks/vimrc.local /etc/vim/
 cp -a /root/ltweaks/vim/* /usr/share/vim/vim74/
 
 # Misc files
-cp /root/ltweaks/tmux.conf /etc/tmux.conf
 cp /root/ltweaks/gitconfig /etc/gitconfig
+# the following will be removed in a future version
+# cp /root/ltweaks/tmux.conf /etc/tmux.conf
 
 # Clean up
 rm -rf /root/ltweaks/
