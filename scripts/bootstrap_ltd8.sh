@@ -1,8 +1,10 @@
 #!/bin/bash
 
-# Version: 1.0
+# Version: 1.1
 
 # Changelog
+# 2017-02-12 - version 1.1
+#   awscli installation is simplified now
 # 2017-02-12 - version 1.0
 #   Tmux is not going to be installed and its config will be removed in a future version - just use screen going forward
 
@@ -45,18 +47,13 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y zsh \
 	vim \
 	unattended-upgrades apt-listchanges \
 	dnsutils \
-	git \
-	python-pip \
-	fail2ban \
-	unzip zip \
+	git awscli \
+	fail2ban ufw \
     mlocate \
+	unzip zip \
 	logwatch postfix mailutils \
-	ufw \
     nodejs npm \
     redis-server
-
-echo 'Install AWS CLI tools'
-pip install awscli
 
 echo 'Taking another backup after installing packages'
 LT_DIRECTORY="/root/backups/etc-v2-after-installing-standard-packages-$(date +%F)"
@@ -121,7 +118,7 @@ echo 'Setting up skel'
 touch /etc/skel/.viminfo
 touch /etc/skel/.zshrc
 if ! grep '# Custom Code - PK' /etc/skel/.zshrc ; then
-	echo '# Custom Code - PK' >> /etc/skel/.zshrc
+	echo '# Custom Code - PK' > /etc/skel/.zshrc
 	echo 'HISTFILE=~/log/zsh_history' >> /etc/skel/.zshrc
 	echo 'export EDITOR=vim' >> /etc/skel/.zshrc
 	echo 'export VISUAL=vim' >> /etc/skel/.zshrc
@@ -129,7 +126,7 @@ fi
 
 touch /etc/skel/.vimrc
 if ! grep '" Custom Code - PK' /etc/skel/.vimrc ; then
-	echo '" Custom Code - PK' >> /etc/skel/.vimrc
+	echo '" Custom Code - PK' > /etc/skel/.vimrc
 	echo "set viminfo+=n~/log/viminfo" >> /etc/skel/.vimrc
 fi
 
