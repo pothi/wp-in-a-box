@@ -35,6 +35,7 @@ fi
 
 if [ -f /root/.envrc ]; then
     chmod 600 /root/.envrc
+    source /root/.envrc
     direnv allow &> /dev/null
 fi
 
@@ -72,23 +73,30 @@ cp /etc/skel/.vimrc /root/
 # chsh --shell /usr/bin/zsh
 
 #--- Setup some helper tools ---#
-echo 'Downloading ps_mem.py, mysqltuner and tuning-primer, etc'
+if [ ! -s /root/ps_mem.py ]; then
+    echo 'Downloading ps_mem.py'
+    PSMEMURL=http://www.pixelbeat.org/scripts/ps_mem.py
+    wget -q -O /root/ps_mem.py $PSMEMURL
+    chmod +x /root/ps_mem.py
+fi
 
-PSMEMURL=http://www.pixelbeat.org/scripts/ps_mem.py
-wget -q -O /root/ps_mem.py $PSMEMURL
-chmod +x /root/ps_mem.py
+if [ ! -s /root/scripts/mysqltuner.pl ]; then
+    echo 'Downloading mysqltuner'
+    TUNERURL=https://raw.github.com/major/MySQltuner-perl/master/mysqltuner.pl
+    wget -q -O /root/scripts/mysqltuner.pl $TUNERURL
+    chmod +x /root/scripts/mysqltuner.pl
+fi
 
-TUNERURL=https://raw.github.com/major/MySQltuner-perl/master/mysqltuner.pl
-wget -q -O /root/scripts/mysqltuner.pl $TUNERURL
-chmod +x /root/scripts/mysqltuner.pl
-
-PRIMERURL=https://launchpad.net/mysql-tuning-primer/trunk/1.6-r1/+download/tuning-primer.sh
-wget -q -O /root/scripts/tuning-primer.sh $PRIMERURL
-chmod +x /root/scripts/tuning-primer.sh
+if [ ! -s /root/scripts/tuning-primer.sh ]; then
+    echo 'Downloading tuning-primer'
+    PRIMERURL=https://launchpad.net/mysql-tuning-primer/trunk/1.6-r1/+download/tuning-primer.sh
+    wget -q -O /root/scripts/tuning-primer.sh $PRIMERURL
+    chmod +x /root/scripts/tuning-primer.sh
+fi
 
 
 #--- Setup wp cli ---#
-if [ ! -a /usr/local/bin/wp ]; then
+if [ ! -s /usr/local/bin/wp ]; then
 	echo 'Setting up WP CLI'
 	WPCLIURL=https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 	curl --silent -O $WPCLIURL
