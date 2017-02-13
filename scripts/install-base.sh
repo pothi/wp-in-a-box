@@ -36,13 +36,13 @@ fi
 #--- Common for all users ---#
 echo 'Setting up skel'
 
-touch /etc/skel/.bashrc
-if ! grep 'direnv' /etc/skel/.bashrc ; then
+touch /etc/skel/.bashrc &> /dev/null
+if ! grep 'direnv' /etc/skel/.bashrc &> /dev/null ; then
     echo 'eval "$(direnv hook bash)"' >> /etc/skel/.bashrc
 fi
 
-mkdir /etc/skel/.vim
-touch /etc/skel/.vimrc
+mkdir /etc/skel/.vim &> /dev/null
+touch /etc/skel/.vimrc &> /dev/null
 if ! grep '" Custom Code - PK' /etc/skel/.vimrc &> /dev/null ; then
 	echo '" Custom Code - PK' > /etc/skel/.vimrc
 	echo "set viminfo+=n~/.vim/viminfo" >> /etc/skel/.vimrc
