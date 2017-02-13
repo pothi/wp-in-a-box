@@ -24,9 +24,17 @@
 # take a backup
 mkdir -p /root/{backups,git,log,others,scripts,src,tmp,bin} &> /dev/null
 
-LOG_FILE=/root/log/linux-tweaks.log
+LOG_FILE=/root/log/wp-in-a-box.log
 exec > >(tee -a ${LOG_FILE} )
 exec 2> >(tee -a ${LOG_FILE} >&2)
+
+if [ -d /root/wp-in-a-box ] ; then
+    cd /root/wp-in-a-box && git pull origin master && cd - &> /dev/null
+else
+    git clone https://github.com/pothi/wp-in-a-box
+fi
+
+source /root/wp-in-a-box/scripts/setup-linux-tweaks.sh
 
 # take a backup
 echo 'Taking an initial backup'
