@@ -29,8 +29,13 @@ echo 'APT::Periodic::Unattended-Upgrade "1";' > /etc/apt/apt.conf.d/20auto-upgra
 sed -i '/\/\/Unattended-Upgrade::Mail\(OnlyOnError\)\?/ s:^//::' /etc/apt/apt.conf.d/50unattended-upgrades
 
 #--- Setup direnv ---#
-if ! grep 'direnv' /root/.bashrc ; then
+if ! grep 'direnv' /root/.bashrc &> /dev/null ; then
     echo 'eval "$(direnv hook bash)"' >> /root/.bashrc
+fi
+
+if [ -f /root/.envrc ]; then
+    chmod 600 /root/.envrc
+    direnv allow &> /dev/null
 fi
 
 #--- Common for all users ---#
