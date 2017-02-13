@@ -51,5 +51,6 @@ fi
 
 # logout and then login to see the changes
 echo 'All done.'
-echo 'You may logout and then log back in to see all the changes'
+echo 'You may reboot only once to apply all changes globally!'
+echo 'Or you may just logout and then log back in to see certain changes'
 echo
