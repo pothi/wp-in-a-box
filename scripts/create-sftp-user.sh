@@ -6,15 +6,15 @@
 
 # Variables - you may send these as command line options
 BASE_NAME=web
-MY_SFTP_USER=
+WP_SFTP_USER=
 
 #--- please do not edit below this file ---#
 
 SSHD_CONF=/etc/ssh/sshd_config
 
 if [ ! -e "/home/${BASE_NAME}/" ]; then
-    groupadd --gid=1010 $MY_SFTP_USER &> /dev/null
-    useradd --uid=1010 --gid=1010 --shell=/usr/bin/zsh -m --home-dir /home/${BASE_NAME}/ $MY_SFTP_USER &> /dev/null
+    groupadd --gid=1010 $WP_SFTP_USER &> /dev/null
+    useradd --uid=1010 --gid=1010 --shell=/usr/bin/zsh -m --home-dir /home/${BASE_NAME}/ $WP_SFTP_USER &> /dev/null
 
     groupadd ${BASE_NAME} &> /dev/null
 
@@ -24,19 +24,19 @@ else
 fi
 
 # "web" is meant for SFTP only user/s
-gpasswd -a $MY_SFTP_USER ${BASE_NAME} &> /dev/null
+gpasswd -a $WP_SFTP_USER ${BASE_NAME} &> /dev/null
 
 mkdir -p /home/${BASE_NAME}/{.aws,.composer,.ssh,.well-known,Backup,bin,git,log,others,php/session,scripts,sites,src,tmp,mbox,.npm,.wp-cli} &> /dev/null
 mkdir -p /home/${BASE_NAME}/Backup/{files,databases}
 
-chown -R $MY_SFTP_USER:$MY_SFTP_USER /home/${BASE_NAME}
+chown -R $WP_SFTP_USER:$WP_SFTP_USER /home/${BASE_NAME}
 chown root:root /home/${BASE_NAME}
 chmod 755 /home/${BASE_NAME}
 
 #-- allow the user to login to the server --#
 # older way of doing things by appending it to AllowUsers directive
-# if ! grep "$MY_SFTP_USER" ${SSHD_CONFIG} &> /dev/null ; then
-  # sed -i '/AllowUsers/ s/$/ '$MY_SFTP_USER'/' ${SSHD_CONFIG}
+# if ! grep "$WP_SFTP_USER" ${SSHD_CONFIG} &> /dev/null ; then
+  # sed -i '/AllowUsers/ s/$/ '$WP_SFTP_USER'/' ${SSHD_CONFIG}
 # fi
 # latest way of doing things
 # ref: https://knowledgelayer.softlayer.com/learning/how-do-i-permit-specific-users-ssh-access
@@ -51,7 +51,7 @@ AllowGroups sshusers
 fi
 
 # add new users into the 'sshusers' now
-usermod -a -G sshusers ${MY_SFTP_USER}
+usermod -a -G sshusers ${WP_SFTP_USER}
 
 # if the text 'match group ${BASE_NAME}' isn't found, then
 # insert it only once
