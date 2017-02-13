@@ -1,26 +1,27 @@
-Linux-Tweaks
-============
+# WP In A Box
 
-Debian 8 is undoubtedly one of the leanest server distribution around this time (2016). It may not be the case after few years down the road, though. Until then, let's tweak it to some extend to make it more usable!
-
-Tweaks on bash, zsh, vim, tmux, AWScli etc
+Script/s to install WordPress in a linux box without much effort
 
 ## Install procedure
+
+Rename `.envrc-sample` file as `.envrc` and insert as much information as possible
+
+Download `bootstrap.sh` and execute it.
 
 ```bash
 # as root
 
 mkdir ~/scripts
-curl -Sso ~/scripts/bootstrap_ltd8.sh https://raw.githubusercontent.com/pothi/linux-tweaks-debian-8/master/scripts/bootstrap_ltd8.sh
-chmod +x ~/scripts/bootstrap_ltd8.sh
+curl -Sso ~/scripts/bootstrap.sh https://github.com/pothi/linux-tweaks-deb/raw/master/bootstrap.sh
+chmod +x ~/scripts/bootstrap.sh
 
 # go through the script to understand what it does. you are warned!
-# vi ~/scripts/bootstrap_ltd8.sh
+# vi ~/scripts/bootstrap.sh
 
 # run it and face the consequences
-~/scripts/bootstrap_ltd8.sh
+~/scripts/bootstrap.sh
 
 # (optional) get rid of all the evidences of making the changes
-# rm ~/scripts/bootstrap_ltd8.sh
+# rm ~/scripts/bootstrap.sh
 
 ```
