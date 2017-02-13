@@ -49,7 +49,7 @@ if ! grep '" Custom Code - PK' /etc/skel/.vimrc &> /dev/null ; then
 fi
 
 # copy the skel info to root
-mkdir /root/.vim
+mkdir /root/.vim &> /dev/null
 # cp /etc/skel/.zshrc /root/
 cp /etc/skel/.vimrc /root/
 
