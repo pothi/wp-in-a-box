@@ -30,7 +30,7 @@ sed -i '/\/\/Unattended-Upgrade::Mail\(OnlyOnError\)\?/ s:^//::' /etc/apt/apt.co
 
 #--- Setup direnv ---#
 if ! grep 'direnv' /root/.bashrc &> /dev/null ; then
-    echo 'eval "$(direnv hook bash)"' >> /root/.bashrc
+    echo 'eval "$(direnv hook bash)"' >> /root/.bashrc &> /dev/null
 fi
 
 if [ -f /root/.envrc ]; then
