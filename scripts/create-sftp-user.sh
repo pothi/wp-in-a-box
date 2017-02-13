@@ -6,7 +6,14 @@
 
 # Variables - you may send these as command line options
 BASE_NAME=web
-WP_SFTP_USER=
+
+source /root/.envrc
+
+if [ "$WP_SFTP_USER" == "" ]; then
+    # create SFTP username automatically
+    WP_SFTP_USER="sftp$(pwgen -A 8 1)"
+    echo "export WP_SFTP_USER=$WP_SFTP_USER" >> /root/.envrc
+fi
 
 #--- please do not edit below this file ---#
 
@@ -92,5 +99,11 @@ else
         echo 'Do NOT ignore this warning'
     fi
 fi
+
+WP_SFTP_PASS=$(pwgen -s 18 1)
+echo; echo "SFTP username is $WP_SFTP_USER"; echo;
+echo; echo "SFTP password is $WP_SFTP_PASS"; echo;
+echo 'Please make a note of these somewhere safe'
+echo 'Also please test if things are okay!'
 
 # Next Step - Setup PHP-FPM pool

@@ -11,7 +11,8 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y vim \
 	logwatch mailutils \
     nodejs npm \
     redis-server \
-    direnv duplicity
+    direnv duplicity \
+    gpw pwgen
 
 #--- setup timezone ---#
 timedatectl set-timezone UTC
