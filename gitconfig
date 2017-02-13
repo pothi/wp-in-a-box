@@ -1,3 +1,4 @@
+# fetch the email from .env file going forward
 [user]
 	name = Pothi Kalimuthu
-	email = pothi@tinywp.com
+	email = kpothi@gmail.com
