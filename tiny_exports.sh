@@ -1,4 +1,4 @@
-### custom exports by pothi @ tinywp.com
+### custom exports
 
 # for history control
 export HISTCONTROL=$HISTCONTROL:erasedups:ignorespace
@@ -10,5 +10,6 @@ export HISTCONTROL=$HISTCONTROL:erasedups:ignorespace
 export EDITOR=vi
 export VISUAL=vi
 
-### end of custom exports by pothi ###
+export PATH=/usr/local/bin:$PATH
 
+### end of custom exports by pothi ###
