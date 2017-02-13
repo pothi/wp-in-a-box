@@ -1,7 +1,7 @@
 # instructions
 # ============
 # fill the values
-# rename it to .env
+# rename it to .envrc
 # place it at $HOME or root aka /root/
 
 
@@ -10,7 +10,7 @@
 # - logwatch
 # - as an alias for root in the server
 
-EMAIL=
+export EMAIL=
 
 
 # SERVER_IP is used in
@@ -18,15 +18,15 @@ EMAIL=
 # - to setup PhpMyAdmin (why don't we have a subdomain to set it up?)
 # probably get this using a script
 
-SERVER_IP=
+export SERVER_IP=
 
 
 # if the password contains '=' char, then it may not work as expected
 
-SMTP_USERNAME=
-SMTP_PASSWORD=
-SMTP_HOST=
-SMTP_PORT=
+export SMTP_USERNAME=
+export SMTP_PASSWORD=
+export SMTP_HOST=
+export SMTP_PORT=
 
 
 # WP_HOSTNAME=
@@ -34,7 +34,7 @@ SMTP_PORT=
 # server_name _; # nginx
 # if the following value is set, then send 403 for all other domains
 
-WP_DOMAIN=
+export WP_DOMAIN=
 
 
 # create the following dynamically
@@ -46,4 +46,4 @@ WP_DOMAIN=
 # ( total memory / max_memory in php.ini ) * 2
 # on a 1GB server with a max_memory of 256MB for php, the max_children would be 4
 
-WP_MAX_CHILDREN=
+export WP_MAX_CHILDREN=
