@@ -35,6 +35,7 @@ else
 fi
 
 source /root/wp-in-a-box/scripts/setup-linux-tweaks.sh
+source /root/wp-in-a-box/scripts/install-base.sh
 
 # take a backup
 echo 'Taking an initial backup'

@@ -38,7 +38,7 @@ echo 'Setting up skel'
 
 touch /etc/skel/.bashrc &> /dev/null
 if ! grep 'direnv' /etc/skel/.bashrc &> /dev/null ; then
-    echo 'eval "$(direnv hook bash)"' >> /etc/skel/.bashrc
+    echo 'eval "$(direnv hook bash)"' >> /etc/skel/.bashrc &> /dev/null
 fi
 
 mkdir /etc/skel/.vim &> /dev/null
@@ -48,6 +48,8 @@ if ! grep '" Custom Code - PK' /etc/skel/.vimrc &> /dev/null ; then
 	echo "set viminfo+=n~/.vim/viminfo" >> /etc/skel/.vimrc
 fi
 
+# copy the skel info to root
+mkdir /root/.vim
 # cp /etc/skel/.zshrc /root/
 cp /etc/skel/.vimrc /root/
 
