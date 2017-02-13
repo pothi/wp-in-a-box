@@ -4,6 +4,10 @@
 
 alias ls='ls --color=auto --group-directories-first --classify'
 alias l='ls --color=auto --group-directories-first --classify'
+
+# for mac
+# alias l='ls'
+
 # use the following if --color=auto did not work
 # alias l='ls --color=always --group-directories-first --classify'
 # if OS sets up colors and to get rid of colors, use --color=never
