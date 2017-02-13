@@ -48,8 +48,6 @@ if ! grep '" Custom Code - PK' /etc/skel/.vimrc &> /dev/null ; then
 	echo "set viminfo+=n~/.vim/viminfo" >> /etc/skel/.vimrc
 fi
 
-# Copy common files to root
-cp /etc/skel/.viminfo /root/
 # cp /etc/skel/.zshrc /root/
 cp /etc/skel/.vimrc /root/
 
