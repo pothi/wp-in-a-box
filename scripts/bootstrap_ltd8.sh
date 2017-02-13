@@ -95,7 +95,7 @@ rm -rf /root/ltweaks &> /dev/null
 git clone --recursive $LTREPO /root/ltweaks
 
 # Shell related configs
-cp /root/ltweaks/tiny_* /etc/profile.d/
+cp /root/ltweaks/custom_* /etc/profile.d/
 
 cp /root/ltweaks/zprofile /etc/zsh/zprofile
 cp /root/ltweaks/zshrc /etc/zsh/zshrc

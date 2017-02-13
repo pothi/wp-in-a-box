@@ -53,6 +53,6 @@ zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 # alias to find the flag info
 # modified from https://coderwall.com/p/gtgxww/intuitive-flags-information-of-nginx
 
-if [ -f ./tiny_aliases.sh ]; then
-    source ./tiny_aliases.sh
+if [ -f $HOME/.config/custom_aliases.sh ]; then
+    source $HOME/.config/custom_aliases.sh
 fi
