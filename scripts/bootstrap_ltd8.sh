@@ -43,8 +43,7 @@ DEBIAN_FRONTEND=noninteractive apt-get autoremove -y
 
 # Install pre-requisites
 echo 'Install prerequisites'
-DEBIAN_FRONTEND=noninteractive apt-get install -y zsh \
-	vim \
+DEBIAN_FRONTEND=noninteractive apt-get install -y vim \
 	unattended-upgrades apt-listchanges \
 	dnsutils \
 	git awscli \
@@ -53,7 +52,8 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y zsh \
 	unzip zip \
 	logwatch postfix mailutils \
     nodejs npm \
-    redis-server
+    redis-server \
+    direnv duplicity
 
 echo 'Taking another backup after installing packages'
 LT_DIRECTORY="/root/backups/etc-v2-after-installing-standard-packages-$(date +%F)"
@@ -89,16 +89,17 @@ if [ $? != 0 ]; then
 fi
 
 # get the source from Github
-LTREPO=https://github.com/pothi/linux-tweaks-debian-8.git
+LTREPO=https://github.com/pothi/linux-tweaks-deb
 echo 'Downloading Linux Tweaks from Github repo at '$LTREPO
 rm -rf /root/ltweaks &> /dev/null
-git clone --recursive $LTREPO /root/ltweaks
+git clone $LTREPO /root/ltweaks
 
 # Shell related configs
-cp /root/ltweaks/custom_* /etc/profile.d/
+cp /root/ltweaks/custom_aliases.sh/etc/profile.d/
+cp /root/ltweaks/custom_exports.sh/etc/profile.d/
 
-cp /root/ltweaks/zprofile /etc/zsh/zprofile
-cp /root/ltweaks/zshrc /etc/zsh/zshrc
+# cp /root/ltweaks/zprofile /etc/zsh/zprofile
+# cp /root/ltweaks/zshrc /etc/zsh/zshrc
 
 # Vim related configs
 cp /root/ltweaks/vimrc.local /etc/vim/
@@ -116,13 +117,13 @@ rm -rf /root/ltweaks/
 # Common for all users
 echo 'Setting up skel'
 touch /etc/skel/.viminfo
-touch /etc/skel/.zshrc
-if ! grep '# Custom Code - PK' /etc/skel/.zshrc ; then
-	echo '# Custom Code - PK' > /etc/skel/.zshrc
-	echo 'HISTFILE=~/log/zsh_history' >> /etc/skel/.zshrc
-	echo 'export EDITOR=vim' >> /etc/skel/.zshrc
-	echo 'export VISUAL=vim' >> /etc/skel/.zshrc
-fi
+# touch /etc/skel/.zshrc
+# if ! grep '# Custom Code - PK' /etc/skel/.zshrc ; then
+	# echo '# Custom Code - PK' > /etc/skel/.zshrc
+	# echo 'HISTFILE=~/log/zsh_history' >> /etc/skel/.zshrc
+	# echo 'export EDITOR=vim' >> /etc/skel/.zshrc
+	# echo 'export VISUAL=vim' >> /etc/skel/.zshrc
+# fi
 
 touch /etc/skel/.vimrc
 if ! grep '" Custom Code - PK' /etc/skel/.vimrc ; then
@@ -132,13 +133,13 @@ fi
 
 # Copy common files to root
 cp /etc/skel/.viminfo /root/
-cp /etc/skel/.zshrc /root/
+# cp /etc/skel/.zshrc /root/
 cp /etc/skel/.vimrc /root/
 
 
 # Change Shell
-echo 'Changing shell for root to ZSH'
-chsh --shell /usr/bin/zsh
+# echo 'Changing shell for root to ZSH'
+# chsh --shell /usr/bin/zsh
 
 # Setup some helper tools
 echo 'Downloading ps_mem.py, mysqltuner and tuning-primer, etc'
@@ -171,6 +172,22 @@ LT_DIRECTORY="/root/backups/etc-linux-tweaks-after-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
 	cp -a /etc $LT_DIRECTORY
 fi
+
+echo 'Installing MySQL / MariaDB Server'
+# lets check if mariadb-server exists
+SQL_SERVER=mariadb-server
+if ! apt-cache show mariadb-server &> /dev/null ; then SQL_SERVER=mysql-server ; fi
+
+DEBIAN_FRONTEND=noninteractive apt-get install ${SQL_SERVER} -y
+
+echo 'Installing Nginx Server'
+DEBIAN_FRONTEND=noninteractive apt-get install -y nginx-extras-dbg
+LT_DIRECTORY="/root/backups/etc-nginx-$(date +%F)"
+if [ ! -d "$LT_DIRECTORY" ]; then
+	cp -a /etc $LT_DIRECTORY
+fi
+git clone https://github.com/pothi/wordpress-nginx ~/git/wordpress-nginx
+cp -a ~/git/wordpress-nginx/{conf.d, errors, globals, sites-available} /etc/nginx/
 
 # logout and then login to see the changes
 echo 'All done.'
