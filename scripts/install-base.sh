@@ -43,7 +43,7 @@ fi
 
 mkdir /etc/skel/.vim
 touch /etc/skel/.vimrc
-if ! grep '" Custom Code - PK' /etc/skel/.vimrc ; then
+if ! grep '" Custom Code - PK' /etc/skel/.vimrc &> /dev/null ; then
 	echo '" Custom Code - PK' > /etc/skel/.vimrc
 	echo "set viminfo+=n~/.vim/viminfo" >> /etc/skel/.vimrc
 fi
@@ -83,7 +83,6 @@ chmod +x /root/scripts/tuning-primer.sh
 
 
 #--- Setup wp cli ---#
-echo 'Setting up WP CLI'
 if [ ! -a /usr/local/bin/wp ]; then
 	echo 'Setting up WP CLI'
 	WPCLIURL=https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
