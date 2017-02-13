@@ -12,7 +12,7 @@ Download `bootstrap.sh` and execute it.
 # as root
 
 mkdir ~/scripts
-curl -Sso ~/scripts/bootstrap.sh https://github.com/pothi/wp-in-a-box/raw/master/bootstrap.sh
+curl -LSso ~/scripts/bootstrap.sh https://github.com/pothi/wp-in-a-box/raw/master/bootstrap.sh
 chmod +x ~/scripts/bootstrap.sh
 
 # go through the script to understand what it does. you are warned!
