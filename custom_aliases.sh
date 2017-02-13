@@ -3,7 +3,7 @@
 # Aliases for `ls`
 
 # for mac, comment out the following line
-# alias ls='/bin/ls --color=auto --group-directories-first --classify'
+alias ls='/bin/ls --color=auto --group-directories-first --classify'
 
 alias l='ls'
 
