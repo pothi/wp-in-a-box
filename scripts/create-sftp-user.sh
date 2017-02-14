@@ -21,22 +21,21 @@ SSHD_CONFIG='/etc/ssh/sshd_config'
 
 if [ ! -d "/home/${BASE_NAME}" ]; then
     groupadd --gid=1010 $WP_SFTP_USER &> /dev/null
-    useradd --uid=1010 --gid=1010 --shell=/usr/bin/zsh -m --home-dir /home/${BASE_NAME}/ $WP_SFTP_USER &> /dev/null
+    useradd --uid=1010 --gid=1010 -m --home-dir /home/${BASE_NAME}/ $WP_SFTP_USER &> /dev/null
+    # use the following, if the user prefers ZSH shell
+    # useradd --uid=1010 --gid=1010 --shell=/usr/bin/zsh -m --home-dir /home/${BASE_NAME}/ $WP_SFTP_USER &> /dev/null
 
     groupadd ${BASE_NAME} &> /dev/null
-else
-    echo "the default directory /home/${BASE_NAME} already exists!"; exit 1
-fi
 
-# "web" is meant for SFTP only user/s
-gpasswd -a $WP_SFTP_USER ${BASE_NAME} &> /dev/null
+    # "web" is meant for SFTP only user/s
+    gpasswd -a $WP_SFTP_USER ${BASE_NAME} &> /dev/null
 
-mkdir -p /home/${BASE_NAME}/{.aws,.composer,.ssh,.well-known,Backup,bin,git,log,others,php/session,scripts,sites,src,tmp,mbox,.npm,.wp-cli} &> /dev/null
-mkdir -p /home/${BASE_NAME}/Backup/{files,databases}
+    mkdir -p /home/${BASE_NAME}/{.aws,.composer,.ssh,.well-known,Backup,bin,git,log,others,php/session,scripts,sites,src,tmp,mbox,.npm,.wp-cli} &> /dev/null
+    mkdir -p /home/${BASE_NAME}/Backup/{files,databases}
 
-chown -R $WP_SFTP_USER:$WP_SFTP_USER /home/${BASE_NAME}
-chown root:root /home/${BASE_NAME}
-chmod 755 /home/${BASE_NAME}
+    chown -R $WP_SFTP_USER:$WP_SFTP_USER /home/${BASE_NAME}
+    chown root:root /home/${BASE_NAME}
+    chmod 755 /home/${BASE_NAME}
 
 #-- allow the user to login to the server --#
 # older way of doing things by appending it to AllowUsers directive
@@ -103,11 +102,15 @@ fi # /Match group ${BASE_NAME}
 
 WP_SFTP_PASS=$(pwgen -s 18 1)
 
-echo "$WP_SFTP_USER:$WP_SFTP_PASS" | chpasswd
+    echo "$WP_SFTP_USER:$WP_SFTP_PASS" | chpasswd
 
-echo; echo "SFTP username is $WP_SFTP_USER"; echo;
-echo; echo "SFTP password is $WP_SFTP_PASS"; echo;
-echo 'Please make a note of these somewhere safe'
-echo 'Also please test if things are okay!'
+    echo; echo "SFTP username is $WP_SFTP_USER"; echo;
+    echo; echo "SFTP password is $WP_SFTP_PASS"; echo;
+    echo 'Please make a note of these somewhere safe'
+    echo 'Also please test if things are okay!'
 
-# Next Step - Setup PHP-FPM pool
+    # Next Step - Setup PHP-FPM pool
+else
+    echo "the default directory /home/${BASE_NAME} already exists!"
+    # exit 1
+fi # end of if ! -d "/home/${BASE_NAME}" - whoops

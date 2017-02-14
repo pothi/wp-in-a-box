@@ -39,6 +39,8 @@ source /root/wp-in-a-box/scripts/install-base.sh
 source /root/wp-in-a-box/scripts/install-firewall.sh
 source /root/wp-in-a-box/scripts/install-nginx.sh
 source /root/wp-in-a-box/scripts/install-mysql.sh
+source /root/wp-in-a-box/scripts/create-sftp-user.sh
+source /root/wp-in-a-box/scripts/install-mysql.sh
 
 # take a backup
 echo 'Taking an initial backup'
