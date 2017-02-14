@@ -46,4 +46,8 @@
 # ( total memory / max_memory in php.ini ) * 2
 # on a 1GB server with a max_memory of 256MB for php, the max_children would be 4
 
-#export WP_MAX_CHILDREN=
+#export PHP_MAX_CHILDREN=
+#export PHP_MEM_LIMIT=
+
+
+#export MEMCACHED_MEM_LIMIT=
