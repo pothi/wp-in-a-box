@@ -21,7 +21,7 @@ SSHD_CONFIG='/etc/ssh/sshd_config'
 
 if [ ! -d "/home/${BASE_NAME}" ]; then
     groupadd --gid=1010 $WP_SFTP_USER &> /dev/null
-    useradd --uid=1010 --gid=1010 -m --home-dir /home/${BASE_NAME}/ $WP_SFTP_USER &> /dev/null
+    useradd --uid=1010 --gid=1010 -m --home-dir /home/${BASE_NAME} $WP_SFTP_USER &> /dev/null
     # use the following, if the user prefers ZSH shell
     # useradd --uid=1010 --gid=1010 --shell=/usr/bin/zsh -m --home-dir /home/${BASE_NAME}/ $WP_SFTP_USER &> /dev/null
 
