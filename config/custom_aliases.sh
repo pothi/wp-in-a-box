@@ -30,8 +30,8 @@ alias sedf='/bin/sed --follow-symlinks'
 ### Ref - http://curl.haxx.se/docs/manpage.html
 # alias curli='curl -I'
 # alias curlih='curl -I -H "Accept-Encoding:gzip,deflate"'
-alias curld='curl -H "Accept-Encoding:gzip,deflate" -s -D- -o /dev/null'
-alias curlm='curl -H "Accept-Encoding:gzip,deflate" -s -D- -o /dev/null -A "Mozilla/5.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/600.1.3 (KHTML, like Gecko) Version/8.0 Mobile/12A4345d Safari/600.1.4"'
+alias curld='curl -I -H "Accept-Encoding:gzip,deflate"'
+alias curlm='curl -I -H "Accept-Encoding:gzip,deflate" -A "Mozilla/5.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/600.1.3 (KHTML, like Gecko) Version/8.0 Mobile/12A4345d Safari/600.1.4"'
 
 # Explanation for the above
 # curli='curl --head' # strange character to replace --head
