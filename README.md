@@ -10,7 +10,7 @@ Script/s to install WordPress in a linux box without much effort
 ```bash
 # as root
 
-curl -LSso ~/bootstrap.sh https://github.com/pothi/wp-in-a-box/raw/master/bootstrap.sh
+curl -LSs https://github.com/pothi/wp-in-a-box/raw/master/bootstrap.sh
 
 # go through the script to understand what it does. you are ***warned***!
 # vi ~/bootstrap.sh

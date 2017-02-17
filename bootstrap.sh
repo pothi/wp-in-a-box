@@ -45,7 +45,7 @@ apt-get autoremove -y
 if [ -d /root/wp-in-a-box ] ; then
     cd /root/wp-in-a-box && git pull origin master && cd - &> /dev/null
 else
-    apt-get install git -y
+    DEBIAN_FRONTEND=noninteractive apt-get install git -y
     git clone --recursive https://github.com/pothi/wp-in-a-box
 fi
 
