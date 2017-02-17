@@ -37,57 +37,57 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
     chown root:root /home/${BASE_NAME}
     chmod 755 /home/${BASE_NAME}
 
-#-- allow the user to login to the server --#
-# older way of doing things by appending it to AllowUsers directive
-# if ! grep "$WP_SFTP_USER" ${SSHD_CONFIG} &> /dev/null ; then
-  # sed -i '/AllowUsers/ s/$/ '$WP_SFTP_USER'/' ${SSHD_CONFIG}
-# fi
-# latest way of doing things
-# ref: https://knowledgelayer.softlayer.com/learning/how-do-i-permit-specific-users-ssh-access
-# groupadd –r sshusers
+    #-- allow the user to login to the server --#
+    # older way of doing things by appending it to AllowUsers directive
+    # if ! grep "$WP_SFTP_USER" ${SSHD_CONFIG} &> /dev/null ; then
+      # sed -i '/AllowUsers/ s/$/ '$WP_SFTP_USER'/' ${SSHD_CONFIG}
+    # fi
+    # latest way of doing things
+    # ref: https://knowledgelayer.softlayer.com/learning/how-do-i-permit-specific-users-ssh-access
+    # groupadd –r sshusers
 
-# if AllowGroups line doesn't exist, insert it only once!
-# if ! grep -i "AllowGroups" ${SSHD_CONFIG} &> /dev/null ; then
-    # echo '
-# # allow users within the (system) group "sshusers"
-# AllowGroups sshusers
-# ' >> ${SSHD_CONFIG}
-# fi
+    # if AllowGroups line doesn't exist, insert it only once!
+    # if ! grep -i "AllowGroups" ${SSHD_CONFIG} &> /dev/null ; then
+        # echo '
+    # # allow users within the (system) group "sshusers"
+    # AllowGroups sshusers
+    # ' >> ${SSHD_CONFIG}
+    # fi
 
-# add new users into the 'sshusers' now
-# usermod -a -G sshusers ${WP_SFTP_USER}
+    # add new users into the 'sshusers' now
+    # usermod -a -G sshusers ${WP_SFTP_USER}
 
-# if the text 'match group ${BASE_NAME}' isn't found, then
-# insert it only once
-if ! grep "Match group ${BASE_NAME}" "${SSHD_CONFIG}" &> /dev/null ; then
-    # remove the existing subsystem
-    sed -i 's/^Subsystem/### &/' ${SSHD_CONFIG}
+    # if the text 'match group ${BASE_NAME}' isn't found, then
+    # insert it only once
+    if ! grep "Match group ${BASE_NAME}" "${SSHD_CONFIG}" &> /dev/null ; then
+        # remove the existing subsystem
+        sed -i 's/^Subsystem/### &/' ${SSHD_CONFIG}
 
-    # add new subsystem
-echo "
-# setup internal SFTP
-Subsystem sftp internal-sftp
-    Match group ${BASE_NAME}
-    ChrootDirectory %h
-    X11Forwarding no
-    AllowTcpForwarding no
-    ForceCommand internal-sftp
-" >> ${SSHD_CONFIG}
+        # add new subsystem
+    echo "
+        # setup internal SFTP
+        Subsystem sftp internal-sftp
+            Match group ${BASE_NAME}
+            ChrootDirectory %h
+            X11Forwarding no
+            AllowTcpForwarding no
+            ForceCommand internal-sftp
+        " >> ${SSHD_CONFIG}
 
-fi # /Match group ${BASE_NAME}
+    fi # /Match group ${BASE_NAME}
 
-# echo 'Testing the modified SSH config'
-# the following didn't work
-# sshd –t
-# /usr/sbin/sshd -t
-# if [ "$?" != 0 ]; then
-    # echo 'Something is messed up in the SSH config file'
-    # echo 'Please re-run after fixing errors'
-    # echo "See the logfile ${LOG_FILE} for details of the error"
-    # echo 'Exiting pre-maturely'
-    # exit 1
-# else
-    # echo 'Cool. Things seem fine.'
+    # echo 'Testing the modified SSH config'
+    # the following didn't work
+    # sshd –t
+    # /usr/sbin/sshd -t
+    # if [ "$?" != 0 ]; then
+        # echo 'Something is messed up in the SSH config file'
+        # echo 'Please re-run after fixing errors'
+        # echo "See the logfile ${LOG_FILE} for details of the error"
+        # echo 'Exiting pre-maturely'
+        # exit 1
+    # else
+        # echo 'Cool. Things seem fine.'
     echo 'Restarting SSH Daemon...'
     systemctl restart sshd &> /dev/null
     if [ "$?" != 0 ]; then
@@ -98,9 +98,8 @@ fi # /Match group ${BASE_NAME}
         echo 'WARNING: Try to create another SSH connection from another terminal, just incase...!'
         echo 'Do NOT ignore this warning'
     fi
-# fi
 
-WP_SFTP_PASS=$(pwgen -s 18 1)
+    WP_SFTP_PASS=$(pwgen -s 18 1)
 
     echo "$WP_SFTP_USER:$WP_SFTP_PASS" | chpasswd
 

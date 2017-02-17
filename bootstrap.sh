@@ -31,7 +31,7 @@ exec 2> >(tee -a ${LOG_FILE} >&2)
 if [ -d /root/wp-in-a-box ] ; then
     cd /root/wp-in-a-box && git pull origin master && cd - &> /dev/null
 else
-    git clone https://github.com/pothi/wp-in-a-box
+    git clone --recursive https://github.com/pothi/wp-in-a-box
 fi
 
 source /root/wp-in-a-box/scripts/setup-linux-tweaks.sh
@@ -40,7 +40,7 @@ source /root/wp-in-a-box/scripts/install-firewall.sh
 source /root/wp-in-a-box/scripts/install-nginx.sh
 source /root/wp-in-a-box/scripts/install-mysql.sh
 source /root/wp-in-a-box/scripts/create-sftp-user.sh
-source /root/wp-in-a-box/scripts/install-mysql.sh
+source /root/wp-in-a-box/scripts/install-php7.sh
 
 # take a backup
 echo 'Taking an initial backup'
