@@ -5,14 +5,14 @@ echo 'Install prerequisites'
 DEBIAN_FRONTEND=noninteractive apt-get install -y vim \
 	unattended-upgrades apt-listchanges \
 	dnsutils \
-	git awscli \
+	awscli \
     mlocate \
 	unzip zip \
 	logwatch mailutils \
     nodejs npm \
     redis-server \
     direnv duplicity \
-    gpw pwgen \
+    pwgen \
     letsencrypt
 
 #--- setup timezone ---#

@@ -28,20 +28,6 @@ LOG_FILE=/root/log/wp-in-a-box.log
 exec > >(tee -a ${LOG_FILE} )
 exec 2> >(tee -a ${LOG_FILE} >&2)
 
-if [ -d /root/wp-in-a-box ] ; then
-    cd /root/wp-in-a-box && git pull origin master && cd - &> /dev/null
-else
-    git clone --recursive https://github.com/pothi/wp-in-a-box
-fi
-
-source /root/wp-in-a-box/scripts/setup-linux-tweaks.sh
-source /root/wp-in-a-box/scripts/install-base.sh
-source /root/wp-in-a-box/scripts/install-firewall.sh
-source /root/wp-in-a-box/scripts/install-nginx.sh
-source /root/wp-in-a-box/scripts/install-mysql.sh
-source /root/wp-in-a-box/scripts/create-sftp-user.sh
-source /root/wp-in-a-box/scripts/install-php7.sh
-
 # take a backup
 echo 'Taking an initial backup'
 LT_DIRECTORY="/root/backups/etc-linux-tweaks-$(date +%F)"
@@ -55,6 +41,21 @@ apt-get update -y
 DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y
 apt-get autoremove -y
+
+if [ -d /root/wp-in-a-box ] ; then
+    cd /root/wp-in-a-box && git pull origin master && cd - &> /dev/null
+else
+    apt-get install git -y
+    git clone --recursive https://github.com/pothi/wp-in-a-box
+fi
+
+source /root/wp-in-a-box/scripts/setup-linux-tweaks.sh
+source /root/wp-in-a-box/scripts/install-base.sh
+source /root/wp-in-a-box/scripts/install-firewall.sh
+source /root/wp-in-a-box/scripts/install-nginx.sh
+source /root/wp-in-a-box/scripts/install-mysql.sh
+source /root/wp-in-a-box/scripts/create-sftp-user.sh
+source /root/wp-in-a-box/scripts/install-php7.sh
 
 # take a backup, after doing everything
 echo 'Taking a final backup'
