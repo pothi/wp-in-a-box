@@ -17,7 +17,7 @@ SSHD_CONFIG='/etc/ssh/sshd_config'
 
 if [ ! -d "/home/${SSH_USER}" ]; then
     # for low-level utility, use useradd
-    adduser $SSH_USER &> /dev/null
+    useradd -m $SSH_USER &> /dev/null
 
     # use the following, if the user prefers ZSH shell
     # chsh --shell /bin/zsh $SSH_USER
