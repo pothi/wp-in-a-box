@@ -63,6 +63,42 @@ cp /root/ltweaks/config/gitconfig /etc/gitconfig
 # Clean up
 rm -rf /root/ltweaks/
 
+#--- Tweak SSH config ---#
+$SSHD_CONFIG=/etc/ssh/sshd_config
+
+# disable password authentication for root
+# make sure that SSH user has been created
+passwd -l root
+
+# disable password authentication
+# sed -i -E '/PasswordAuthentication (yes|no)/ s/^#//' $SSHD_CONFIG
+# sed -i '/PasswordAuthentication/I s/yes/no/' $SSHD_CONFIG
+
+# echo 'Testing the modified SSH config'
+# the following didn't work
+# sshd –t
+# /usr/sbin/sshd -t
+# if [ "$?" != 0 ]; then
+    # echo 'Something is messed up in the SSH config file'
+    # echo 'Please re-run after fixing errors'
+    # echo "See the logfile ${LOG_FILE} for details of the error"
+    # echo 'Exiting pre-maturely'
+    # exit 1
+# else
+    # echo 'Cool. Things seem fine.'
+    echo 'Restarting SSH Daemon...'
+    systemctl restart sshd &> /dev/null
+    if [ "$?" != 0 ]; then
+        echo 'Something went wrong while creating SFTP user! See below...'; echo; echo;
+        systemctl status sshd
+    else
+        echo 'SSH Daemon restarted!'
+        echo 'WARNING: Try to create another SSH connection from another terminal, just incase...!'
+        echo 'Do NOT ignore this warning'
+    fi
+# fi
+
+
 #--- Tweak Logwatch ---#
 mv /etc/cron.daily/00logwatch /etc/cron.weekly/00logwatch &> /dev/null
 if [ $? != 0 ]; then

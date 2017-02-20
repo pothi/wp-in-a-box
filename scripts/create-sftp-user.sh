@@ -88,16 +88,17 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
         # exit 1
     # else
         # echo 'Cool. Things seem fine.'
-    echo 'Restarting SSH Daemon...'
-    systemctl restart sshd &> /dev/null
-    if [ "$?" != 0 ]; then
-        echo 'Something went wrong while creating SFTP user! See below...'; echo; echo;
-        systemctl status sshd
-    else
-        echo 'SSH Daemon restarted!'
-        echo 'WARNING: Try to create another SSH connection from another terminal, just incase...!'
-        echo 'Do NOT ignore this warning'
-    fi
+        echo 'Restarting SSH Daemon...'
+        systemctl restart sshd &> /dev/null
+        if [ "$?" != 0 ]; then
+            echo 'Something went wrong while creating SFTP user! See below...'; echo; echo;
+            systemctl status sshd
+        else
+            echo 'SSH Daemon restarted!'
+            echo 'WARNING: Try to create another SSH connection from another terminal, just incase...!'
+            echo 'Do NOT ignore this warning'
+        fi
+    # fi # end of sshd -t check
 
     WP_SFTP_PASS=$(pwgen -s 18 1)
 
