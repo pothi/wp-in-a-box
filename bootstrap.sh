@@ -42,11 +42,16 @@ DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y
 apt-get autoremove -y
 
-if [ -d /root/wp-in-a-box ] ; then
-    cd /root/wp-in-a-box && git pull origin master && cd - &> /dev/null
+LOCAL_WPINABOX_REPO=/root/git/wp-in-a-box
+
+if [ -d $LOCAL_WPINABOX_REPO ] ; then
+    cd $LOCAL_WPINABOX_REPO
+    git pull origin master
+    git pull --recurse-submodules
+    cd -
 else
     DEBIAN_FRONTEND=noninteractive apt-get install git -y
-    git clone --recursive https://github.com/pothi/wp-in-a-box
+    git clone --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO
 fi
 
 source /root/wp-in-a-box/scripts/setup-linux-tweaks.sh

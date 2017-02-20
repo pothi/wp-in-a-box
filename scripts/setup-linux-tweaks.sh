@@ -1,18 +1,11 @@
 #!/bin/bash
 
-# get the source from Github
-LTREPO=https://github.com/pothi/wp-in-a-box
-echo 'Downloading Linux Tweaks from Github repo at '$LTREPO
-
-rm -rf /root/ltweaks &> /dev/null
-git clone $LTREPO /root/ltweaks
-
 # Common shell related configs
-cp /root/ltweaks/config/custom_aliases.sh /etc/profile.d/
-source /root/ltweaks/config/custom_aliases.sh
+cp $LOCAL_WPINABOX_REPO/config/custom_aliases.sh /etc/profile.d/
+source $LOCAL_WPINABOX_REPO/config/custom_aliases.sh
 
-cp /root/ltweaks/config/custom_exports.sh /etc/profile.d/
-source /root/ltweaks/config/custom_exports.sh
+cp $LOCAL_WPINABOX_REPO/config/custom_exports.sh /etc/profile.d/
+source $LOCAL_WPINABOX_REPO/config/custom_exports.sh
 
 #--- Common for all users ---#
 echo 'Setting up skel'
@@ -46,22 +39,22 @@ cp /etc/skel/.vimrc /root/
 # echo 'Changing shell for root to ZSH'
 # chsh --shell /usr/bin/zsh
 # For ZSH
-# cp /root/ltweaks/zprofile /etc/zsh/zprofile
-# source /root/ltweaks/zprofile
-# cp /root/ltweaks/zshrc /etc/zsh/zshrc
-# source /root/ltweaks/zshrc
+# cp $LOCAL_WPINABOX_REPO/zprofile /etc/zsh/zprofile
+# source $LOCAL_WPINABOX_REPO/zprofile
+# cp $LOCAL_WPINABOX_REPO/zshrc /etc/zsh/zshrc
+# source $LOCAL_WPINABOX_REPO/zshrc
 
 # Vim related configs
-cp /root/ltweaks/config/vimrc.local /etc/vim/
-cp -a /root/ltweaks/config/vim/* /usr/share/vim/vim74/
+cp $LOCAL_WPINABOX_REPO/config/vimrc.local /etc/vim/
+cp -a $LOCAL_WPINABOX_REPO/config/vim/* /usr/share/vim/vim74/
 
 # Misc files
-cp /root/ltweaks/config/gitconfig /etc/gitconfig
+cp $LOCAL_WPINABOX_REPO/config/gitconfig /etc/gitconfig
 # the following will be removed in a future version
-# cp /root/ltweaks/tmux.conf /etc/tmux.conf
+# cp $LOCAL_WPINABOX_REPO/tmux.conf /etc/tmux.conf
 
 # Clean up
-rm -rf /root/ltweaks/
+# rm -rf $LOCAL_WPINABOX_REPO/
 
 #--- Tweak SSH config ---#
 SSHD_CONFIG=/etc/ssh/sshd_config
