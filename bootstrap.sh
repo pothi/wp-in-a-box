@@ -66,6 +66,12 @@ fi
 
 # logout and then login to see the changes
 echo 'All done.'
+
+echo; echo "SSH username is $SSH_USER"; echo;
+echo; echo "SSH password is $SSH_PASS"; echo;
+echo 'Please make a note of these somewhere safe'
+echo 'Also please test if things are okay!'
+
 echo 'You may reboot only once to apply all changes globally!'
 echo 'Or you may just logout and then log back in to see certain changes'
 echo

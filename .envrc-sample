@@ -4,6 +4,9 @@
 # rename it to .envrc
 # place it at $HOME or root aka /root/
 
+# this user will be used to access the server via SSH
+# if not provided, a random username will be created along with the password
+#export SSH_USER=
 
 # EMAIL is used in multiple places
 # - crontab
