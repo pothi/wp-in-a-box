@@ -64,7 +64,7 @@ cp /root/ltweaks/config/gitconfig /etc/gitconfig
 rm -rf /root/ltweaks/
 
 #--- Tweak SSH config ---#
-$SSHD_CONFIG=/etc/ssh/sshd_config
+SSHD_CONFIG=/etc/ssh/sshd_config
 
 # disable password authentication for root
 # make sure that SSH user has been created
@@ -109,11 +109,11 @@ LOGWATCH_CONF=/etc/logwatch/conf/logwatch.conf
 touch $LOGWATCH_CONF
 echo 'Range = "between -7 days and -1 days"' >> $LOGWATCH_CONF
 echo 'Details = High' >> $LOGWATCH_CONF
-if [ $EMAIL != '' ]; then
+if [ "$EMAIL" != '' ]; then
     echo "mailto = $EMAIL" >> $LOGWATCH_CONF
 fi
 
-if [ $WP_DOMAIN != '' ]; then
+if [ "$WP_DOMAIN" != '' ]; then
     echo "MailFrom = logwatch@$WP_DOMAIN" >> $LOGWATCH_CONF
     echo "Subject = 'Weekly log from $WP_DOMAIN server'" >> $LOGWATCH_CONF
 fi
