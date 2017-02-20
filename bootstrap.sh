@@ -55,6 +55,7 @@ source /root/wp-in-a-box/scripts/install-firewall.sh
 source /root/wp-in-a-box/scripts/install-nginx.sh
 source /root/wp-in-a-box/scripts/install-mysql.sh
 source /root/wp-in-a-box/scripts/create-sftp-user.sh
+source /root/wp-in-a-box/scripts/create-ssh-user.sh
 source /root/wp-in-a-box/scripts/install-php7.sh
 
 # take a backup, after doing everything
