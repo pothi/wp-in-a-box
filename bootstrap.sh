@@ -54,14 +54,14 @@ else
     git clone --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO
 fi
 
-source /root/wp-in-a-box/scripts/setup-linux-tweaks.sh
-source /root/wp-in-a-box/scripts/install-base.sh
-source /root/wp-in-a-box/scripts/install-firewall.sh
-source /root/wp-in-a-box/scripts/install-nginx.sh
-source /root/wp-in-a-box/scripts/install-mysql.sh
-source /root/wp-in-a-box/scripts/create-sftp-user.sh
-source /root/wp-in-a-box/scripts/create-ssh-user.sh
-source /root/wp-in-a-box/scripts/install-php7.sh
+source $LOCAL_WPINABOX_REPO/scripts/setup-linux-tweaks.sh
+source $LOCAL_WPINABOX_REPO/scripts/install-base.sh
+source $LOCAL_WPINABOX_REPO/scripts/install-firewall.sh
+source $LOCAL_WPINABOX_REPO/scripts/install-nginx.sh
+source $LOCAL_WPINABOX_REPO/scripts/install-mysql.sh
+source $LOCAL_WPINABOX_REPO/scripts/create-sftp-user.sh
+source $LOCAL_WPINABOX_REPO/scripts/create-ssh-user.sh
+source $LOCAL_WPINABOX_REPO/scripts/install-php7.sh
 
 # take a backup, after doing everything
 echo 'Taking a final backup'
