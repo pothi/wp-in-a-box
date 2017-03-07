@@ -25,7 +25,7 @@ if [ ! -d "/home/${SSH_USER}" ]; then
     echo "${SSH_USER} ALL=(ALL) NOPASSWD:ALL"> /etc/sudoers.d/$SSH_USER
     chmod 400 /etc/sudoers.d/$SSH_USER
 
-    SSH_PASS=$(pwgen -s 18 1)
+    SSH_PASS=$(pwgen -cns 18 1)
 
     echo "$SSH_USER:$SSH_PASS" | chpasswd
 

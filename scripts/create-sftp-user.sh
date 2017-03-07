@@ -100,7 +100,7 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
         fi
     # fi # end of sshd -t check
 
-    WP_SFTP_PASS=$(pwgen -s 18 1)
+    WP_SFTP_PASS=$(pwgen -cns 18 1)
 
     echo "$WP_SFTP_USER:$WP_SFTP_PASS" | chpasswd
 
