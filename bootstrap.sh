@@ -73,8 +73,10 @@ fi
 # logout and then login to see the changes
 echo 'All done.'
 
-echo; echo "SSH username is $SSH_USER"; echo;
-echo; echo "SSH password is $SSH_PASS"; echo;
+echo; echo "SFTP username is $WP_SFTP_USER"
+echo "SFTP password is $WP_SFTP_PASS"; echo;
+echo; echo "SSH username is $SSH_USER"
+echo "SSH password is $SSH_PASS"; echo;
 echo 'Please make a note of these somewhere safe'
 echo 'Also please test if things are okay!'
 

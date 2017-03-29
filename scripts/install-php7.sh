@@ -127,4 +127,15 @@ if [ "$?" != 0 ]; then
 	echo 'PHP-FPM failed to restart. Please check your configs!'; exit
 fi
 
+echo 'Installing Composer for PHP...'
+EXPECTED_SIGNATURE=$(wget -q -O - https://composer.github.io/installer.sig)
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+ACTUAL_SIGNATURE=$(php -r "echo hash_file('SHA384', 'composer-setup.php');")
+
+if [ "$EXPECTED_SIGNATURE" == "$ACTUAL_SIGNATURE" ]
+then
+	php composer-setup.php --quiet --install-dir=/usr/local/bin --filename=composer
+fi
+
 echo; echo 'All done with PHP-FPM; Good luck'; echo;
+
