@@ -33,6 +33,8 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
     mkdir -p /home/${BASE_NAME}/{.aws,.composer,.nano,.selected-editor,.ssh,.well-known,Backup,bin,git,log,others,php/session,scripts,sites,src,tmp,mbox,.npm,.wp-cli} &> /dev/null
     mkdir -p /home/${BASE_NAME}/Backup/{files,databases}
 
+    touch -p /home/${BASE_NAME}/.bash_history &> /dev/null
+
     chown -R $WP_SFTP_USER:$WP_SFTP_USER /home/${BASE_NAME}
     chown root:root /home/${BASE_NAME}
     chmod 755 /home/${BASE_NAME}
