@@ -13,7 +13,8 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y vim \
     redis-server \
     direnv duplicity \
     pwgen \
-    letsencrypt
+    letsencrypt \
+    apache2-utils
 
 #--- setup timezone ---#
 timedatectl set-timezone UTC
