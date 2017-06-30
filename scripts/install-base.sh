@@ -4,6 +4,7 @@
 echo 'Install prerequisites'
 DEBIAN_FRONTEND=noninteractive apt-get install -y vim \
 	unattended-upgrades apt-listchanges \
+    landscape-common update-notifier-common \
 	dnsutils \
 	awscli \
     mlocate \
