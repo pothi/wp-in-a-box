@@ -30,10 +30,12 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
     # "web" is meant for SFTP only user/s
     gpasswd -a $WP_SFTP_USER ${BASE_NAME} &> /dev/null
 
-    mkdir -p /home/${BASE_NAME}/{.aws,.composer,.nano,.selected-editor,.ssh,.well-known,Backup,bin,git,log,others,php/session,scripts,sites,src,tmp,mbox,.npm,.wp-cli} &> /dev/null
+    mkdir -p /home/${BASE_NAME}/{.aws,.composer,.config,.gsutil,.nano,.npm,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
+    mkdir -p /home/${BASE_NAME}/{Backup,bin,git,log,others,php/session,scripts,sites,src,tmp} &> /dev/null
     mkdir -p /home/${BASE_NAME}/Backup/{files,databases}
 
-    touch /home/${BASE_NAME}/.bash_history &> /dev/null
+    touch /home/${BASE_NAME}/{.bash_history,mbox} &> /dev/null
+    chmod 600 /home/${BASE_NAME}/mbox &> /dev/null
 
     chown -R $WP_SFTP_USER:$WP_SFTP_USER /home/${BASE_NAME}
     chown root:root /home/${BASE_NAME}

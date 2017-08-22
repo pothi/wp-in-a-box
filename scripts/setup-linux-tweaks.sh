@@ -45,8 +45,9 @@ cp /etc/skel/.vimrc /root/
 # source $LOCAL_WPINABOX_REPO/zshrc
 
 # Vim related configs
+VIM_VERSION=$(/usr/bin/vim --version | head -1 | awk {'print $5'} | tr -d .)
 cp $LOCAL_WPINABOX_REPO/config/vimrc.local /etc/vim/
-cp -a $LOCAL_WPINABOX_REPO/config/vim/* /usr/share/vim/vim74/
+cp -a $LOCAL_WPINABOX_REPO/config/vim/* /usr/share/vim/vim${VIM_VERSION}/
 
 # Misc files
 cp $LOCAL_WPINABOX_REPO/config/gitconfig /etc/gitconfig
