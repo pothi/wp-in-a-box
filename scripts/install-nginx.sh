@@ -1,7 +1,20 @@
 #!/bin/bash
 
 echo 'Installing Nginx Server'
-DEBIAN_FRONTEND=noninteractive apt-get install -y nginx-extras-dbg
+
+apt-get install -y apt-key
+
+curl http://nginx.org/keys/nginx_signing.key | apt-key add -
+
+DISTRO=$(gawk -F= '/^ID=/{print $2}' /etc/os-release)
+CODENAME=$(lsb_release -c -s)
+
+echo "deb http://nginx.org/packages/mainline/${DISTRO}/ ${CODENAME} nginx" > /etc/apt/sources.d/nginx.list
+echo "deb-src http://nginx.org/packages/mainline/${DISTRO}/ ${CODENAME} nginx" >> /etc/apt/sources.d/nginx.list
+
+apt-get update
+
+DEBIAN_FRONTEND=noninteractive apt-get install -y nginx
 LT_DIRECTORY="/root/backups/etc-nginx-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
 	cp -a /etc $LT_DIRECTORY
