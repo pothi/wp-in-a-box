@@ -4,12 +4,15 @@
 # landscape-common update-notifier-common \
 echo 'Install prerequisites'
 DEBIAN_FRONTEND=noninteractive apt-get install -y vim \
-	unattended-upgrades apt-listchanges \
+    apt-file \
+    bash-completion \
 	dnsutils \
-	awscli \
-    mlocate \
-	unzip zip \
 	logwatch mailutils \
+    mlocate \
+    postfix \
+	unattended-upgrades apt-listchanges \
+	zip unzip  \
+	awscli \
     nodejs npm \
     redis-server \
     direnv duplicity \
