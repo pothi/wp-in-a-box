@@ -9,8 +9,11 @@ curl http://nginx.org/keys/nginx_signing.key | apt-key add -
 DISTRO=$(gawk -F= '/^ID=/{print $2}' /etc/os-release)
 CODENAME=$(lsb_release -c -s)
 
-echo "deb http://nginx.org/packages/mainline/${DISTRO}/ ${CODENAME} nginx" > /etc/apt/sources.d/nginx.list
-echo "deb-src http://nginx.org/packages/mainline/${DISTRO}/ ${CODENAME} nginx" >> /etc/apt/sources.d/nginx.list
+NGX_BRANCH=stable
+# or NGX_BRANCH=mainline
+
+echo "deb http://nginx.org/packages/${NGX_BRANCH}/${DISTRO}/ ${CODENAME} nginx" > /etc/apt/sources.d/nginx.list
+echo "deb-src http://nginx.org/packages/${NGX_BRANCH}/${DISTRO}/ ${CODENAME} nginx" >> /etc/apt/sources.d/nginx.list
 
 apt-get update
 
