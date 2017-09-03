@@ -3,22 +3,36 @@
 #--- Install pre-requisites ---#
 # landscape-common update-notifier-common \
 echo 'Install prerequisites'
-DEBIAN_FRONTEND=noninteractive apt-get install -y vim \
-    apt-file \
+required_package="vim \
     bash-completion \
 	dnsutils \
-	logwatch mailutils \
-    mlocate \
     postfix \
+	logwatch \
+    mailutils \
+    mlocate \
 	unattended-upgrades apt-listchanges \
 	zip unzip  \
 	awscli \
-    nodejs npm \
     redis-server \
-    direnv duplicity \
-    pwgen \
     letsencrypt \
-    apache2-utils
+    apache2-utils"
+
+optional_packages="apt-file \
+    vim-scripts \
+    nodejs npm \
+    direnv duplicity \
+    pwgen"
+
+for package in $required_packages
+do  
+	DEBIAN_FRONTEND=noninteractive apt-get install -y $package
+done
+
+# TODO - ask user consent
+# for package in $optional_packages
+# do  
+	# DEBIAN_FRONTEND=noninteractive apt-get install -y $package
+# done
 
 #--- setup timezone ---#
 timedatectl set-timezone UTC

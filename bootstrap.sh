@@ -30,7 +30,7 @@ exec 2> >(tee -a ${LOG_FILE} >&2)
 
 # take a backup
 echo 'Taking an initial backup'
-LT_DIRECTORY="/root/backups/etc-linux-tweaks-$(date +%F)"
+LT_DIRECTORY="/root/backups/etc-before-wp-in-a-box-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
 	cp -a /etc $LT_DIRECTORY
 fi
@@ -54,7 +54,7 @@ else
     git clone --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO
 fi
 
-source $LOCAL_WPINABOX_REPO/scripts/install-base.sh
+source $LOCAL_WPINABOX_REPO/scripts/base-installation.sh
 source $LOCAL_WPINABOX_REPO/scripts/setup-linux-tweaks.sh
 source $LOCAL_WPINABOX_REPO/scripts/install-firewall.sh
 source $LOCAL_WPINABOX_REPO/scripts/install-nginx.sh
@@ -65,7 +65,7 @@ source $LOCAL_WPINABOX_REPO/scripts/install-php7.sh
 
 # take a backup, after doing everything
 echo 'Taking a final backup'
-LT_DIRECTORY="/root/backups/etc-linux-tweaks-after-$(date +%F)"
+LT_DIRECTORY="/root/backups/etc-after-wp-in-a-box-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
 	cp -a /etc $LT_DIRECTORY
 fi
@@ -73,10 +73,18 @@ fi
 # logout and then login to see the changes
 echo 'All done.'
 
-echo; echo "SFTP username is $WP_SFTP_USER"
-echo "SFTP password is $WP_SFTP_PASS"; echo;
-echo; echo "SSH username is $SSH_USER"
-echo "SSH password is $SSH_PASS"; echo;
+echo '-----------------------------------'
+echo '-----------------------------------'
+echo "SFTP username is $WP_SFTP_USER"
+echo "SFTP password is $WP_SFTP_PASS"
+echo '-----------------------------------'
+echo "SSH username is $SSH_USER"
+echo "SSH password is $SSH_PASS"
+echo '-----------------------------------'
+echo '-----------------------------------'
+echo 'Please type vi or vim as root to install vim plugins globally'
+echo '-----------------------------------'
+
 echo 'Please make a note of these somewhere safe'
 echo 'Also please test if things are okay!'
 
