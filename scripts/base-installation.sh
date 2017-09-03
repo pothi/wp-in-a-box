@@ -3,7 +3,7 @@
 #--- Install pre-requisites ---#
 # landscape-common update-notifier-common \
 echo 'Install prerequisites'
-required_package="acl \
+required_packages="acl \
     vim \
     bash-completion \
 	dnsutils \
@@ -17,7 +17,13 @@ required_package="acl \
     redis-server \
     letsencrypt \
     pwgen \
+    fail2ban \
     apache2-utils"
+
+for package in $required_packages
+do  
+	DEBIAN_FRONTEND=noninteractive apt install -y $package
+done
 
 optional_packages="apt-file \
     vim-scripts \
@@ -25,15 +31,10 @@ optional_packages="apt-file \
     direnv \
     duplicity"
 
-for package in $required_packages
-do  
-	DEBIAN_FRONTEND=noninteractive apt-get install -y $package
-done
-
 # TODO - ask user consent
 # for package in $optional_packages
 # do  
-	# DEBIAN_FRONTEND=noninteractive apt-get install -y $package
+	# DEBIAN_FRONTEND=noninteractive apt install -y $package
 # done
 
 #--- setup timezone ---#

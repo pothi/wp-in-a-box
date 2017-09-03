@@ -37,10 +37,10 @@ fi
 
 # install dependencies
 echo 'Updating the server'
-apt-get update -y
-DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
-DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y
-apt-get autoremove -y
+apt update -y
+DEBIAN_FRONTEND=noninteractive apt upgrade -y
+DEBIAN_FRONTEND=noninteractive apt dist-upgrade -y
+apt autoremove -y
 
 LOCAL_WPINABOX_REPO=/root/git/wp-in-a-box
 

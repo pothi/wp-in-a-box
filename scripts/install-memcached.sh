@@ -9,7 +9,7 @@ PHP_INI=/etc/php/${PHP_VER}/fpm/php.ini
 
 # Memcached server
 if ! apt-cache show memcached &> /dev/null ; then echo 'Memcached server not found!' ; fi
-apt-get install memcached -y
+apt install memcached -y
 cp /etc/memcached.conf /root/backups/memcached.conf-$(date +%F)
 sed -i '/^.m / s/[0-9]\+/'$MEMCACHED_MEM_LIMIT'/' /etc/memcached.conf
 systemctl restart memcached
@@ -28,7 +28,7 @@ PHP_PACKAGES=''
 #     PHP_PACKAGES=$(echo "$PHP_PACKAGES" "php${PHP_VER}-memcache")
 # fi
 
-apt-get install -y ${PHP_PACKAGES}
+apt install -y ${PHP_PACKAGES}
 
 # SESSION Handling
 sed -i -e '/^session.save_handler/ s/=.*/= memcached/' $PHP_INI

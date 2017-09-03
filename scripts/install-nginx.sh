@@ -10,15 +10,16 @@ curl http://nginx.org/keys/nginx_signing.key | apt-key add -
 DISTRO=$(gawk -F= '/^ID=/{print $2}' /etc/os-release)
 CODENAME=$(lsb_release -c -s)
 
-NGX_BRANCH=stable
-# or NGX_BRANCH=mainline
+# for updated info, please see https://nginx.org/en/linux_packages.html#stable
+NGX_BRANCH= # leave this empty to install stable version
+# or NGX_BRANCH="mainline/"
 
-echo "deb http://nginx.org/packages/${NGX_BRANCH}/${DISTRO}/ ${CODENAME} nginx" > /etc/apt/sources.list.d/nginx.list
-echo "deb-src http://nginx.org/packages/${NGX_BRANCH}/${DISTRO}/ ${CODENAME} nginx" >> /etc/apt/sources.list.d/nginx.list
+echo "deb https://nginx.org/packages/${NGX_BRANCH}${DISTRO}/ ${CODENAME} nginx" > /etc/apt/sources.list.d/nginx.list
+echo "deb-src https://nginx.org/packages/${NGX_BRANCH}${DISTRO}/ ${CODENAME} nginx" >> /etc/apt/sources.list.d/nginx.list
 
-apt-get update
+apt update
 
-DEBIAN_FRONTEND=noninteractive apt-get install -y nginx
+DEBIAN_FRONTEND=noninteractive apt install -y nginx
 LT_DIRECTORY="/root/backups/etc-nginx-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
 	cp -a /etc $LT_DIRECTORY
