@@ -56,12 +56,14 @@ fi
 
 source $LOCAL_WPINABOX_REPO/scripts/base-installation.sh
 source $LOCAL_WPINABOX_REPO/scripts/setup-linux-tweaks.sh
-source $LOCAL_WPINABOX_REPO/scripts/install-firewall.sh
 source $LOCAL_WPINABOX_REPO/scripts/install-nginx.sh
 source $LOCAL_WPINABOX_REPO/scripts/install-mysql.sh
 source $LOCAL_WPINABOX_REPO/scripts/create-sftp-user.sh
-source $LOCAL_WPINABOX_REPO/scripts/create-ssh-user.sh
 source $LOCAL_WPINABOX_REPO/scripts/install-php7.sh
+
+# the following can be executed at any order
+source $LOCAL_WPINABOX_REPO/scripts/install-firewall.sh
+source $LOCAL_WPINABOX_REPO/scripts/emergency-user-creation.sh
 
 # take a backup, after doing everything
 echo 'Taking a final backup'
@@ -78,8 +80,8 @@ echo '-----------------------------------'
 echo "SFTP username is $WP_SFTP_USER"
 echo "SFTP password is $WP_SFTP_PASS"
 echo '-----------------------------------'
-echo "SSH username is $SSH_USER"
-echo "SSH password is $SSH_PASS"
+echo "Emergency username is $ICE_USER"
+echo "Emergency password is $ICE_PASS"
 echo '-----------------------------------'
 echo '-----------------------------------'
 echo 'Please type vi or vim as root to install vim plugins globally'

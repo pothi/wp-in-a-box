@@ -24,25 +24,7 @@ fi
 
 # copy the skel info to root
 mkdir /root/.vim &> /dev/null
-# cp /etc/skel/.zshrc /root/
 cp /etc/skel/.vimrc /root/
-
-# touch /etc/skel/.zshrc
-# if ! grep '# Custom Code - PK' /etc/skel/.zshrc ; then
-	# echo '# Custom Code - PK' > /etc/skel/.zshrc
-	# echo 'HISTFILE=~/log/zsh_history' >> /etc/skel/.zshrc
-	# echo 'export EDITOR=vim' >> /etc/skel/.zshrc
-	# echo 'export VISUAL=vim' >> /etc/skel/.zshrc
-# fi
-
-### Change Shell
-# echo 'Changing shell for root to ZSH'
-# chsh --shell /usr/bin/zsh
-# For ZSH
-# cp $LOCAL_WPINABOX_REPO/zprofile /etc/zsh/zprofile
-# source $LOCAL_WPINABOX_REPO/zprofile
-# cp $LOCAL_WPINABOX_REPO/zshrc /etc/zsh/zshrc
-# source $LOCAL_WPINABOX_REPO/zshrc
 
 # Vim related configs
 VIM_VERSION=$(/usr/bin/vim --version | head -1 | awk {'print $5'} | tr -d .)
@@ -51,22 +33,20 @@ cp -a $LOCAL_WPINABOX_REPO/config/vim/* /usr/share/vim/vim${VIM_VERSION}/
 
 # Misc files
 cp $LOCAL_WPINABOX_REPO/config/gitconfig /etc/gitconfig
-# the following will be removed in a future version
-# cp $LOCAL_WPINABOX_REPO/tmux.conf /etc/tmux.conf
 
 # Clean up
 # rm -rf $LOCAL_WPINABOX_REPO/
 
 #--- Tweak SSH config ---#
-SSHD_CONFIG=/etc/ssh/sshd_config
 
 # disable password authentication for root
 # make sure that SSH user has been created
 passwd -l root
 
 # disable password authentication
-# sed -i -E '/PasswordAuthentication (yes|no)/ s/^#//' $SSHD_CONFIG
-# sed -i '/PasswordAuthentication/I s/yes/no/' $SSHD_CONFIG
+SSHD_CONFIG=/etc/ssh/sshd_config
+sed -i -E '/PasswordAuthentication (yes|no)/ s/^#//' $SSHD_CONFIG
+sed -i '/PasswordAuthentication/I s/yes/no/' $SSHD_CONFIG
 
 # echo 'Testing the modified SSH config'
 # the following didn't work

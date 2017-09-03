@@ -15,13 +15,14 @@ required_package="vim \
 	awscli \
     redis-server \
     letsencrypt \
+    pwgen \
     apache2-utils"
 
 optional_packages="apt-file \
     vim-scripts \
     nodejs npm \
-    direnv duplicity \
-    pwgen"
+    direnv \
+    duplicity"
 
 for package in $required_packages
 do  
