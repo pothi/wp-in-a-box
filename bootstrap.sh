@@ -54,8 +54,8 @@ else
     git clone --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO
 fi
 
-source $LOCAL_WPINABOX_REPO/scripts/setup-linux-tweaks.sh
 source $LOCAL_WPINABOX_REPO/scripts/install-base.sh
+source $LOCAL_WPINABOX_REPO/scripts/setup-linux-tweaks.sh
 source $LOCAL_WPINABOX_REPO/scripts/install-firewall.sh
 source $LOCAL_WPINABOX_REPO/scripts/install-nginx.sh
 source $LOCAL_WPINABOX_REPO/scripts/install-mysql.sh
