@@ -18,6 +18,7 @@ required_packages="acl \
     letsencrypt \
     pwgen \
     fail2ban \
+    gawk \
     apache2-utils"
 
 for package in $required_packages
