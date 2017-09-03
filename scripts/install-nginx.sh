@@ -2,7 +2,8 @@
 
 echo 'Installing Nginx Server'
 
-apt-get install -y apt-key
+# no longer needed; it's part of apt
+# apt-get install -y apt-key
 
 curl http://nginx.org/keys/nginx_signing.key | apt-key add -
 
@@ -12,8 +13,8 @@ CODENAME=$(lsb_release -c -s)
 NGX_BRANCH=stable
 # or NGX_BRANCH=mainline
 
-echo "deb http://nginx.org/packages/${NGX_BRANCH}/${DISTRO}/ ${CODENAME} nginx" > /etc/apt/sources.d/nginx.list
-echo "deb-src http://nginx.org/packages/${NGX_BRANCH}/${DISTRO}/ ${CODENAME} nginx" >> /etc/apt/sources.d/nginx.list
+echo "deb http://nginx.org/packages/${NGX_BRANCH}/${DISTRO}/ ${CODENAME} nginx" > /etc/apt/sources.list.d/nginx.list
+echo "deb-src http://nginx.org/packages/${NGX_BRANCH}/${DISTRO}/ ${CODENAME} nginx" >> /etc/apt/sources.list.d/nginx.list
 
 apt-get update
 
