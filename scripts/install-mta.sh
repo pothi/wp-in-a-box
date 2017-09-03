@@ -9,7 +9,7 @@
 # SMTP_HOST=
 # SMTP_PORT=
 
-DEBIAN_FRONTEND=noninteractive apt install -y postfix
+DEBIAN_FRONTEND=noninteractive apt-get install -y postfix
 
 # setup mta to use only ipv4 to send emails
 #- why:

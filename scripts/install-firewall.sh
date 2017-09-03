@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEBIAN_FRONTEND=noninteractive apt install -y ufw
+DEBIAN_FRONTEND=noninteractive apt-get install -y ufw
 
 # UFW
 ufw default deny incoming

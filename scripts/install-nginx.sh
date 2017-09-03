@@ -17,9 +17,9 @@ NGX_BRANCH= # leave this empty to install stable version
 echo "deb https://nginx.org/packages/${NGX_BRANCH}${DISTRO}/ ${CODENAME} nginx" > /etc/apt/sources.list.d/nginx.list
 echo "deb-src https://nginx.org/packages/${NGX_BRANCH}${DISTRO}/ ${CODENAME} nginx" >> /etc/apt/sources.list.d/nginx.list
 
-apt update
+apt-get update
 
-DEBIAN_FRONTEND=noninteractive apt install -y nginx
+DEBIAN_FRONTEND=noninteractive apt-get install -y nginx
 LT_DIRECTORY="/root/backups/etc-nginx-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
 	cp -a /etc $LT_DIRECTORY

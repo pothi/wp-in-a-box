@@ -22,7 +22,7 @@ required_packages="acl \
 
 for package in $required_packages
 do  
-	DEBIAN_FRONTEND=noninteractive apt install -y $package
+	DEBIAN_FRONTEND=noninteractive apt-get install -y $package
 done
 
 optional_packages="apt-file \
@@ -34,7 +34,7 @@ optional_packages="apt-file \
 # TODO - ask user consent
 # for package in $optional_packages
 # do  
-	# DEBIAN_FRONTEND=noninteractive apt install -y $package
+	# DEBIAN_FRONTEND=noninteractive apt-get install -y $package
 # done
 
 #--- setup timezone ---#
