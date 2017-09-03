@@ -73,6 +73,7 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
         Subsystem sftp internal-sftp
             Match group ${BASE_NAME}
             ChrootDirectory %h
+            PasswordAuthentication yes
             X11Forwarding no
             AllowTcpForwarding no
             ForceCommand internal-sftp
