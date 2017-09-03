@@ -31,16 +31,20 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
     # "web" is meant for SFTP only user/s
     gpasswd -a $WP_SFTP_USER ${BASE_NAME} &> /dev/null
 
-    mkdir -p /home/${BASE_NAME}/{.aws,.composer,.config,.gsutil,.nano,.npm,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
-    mkdir -p /home/${BASE_NAME}/{Backup,bin,git,log,others,php/session,scripts,sites,src,tmp} &> /dev/null
-    mkdir -p /home/${BASE_NAME}/Backup/{files,databases}
+    # mkdir -p /home/${BASE_NAME}/{.aws,.composer,.config,.gsutil,.nano,.npm,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
+    mkdir -p /home/${BASE_NAME}/{backups,log,scripts,sites} &> /dev/null
+    mkdir -p /home/${BASE_NAME}/backups/{files,databases}
 
-    touch /home/${BASE_NAME}/{.bash_history,mbox} &> /dev/null
-    chmod 600 /home/${BASE_NAME}/mbox &> /dev/null
+    # touch /home/${BASE_NAME}/{.bash_history,mbox} &> /dev/null
+    # chmod 600 /home/${BASE_NAME}/mbox &> /dev/null
 
     chown -R $WP_SFTP_USER:$WP_SFTP_USER /home/${BASE_NAME}
     chown root:root /home/${BASE_NAME}
     chmod 755 /home/${BASE_NAME}
+
+    echo "u:$WP_SFTP_USER:rwx" > /root/tempacl
+    setfacl --modify-file=/root/tempacl /home/$BASE_NAME
+    rm /root/tempacl
 
     #-- allow the user to login to the server --#
     # older way of doing things by appending it to AllowUsers directive

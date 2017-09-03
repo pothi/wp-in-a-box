@@ -3,7 +3,8 @@
 #--- Install pre-requisites ---#
 # landscape-common update-notifier-common \
 echo 'Install prerequisites'
-required_package="vim \
+required_package="acl \
+    vim \
     bash-completion \
 	dnsutils \
     postfix \
