@@ -6,6 +6,7 @@
 
 # Variables - you may send these as command line options
 BASE_NAME=web
+echo "export BASE_NAME=$BASE_NAME" >> /root/.envrc
 
 source /root/.envrc
 
