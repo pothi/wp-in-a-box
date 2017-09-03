@@ -30,6 +30,7 @@ cp /etc/skel/.vimrc /root/
 VIM_VERSION=$(/usr/bin/vim --version | head -1 | awk {'print $5'} | tr -d .)
 cp $LOCAL_WPINABOX_REPO/config/vimrc.local /etc/vim/
 cp -a $LOCAL_WPINABOX_REPO/config/vim/* /usr/share/vim/vim${VIM_VERSION}/
+sed -i "s/VIM_VERSION/$VIM_VERSION/g" /etc/vim/vimrc.local
 
 # Misc files
 cp $LOCAL_WPINABOX_REPO/config/gitconfig /etc/gitconfig
