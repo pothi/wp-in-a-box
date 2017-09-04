@@ -7,7 +7,7 @@ source /root/.envrc
 
 if [ "$ICE_USER" == "" ]; then
     # create SSH username automatically
-    ICE_USER="ssh$(pwgen -A 8 1)"
+    ICE_USER="ice_$(pwgen -A 8 1)"
     echo "export ICE_USER=$ICE_USER" >> /root/.envrc
 fi
 
@@ -21,7 +21,7 @@ if [ ! -d "/home/${ICE_USER}" ]; then
     echo "${ICE_USER} ALL=(ALL) NOPASSWD:ALL"> /etc/sudoers.d/$ICE_USER
     chmod 400 /etc/sudoers.d/$ICE_USER
 
-    ICE_PASS=$(pwgen -cns 18 1)
+    ICE_PASS=$(pwgen -cns 12 1)
 
     echo "$ICE_USER:$ICE_PASS" | chpasswd &> /dev/null
 else

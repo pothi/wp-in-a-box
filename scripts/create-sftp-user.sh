@@ -12,7 +12,7 @@ source /root/.envrc
 
 if [ "$WP_SFTP_USER" == "" ]; then
     # create SFTP username automatically
-    WP_SFTP_USER="sftp$(pwgen -A 8 1)"
+    WP_SFTP_USER="sftp_$(pwgen -A 8 1)"
     echo "export WP_SFTP_USER=$WP_SFTP_USER" >> /root/.envrc
 fi
 
@@ -110,7 +110,7 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
         fi
     # fi # end of sshd -t check
 
-    WP_SFTP_PASS=$(pwgen -cns 18 1)
+    WP_SFTP_PASS=$(pwgen -cns 12 1)
 
     echo "$WP_SFTP_USER:$WP_SFTP_PASS" | chpasswd
 
