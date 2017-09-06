@@ -12,6 +12,7 @@ if [ -z "$pma_db_user" ]; then
     echo "export pma_db_user=$dbuser" > /home/$PMA_USER/.envrc
     echo "export pma_db_pass=$dbpass" >> /home/$PMA_USER/.envrc
     chmod 600 /home/$PMA_USER/.envrc
+    chown $PMA_USER /home/$PMA_USER/.envrc
     source /home/$PMA_USER/.envrc
 fi
 
