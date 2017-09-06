@@ -136,6 +136,11 @@ if [ "$EXPECTED_SIGNATURE" == "$ACTUAL_SIGNATURE" ]
 then
 	php composer-setup.php --quiet --install-dir=/usr/local/bin --filename=composer
 fi
+rm composer-setup.php &> /dev/null
+
+# setup cron to self-update composer
+( crontab -l; echo; echo "# auto-update composer - nightly" ) | crontab -
+( crontab -l; echo '4   4   *   *   *   /usr/local/bin/composer self-update &> /dev/null' ) | crontab -
 
 echo; echo 'All done with PHP-FPM; Good luck'; echo;
 

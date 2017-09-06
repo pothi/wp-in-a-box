@@ -6,6 +6,7 @@ echo 'Installing Nginx Server'
 # apt-get install -y apt-key
 
 curl http://nginx.org/keys/nginx_signing.key | apt-key add -
+rm nginx_signing.key &> /dev/null
 
 DISTRO=$(gawk -F= '/^ID=/{print $2}' /etc/os-release)
 CODENAME=$(lsb_release -c -s)
