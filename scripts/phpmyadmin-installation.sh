@@ -18,5 +18,5 @@ fi
 mysql -e "CREATE DATABASE phpmyadmin"
 mysql -e "GRANT ALL PRIVILEGES ON phpmyadmin.* TO $pma_db_user@localhost IDENTIFIED BY '$pma_db_pass'"
 
-sudo -u $PMA_USER bash pma-user.sh &> /dev/null
+sudo -H -u $PMA_USER bash pma-user.sh &> /dev/null
 
