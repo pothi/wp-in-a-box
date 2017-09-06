@@ -11,7 +11,7 @@ if [ -z "$pma_db_user" ]; then
     dbpass=$(pwgen -cnsv 8 1)
     echo "export pma_db_user=$dbuser" > ~$PMA_USER/.envrc
     echo "export pma_db_pass=$dbpass" >> ~$PMA_USER/.envrc
-    chmod 600 ~/.envrc
+    chmod 600 ~$PMA_USER/.envrc
 fi
 
 mysql -e "CREATE DATABASE phpmyadmin"
