@@ -4,8 +4,6 @@ PMA_USER=pma
 
 useradd -m $PMA_USER &> /dev/null
 
-sudo -u $PMA_USER bash pma-user.sh &> /dev/null
-
 source ~$PMA_USER/.envrc &> /dev/null
 
 if [ -z "$pma_db_user" ]; then
@@ -18,3 +16,6 @@ fi
 
 mysql -e "CREATE DATABASE phpmyadmin"
 mysql -e "GRANT ALL PRIVILEGES ON phpmyadmin.* TO $pma_db_user@localhost IDENTIFIED BY '$pma_db_pass'"
+
+sudo -u $PMA_USER bash pma-user.sh &> /dev/null
+
