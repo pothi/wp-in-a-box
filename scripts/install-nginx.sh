@@ -26,6 +26,8 @@ if [ ! -d "$LT_DIRECTORY" ]; then
 	cp -a /etc $LT_DIRECTORY
 fi
 
+sed -i 's/worker_processes.*/worker_processes auto;/g' /etc/nginx/nginx.conf
+
 if [ -d /root/git/wordpress-nginx ] ; then
     cd /root/git/wordpress-nginx && git pull origin master && cd - &> /dev/null
 else
