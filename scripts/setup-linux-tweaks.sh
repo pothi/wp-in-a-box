@@ -104,7 +104,7 @@ echo "
 # https://stackoverflow.com/a/34511442/1004587 \
 # https://stackoverflow.com/a/44098435/1004587 \
  \
-vim/plugged/vim-searchant" >> /etc/.gitignore
+vim/plugged" >> /etc/.gitignore
 
 git init
 git add .
