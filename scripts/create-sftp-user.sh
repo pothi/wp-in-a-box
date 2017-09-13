@@ -43,7 +43,7 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
     chmod 755 /home/${BASE_NAME}
 
     echo "u:$WP_SFTP_USER:rwx" > /root/tempacl
-    setfacl --modify-file=/root/tempacl /home/$BASE_NAME
+    setfacl --modify-file=/root/tempacl /home/$BASE_NAME/*
     rm /root/tempacl
 
     #-- allow the user to login to the server --#
