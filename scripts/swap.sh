@@ -1,13 +1,13 @@
 #!/bin/bash
 
-if [ free | grep -iw swap | awk {'print $2'} -eq 0 ]; then
+if [ $(free | grep -iw swap | awk {'print $2'}) -eq 0 ]; then
     echo 'Setting up Swap...'
 	fallocate -l 1G /swapfile
 	chmod 600 /swapfile
 	echo '/swapfile none swap sw 0 0' >> /etc/fstab
 	mkswap /swapfile
 	swapon -a
-	swapon -s (verification)
+	swapon -s
 
 	printf "vm.swappiness=10\nvm.vfs_cache_pressure = 50\n" > /etc/sysctl.d/60-swap-custom.conf
 
