@@ -62,7 +62,7 @@ source $LOCAL_WPINABOX_REPO/scripts/create-sftp-user.sh
 source $LOCAL_WPINABOX_REPO/scripts/install-php7.sh
 
 # the following can be executed at any order
-source $LOCAL_WPINABOX_REPO/scripts/install-firewall.sh
+# source $LOCAL_WPINABOX_REPO/scripts/install-firewall.sh
 source $LOCAL_WPINABOX_REPO/scripts/emergency-user-creation.sh
 
 # take a backup, after doing everything

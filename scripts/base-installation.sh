@@ -20,6 +20,7 @@ required_packages="acl \
     fail2ban \
     gawk \
     apt-transport-https \
+    bc \
     apache2-utils"
 
 for package in $required_packages
