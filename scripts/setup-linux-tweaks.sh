@@ -96,14 +96,14 @@ fi
 
 #--- Put /etc/ under version control ---#
 cd /etc
-echo "
-# ref: http://fallengamer.livejournal.com/93321.html \n
-# https://stackoverflow.com/q/1274057/1004587 \n
-# basically two methods \n
-# https://stackoverflow.com/a/34511442/1004587 \n
-# https://stackoverflow.com/a/44098435/1004587 \n
-\n
-vim/plugged \n" >> /etc/.gitignore
+printf "
+# ref: http://fallengamer.livejournal.com/93321.html
+# https://stackoverflow.com/q/1274057/1004587
+# basically two methods
+# https://stackoverflow.com/a/34511442/1004587
+# https://stackoverflow.com/a/44098435/1004587
+
+vim/plugged" >> /etc/.gitignore
 
 git init
 git add .
