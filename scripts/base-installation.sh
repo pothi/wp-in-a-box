@@ -87,6 +87,7 @@ if [ ! -s /root/scripts/tuning-primer.sh ]; then
     PRIMERURL=https://launchpad.net/mysql-tuning-primer/trunk/1.6-r1/+download/tuning-primer.sh
     wget -q -O /root/scripts/tuning-primer.sh $PRIMERURL
     chmod +x /root/scripts/tuning-primer.sh
+    sed -i 's/\bjoin_buffer\b/&_size/' /root/scripts/tuning-primer.sh
 fi
 
 
