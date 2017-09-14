@@ -98,5 +98,14 @@ if [ ! -s /usr/local/bin/wp ]; then
 	curl --silent -O $WPCLIURL
 	chmod +x wp-cli.phar
 	mv wp-cli.phar /usr/local/bin/wp
+
+    # auto-update wp-cli
+    ( crontab -l; echo; echo "# auto-update wp-cli" ) | crontab -
+    ( crontab -l; echo '20  10  *   *   *   /usr/local/bin/wp cli update --allow-root --yes &> /dev/null' ) | crontab -
+
 fi
+
+#--- auto-renew SSL certs ---#
+( crontab -l; echo; echo "# auto-renew SSL certs" ) | crontab -
+( crontab -l; echo '36   0,12   *   *   *   /usr/bin/letsencrypt renew && /usr/sbin/nginx -t && /bin/systemctl restart nginx &> /dev/null' ) | crontab -
 
