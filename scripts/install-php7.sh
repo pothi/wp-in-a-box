@@ -83,9 +83,9 @@ echo; echo 'Setting up the port / socket for PHP'; echo;
 
 # Setup port / socket
 # sed -i '/^listen =/ s/=.*/= 127.0.0.1:9006/' $POOL_FILE
-sed -i "/^listen =/ s:=.*:= /var/lock/php-fpm-${WP_SFTP_USER}:" $POOL_FILE
+sed -i "/^listen =/ s:=.*:= /var/lock/php-fpm-${PHP_VER}-${WP_SFTP_USER}:" $POOL_FILE
 
-sed -i -e 's/^pm = .*/pm = static/' $POOL_FILE
+sed -i -e 's/^pm = .*/pm = ondemand/' $POOL_FILE
 sed -i '/^pm.max_children/ s/=.*/= '$PHP_MAX_CHILDREN'/' $POOL_FILE
 
 echo; echo 'Setting up the processes...'; echo;
