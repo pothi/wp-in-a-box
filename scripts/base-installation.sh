@@ -21,7 +21,8 @@ required_packages="acl \
     gawk \
     apt-transport-https \
     bc \
-    apache2-utils"
+    apache2-utils \
+    software-properties-common"
 
 for package in $required_packages
 do  
