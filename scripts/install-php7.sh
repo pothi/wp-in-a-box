@@ -51,11 +51,13 @@ fi
 echo; echo 'Setting up memory limits'; echo;
 
 PHP_INI=/etc/php/${PHP_VER}/fpm/php.ini
-sed -i '/cgi.fix_pathinfo=/ s/;\(cgi.fix_pathinfo=\)1/\10/' $PHP_INI
+sed -i '/cgi.fix_pathinfo \?=/ s/;\? \?\(cgi.fix_pathinfo \?= \?\)1/\10/' $PHP_INI
 sed -i -e '/^max_execution_time/ s/=.*/= 300/' -e '/^max_input_time/ s/=.*/= 600/' $PHP_INI
 sed -i -e '/^memory_limit/ s/=.*/= 256M/' $PHP_INI
 sed -i -e '/^post_max_size/ s/=.*/= 64M/'      -e '/^upload_max_filesize/ s/=.*/= 64M/' $PHP_INI
 
+# set max_input_vars to 5000 (from the default 1000)
+sed -i '/max_input_vars/ s/;\? \?\(max_input_vars \?= \?\)[[:digit:]]\+/\15000/p' $PHP_INI
 
 # SESSION Handling
 echo; echo 'Setting up sessions...'; echo;
