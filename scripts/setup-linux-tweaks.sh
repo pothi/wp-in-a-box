@@ -10,20 +10,41 @@ source $LOCAL_WPINABOX_REPO/config/custom_exports.sh
 #--- Common for all users ---#
 echo 'Setting up skel'
 
+mkdir /etc/skel/.config &> /dev/null
+cp $LOCAL_WPINABOX_REPO/config/custom_aliases.sh /etc/skel/.config/
+cp $LOCAL_WPINABOX_REPO/config/custom_exports.sh /etc/skel/.config/
+
 touch /etc/skel/.bashrc &> /dev/null
-if ! grep 'direnv' /etc/skel/.bashrc &> /dev/null ; then
+if ! grep 'direnv' /etc/skel/.bashrc ; then
     echo 'eval "$(direnv hook bash)"' >> /etc/skel/.bashrc &> /dev/null
 fi
 
-mkdir /etc/skel/.vim &> /dev/null
-touch /etc/skel/.vimrc &> /dev/null
-if ! grep '" Custom Code - PK' /etc/skel/.vimrc &> /dev/null ; then
+if ! grep -w custom_aliases.sh /etc/skel/.bashrc ; then
+printf "
+if[ -f ~/.config/custom_aliases.sh ]; then
+    source ~/.config/custom_aliases.sh
+fi
+" >> /etc/skel/.bashrc
+fi
+
+if ! grep -w custom_exports.sh /etc/skel/.bashrc ; then
+printf "
+if[ -f ~/.config/custom_exports.sh ]; then
+    source ~/.config/custom_exports.sh
+fi
+" >> /etc/skel/.bashrc
+fi
+
+
+mkdir /etc/skel/.vim
+touch /etc/skel/.vimrc
+if ! grep '" Custom Code - PK' /etc/skel/.vimrc ; then
 	echo '" Custom Code - PK' > /etc/skel/.vimrc
 	echo "set viminfo+=n~/.vim/viminfo" >> /etc/skel/.vimrc
 fi
 
 # copy the skel info to root
-mkdir /root/.vim &> /dev/null
+mkdir /root/.vim
 cp /etc/skel/.vimrc /root/
 
 # Vim related configs

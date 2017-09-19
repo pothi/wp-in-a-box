@@ -12,6 +12,7 @@
 # - crontab
 # - logwatch
 # - as an alias for root in the server
+# - on /etc/gitconfig
 
 #export EMAIL=
 
