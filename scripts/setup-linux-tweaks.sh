@@ -21,7 +21,7 @@ fi
 
 if ! grep -w custom_aliases.sh /etc/skel/.bashrc ; then
 printf "
-if[ -f ~/.config/custom_aliases.sh ]; then
+if [ -f ~/.config/custom_aliases.sh ]; then
     source ~/.config/custom_aliases.sh
 fi
 " >> /etc/skel/.bashrc
@@ -29,7 +29,7 @@ fi
 
 if ! grep -w custom_exports.sh /etc/skel/.bashrc ; then
 printf "
-if[ -f ~/.config/custom_exports.sh ]; then
+if [ -f ~/.config/custom_exports.sh ]; then
     source ~/.config/custom_exports.sh
 fi
 " >> /etc/skel/.bashrc
