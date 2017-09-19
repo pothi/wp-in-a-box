@@ -108,5 +108,5 @@ fi
 
 #--- auto-renew SSL certs ---#
 ( crontab -l; echo; echo "# auto-renew SSL certs" ) | crontab -
-( crontab -l; echo '36   0,12   *   *   *   /usr/bin/letsencrypt renew && /usr/sbin/nginx -t && /bin/systemctl restart nginx &> /dev/null' ) | crontab -
+( crontab -l; echo '36   0,12   *   *   *   /usr/bin/letsencrypt renew && /usr/sbin/nginx -t && /bin/systemctl reload nginx &> /dev/null' ) | crontab -
 
