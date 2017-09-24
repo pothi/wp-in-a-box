@@ -26,6 +26,14 @@ bash ~/bootstrap.sh
 
 ```
 
+## Post-install
+
+Only on Ubuntu 16.04, do the following...
+
+- `sudo add-apt-repository ppa:certbot/certbot`
+- `sudo apt update`
+- `sudo apt install certbot`
+
 ## Wiki
 
 For more documentation, supported / tested hosts, todo, etc, please see the [WP-In-A-Box wiki](https://github.com/pothi/wp-in-a-box/wiki).
