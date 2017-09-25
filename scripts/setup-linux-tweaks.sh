@@ -10,11 +10,20 @@ source $LOCAL_WPINABOX_REPO/config/custom_exports.sh
 #--- Common for all users ---#
 echo 'Setting up skel'
 
-mkdir /etc/skel/.config &> /dev/null
+mkdir -p /etc/skel/{.aws,.composer,.config,.gsutil,.nano,.npm,.npm-global,.selected-editor,.ssh,.well-known,.wp-cli}
+mkdir -p /etc/skel/{backups,log,scripts,sites,tmp}
+mkdir -p /etc/skel/backups/{files,databases}
+
+touch /etc/skel/{.bash_history,.npmrc,mbox}
+chmod 600 /etc/skel/mbox &> /dev/null
+
+mkdir /etc/skel/.config
 cp $LOCAL_WPINABOX_REPO/config/custom_aliases.sh /etc/skel/.config/
 cp $LOCAL_WPINABOX_REPO/config/custom_exports.sh /etc/skel/.config/
 
-touch /etc/skel/.bashrc &> /dev/null
+
+# ~/.bashrc tweaks
+touch /etc/skel/.bashrc
 if ! grep 'direnv' /etc/skel/.bashrc ; then
     echo 'eval "$(direnv hook bash)"' >> /etc/skel/.bashrc &> /dev/null
 fi
@@ -34,6 +43,7 @@ if [ -f ~/.config/custom_exports.sh ]; then
 fi
 " >> /etc/skel/.bashrc
 fi
+# end of ~/.bashrc tweaks
 
 
 mkdir /etc/skel/.vim

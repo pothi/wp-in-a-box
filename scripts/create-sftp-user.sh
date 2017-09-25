@@ -21,24 +21,14 @@ fi
 SSHD_CONFIG='/etc/ssh/sshd_config'
 
 if [ ! -d "/home/${BASE_NAME}" ]; then
-    groupadd --gid=1010 $WP_SFTP_USER &> /dev/null
-    useradd --uid=1010 --gid=1010 --shell=/bin/bash -m --home-dir /home/${BASE_NAME} $WP_SFTP_USER &> /dev/null
-    # use the following, if the user prefers ZSH shell
-    # useradd --uid=1010 --gid=1010 --shell=/usr/bin/zsh -m --home-dir /home/${BASE_NAME}/ $WP_SFTP_USER &> /dev/null
+    groupadd $WP_SFTP_USER &> /dev/null
+    useradd --shell=/bin/bash -m --home-dir /home/${BASE_NAME} $WP_SFTP_USER &> /dev/null
 
     groupadd ${BASE_NAME} &> /dev/null
 
     # "web" is meant for SFTP only user/s
     gpasswd -a $WP_SFTP_USER ${BASE_NAME} &> /dev/null
 
-    mkdir -p /home/${BASE_NAME}/{.aws,.composer,.config,.gsutil,.nano,.npm,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
-    mkdir -p /home/${BASE_NAME}/{backups,log,scripts,sites} &> /dev/null
-    mkdir -p /home/${BASE_NAME}/backups/{files,databases}
-
-    touch /home/${BASE_NAME}/{.bash_history,mbox} &> /dev/null
-    chmod 600 /home/${BASE_NAME}/mbox &> /dev/null
-
-    chown -R $WP_SFTP_USER:$WP_SFTP_USER /home/${BASE_NAME}
     chown root:root /home/${BASE_NAME}
     chmod 755 /home/${BASE_NAME}
 
