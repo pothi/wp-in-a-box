@@ -14,7 +14,7 @@ mkdir -p /etc/skel/{.aws,.composer,.config,.gsutil,.nano,.npm,.npm-global,.selec
 mkdir -p /etc/skel/{backups,log,scripts,sites,tmp}
 mkdir -p /etc/skel/backups/{files,databases}
 
-touch /etc/skel/{.bash_history,.npmrc,mbox}
+touch /etc/skel/{.bash_history,.npmrc,.yarnrc,mbox}
 chmod 600 /etc/skel/mbox &> /dev/null
 
 mkdir /etc/skel/.config
