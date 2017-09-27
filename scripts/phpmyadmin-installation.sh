@@ -2,7 +2,7 @@
 
 PMA_USER=pma
 
-useradd -m $PMA_USER &> /dev/null
+useradd --home-dir /var/www/html -m $PMA_USER &> /dev/null
 
 source /home/$PMA_USER/.envrc &> /dev/null
 
