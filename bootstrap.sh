@@ -66,6 +66,20 @@ source $LOCAL_WPINABOX_REPO/scripts/install-php7.sh
 source $LOCAL_WPINABOX_REPO/scripts/emergency-user-creation.sh
 source $LOCAL_WPINABOX_REPO/scripts/swap.sh
 
+# post-install steps
+codename=`lsb_release -i -s`
+case "$codename" in
+    "stretch")
+        source $LOCAL_WPINABOX_REPO/scripts/post-install-stretch.sh
+        ;;
+    "xenial")
+        source $LOCAL_WPINABOX_REPO/scripts/post-install-xenial.sh
+        ;;
+    "*")
+        echo 'Could not figure out the distribution. Skipping post-install steps!'
+        ;;
+esac
+
 # take a backup, after doing everything
 echo 'Taking a final backup'
 LT_DIRECTORY="/root/backups/etc-after-wp-in-a-box-$(date +%F)"
