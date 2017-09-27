@@ -35,7 +35,7 @@ else
     git clone https://github.com/pothi/wordpress-nginx /root/git/wordpress-nginx
 fi
 
-cp -a /root/git/wordpress-nginx/{conf.d,errors,globals,sites-available} /etc/nginx/
+cp -a /root/git/wordpress-nginx/* /etc/nginx/
 
 # unattended-upgrades
 unattended_file=/etc/apt/apt.conf.d/50unattended-upgrades
