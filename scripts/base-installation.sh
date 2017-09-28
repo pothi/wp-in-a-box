@@ -6,14 +6,14 @@ echo 'Install prerequisites'
 required_packages="acl \
     vim \
     bash-completion \
-	dnsutils \
+    dnsutils \
     postfix \
-	logwatch \
+    logwatch \
     mailutils \
     mlocate \
-	unattended-upgrades apt-listchanges \
-	zip unzip  \
-	awscli \
+    unattended-upgrades apt-listchanges \
+    zip unzip  \
+    awscli \
     redis-server \
     letsencrypt \
     pwgen \
@@ -26,7 +26,7 @@ required_packages="acl \
 
 for package in $required_packages
 do  
-	DEBIAN_FRONTEND=noninteractive apt-get install -y $package
+    DEBIAN_FRONTEND=noninteractive apt-get install -y $package
 done
 
 optional_packages="apt-file \
@@ -38,13 +38,13 @@ optional_packages="apt-file \
 # TODO - ask user consent
 # for package in $optional_packages
 # do  
-	# DEBIAN_FRONTEND=noninteractive apt-get install -y $package
+    # DEBIAN_FRONTEND=noninteractive apt-get install -y $package
 # done
 
 #--- setup timezone ---#
 timedatectl set-timezone UTC
 if [ $? != 0 ]; then
-	echo 'Error setting up timezone'
+    echo 'Error setting up timezone'
 fi
 
 #--- Unattended Upgrades ---#
@@ -94,11 +94,11 @@ fi
 
 #--- Setup wp cli ---#
 if [ ! -s /usr/local/bin/wp ]; then
-	echo 'Setting up WP CLI'
-	WPCLIURL=https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-	curl --silent -O $WPCLIURL
-	chmod +x wp-cli.phar
-	mv wp-cli.phar /usr/local/bin/wp
+    echo 'Setting up WP CLI'
+    WPCLIURL=https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    curl --silent -O $WPCLIURL
+    chmod +x wp-cli.phar
+    mv wp-cli.phar /usr/local/bin/wp
 
     # auto-update wp-cli
     ( crontab -l; echo; echo "# auto-update wp-cli" ) | crontab -
