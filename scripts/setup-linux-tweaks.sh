@@ -49,8 +49,8 @@ fi
 mkdir /etc/skel/.vim
 touch /etc/skel/.vimrc
 if ! grep '" Custom Code - PK' /etc/skel/.vimrc ; then
-	echo '" Custom Code - PK' > /etc/skel/.vimrc
-	echo "set viminfo+=n~/.vim/viminfo" >> /etc/skel/.vimrc
+    echo '" Custom Code - PK' > /etc/skel/.vimrc
+    echo "set viminfo+=n~/.vim/viminfo" >> /etc/skel/.vimrc
 fi
 
 # copy the skel info to root
@@ -108,7 +108,7 @@ sed -i '/PasswordAuthentication/I s/yes/no/' $SSHD_CONFIG
 #--- Tweak Logwatch ---#
 mv /etc/cron.daily/00logwatch /etc/cron.weekly/00logwatch &> /dev/null
 if [ $? != 0 ]; then
-	echo 'Error tweaking logwatch'
+    echo 'Error tweaking logwatch'
 fi
 
 LOGWATCH_CONF=/etc/logwatch/conf/logwatch.conf

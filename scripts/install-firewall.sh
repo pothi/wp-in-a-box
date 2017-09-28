@@ -12,6 +12,6 @@ ufw limit ssh comment 'Rate limit for SSH server'
 
 ufw --force enable
 if [ $? != 0 ]; then
-	echo 'Error setting up firewall'
+    echo 'Error setting up firewall'
 fi
 

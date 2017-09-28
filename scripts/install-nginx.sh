@@ -23,7 +23,7 @@ apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get install -y nginx
 LT_DIRECTORY="/root/backups/etc-nginx-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
-	cp -a /etc $LT_DIRECTORY
+    cp -a /etc $LT_DIRECTORY
 fi
 
 sed -i 's/worker_processes.*/worker_processes auto;/' /etc/nginx/nginx.conf
@@ -40,5 +40,5 @@ cp -a /root/git/wordpress-nginx/* /etc/nginx/
 # unattended-upgrades
 unattended_file=/etc/apt/apt.conf.d/50unattended-upgrades
 if [ ! grep "origin=nginx,codename=stretch"; $unattended_file ] ; then
-	sed -i -e '/^Unattended-Upgrade::Origins-Pattern/ a "origin=nginx,codename=stretch";' $unattended_file
+    sed -i -e '/^Unattended-Upgrade::Origins-Pattern/ a "origin=nginx,codename=stretch";' $unattended_file
 fi

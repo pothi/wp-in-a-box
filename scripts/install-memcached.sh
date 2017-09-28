@@ -36,6 +36,6 @@ sed -i -e '/^;session.save_path/ s/.*/session.save_path = "127.0.0.1:11211"/' $P
 
 systemctl restart php${PHP_VER}-fpm
 if [ "$?" != 0 ]; then
-	echo 'PHP-FPM failed to restart after integrating memcached. Please check your configs!'
+    echo 'PHP-FPM failed to restart after integrating memcached. Please check your configs!'
 fi
 

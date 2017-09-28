@@ -45,7 +45,7 @@ apt-get install -y ${PHP_PACKAGES}
 # let's take a backup of config before modifing them
 BACKUP_PHP_DIR="/root/backups/etc-php-$(date +%F)"
 if [ ! -d "$BACKUP_PHP_DIR" ]; then
-	cp -a /etc $BACKUP_PHP_DIR
+    cp -a /etc $BACKUP_PHP_DIR
 fi
 
 echo; echo 'Setting up memory limits'; echo;
@@ -127,7 +127,7 @@ echo; echo 'Restarting PHP daemon'; echo;
 
 /usr/sbin/php-fpm${PHP_VER} -t && systemctl restart php${PHP_VER}-fpm
 if [ "$?" != 0 ]; then
-	echo 'PHP-FPM failed to restart. Please check your configs!'; exit
+    echo 'PHP-FPM failed to restart. Please check your configs!'; exit
 fi
 
 echo 'Installing Composer for PHP...'
@@ -137,7 +137,7 @@ ACTUAL_SIGNATURE=$(php -r "echo hash_file('SHA384', 'composer-setup.php');")
 
 if [ "$EXPECTED_SIGNATURE" == "$ACTUAL_SIGNATURE" ]
 then
-	php composer-setup.php --quiet --install-dir=/usr/local/bin --filename=composer
+    php composer-setup.php --quiet --install-dir=/usr/local/bin --filename=composer
 fi
 rm composer-setup.php &> /dev/null
 

@@ -32,7 +32,7 @@ exec 2> >(tee -a ${LOG_FILE} >&2)
 echo 'Taking an initial backup'
 LT_DIRECTORY="/root/backups/etc-before-wp-in-a-box-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
-	cp -a /etc $LT_DIRECTORY
+    cp -a /etc $LT_DIRECTORY
 fi
 
 # install dependencies
@@ -84,7 +84,7 @@ esac
 echo 'Taking a final backup'
 LT_DIRECTORY="/root/backups/etc-after-wp-in-a-box-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
-	cp -a /etc $LT_DIRECTORY
+    cp -a /etc $LT_DIRECTORY
 fi
 
 # logout and then login to see the changes
