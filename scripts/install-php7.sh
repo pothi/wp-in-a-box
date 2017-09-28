@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # TODO
-# - ACL
 # - Setup error log inside the user's home / log directory
 
 # Variable/s
@@ -9,19 +8,21 @@
 # PHP_MAX_CHILDREN=
 # MY_MEMCACHED_MEMORY
 
+echo "Setting up PHP..."
+
 # get the variables
 source /root/.envrc
 
-if [ "$WP_SFTP_USER" == "" ]; then
+if [ -z "$WP_SFTP_USER" ]; then
     echo 'SFTP User is not found. Exiting prematurely!'; exit
 fi
 
-if [ "$PHP_MAX_CHILDREN" == "" ]; then
+if [ -z "$PHP_MAX_CHILDREN" ]; then
     # let's be safe with a minmal value
     PHP_MAX_CHILDREN=4
 fi
 
-if [ "$PHP_MEM_LIMIT" == "" ]; then
+if [ -z "$PHP_MEM_LIMIT" ]; then
     # let's be safe with a minmal value
     PHP_MEM_LIMIT=128
 fi
@@ -40,7 +41,7 @@ else
     PHP_PACKAGES=$(echo "$PHP_PACKAGES" "php${PHP_VER}-redis")
 fi
 
-apt-get install -y ${PHP_PACKAGES}
+apt-get install -q -y ${PHP_PACKAGES}
 
 # let's take a backup of config before modifing them
 BACKUP_PHP_DIR="/root/backups/etc-php-$(date +%F)"
@@ -48,7 +49,7 @@ if [ ! -d "$BACKUP_PHP_DIR" ]; then
     cp -a /etc $BACKUP_PHP_DIR
 fi
 
-echo; echo 'Setting up memory limits'; echo;
+echo; echo 'Setting up memory limits for PHP...'; echo;
 
 PHP_INI=/etc/php/${PHP_VER}/fpm/php.ini
 sed -i '/cgi.fix_pathinfo \?=/ s/;\? \?\(cgi.fix_pathinfo \?= \?\)1/\10/' $PHP_INI
@@ -142,8 +143,10 @@ fi
 rm composer-setup.php &> /dev/null
 
 # setup cron to self-update composer
-( crontab -l; echo; echo "# auto-update composer - nightly" ) | crontab -
-( crontab -l; echo '4   4   *   *   *   /usr/local/bin/composer self-update &> /dev/null' ) | crontab -
+if [ $(crontab -l | grep -w composer) -eq 1 ]; then
+    ( crontab -l; echo; echo "# auto-update composer - nightly" ) | crontab -
+    ( crontab -l; echo '4   4   *   *   *   /usr/local/bin/composer self-update &> /dev/null' ) | crontab -
+fi
 
-echo; echo 'All done with PHP-FPM; Good luck'; echo;
+echo; echo 'All done with PHP-FPM!'; echo;
 

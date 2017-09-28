@@ -1,6 +1,8 @@
 #!/bin/bash
 
-DEBIAN_FRONTEND=noninteractive apt-get install -y ufw
+echo 'Setting up ufw...'
+
+DEBIAN_FRONTEND=noninteractive apt-get install -q -y ufw
 
 # UFW
 ufw default deny incoming
@@ -15,3 +17,4 @@ if [ $? != 0 ]; then
     echo 'Error setting up firewall'
 fi
 
+echo "Done setting up UFW!"

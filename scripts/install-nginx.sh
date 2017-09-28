@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo 'Installing Nginx Server'
+echo 'Installing Nginx Server...'
 
 # no longer needed; it's part of apt
 # apt-get install -y apt-key
@@ -18,9 +18,9 @@ NGX_BRANCH= # leave this empty to install stable version
 echo "deb https://nginx.org/packages/${NGX_BRANCH}${DISTRO}/ ${CODENAME} nginx" > /etc/apt/sources.list.d/nginx.list
 echo "deb-src https://nginx.org/packages/${NGX_BRANCH}${DISTRO}/ ${CODENAME} nginx" >> /etc/apt/sources.list.d/nginx.list
 
-apt-get update
+apt-get update -q -y
 
-DEBIAN_FRONTEND=noninteractive apt-get install -y nginx
+DEBIAN_FRONTEND=noninteractive apt-get install -q -y nginx
 LT_DIRECTORY="/root/backups/etc-nginx-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
     cp -a /etc $LT_DIRECTORY
@@ -42,3 +42,5 @@ unattended_file=/etc/apt/apt.conf.d/50unattended-upgrades
 if [ ! grep "origin=nginx,codename=stretch"; $unattended_file ] ; then
     sed -i -e '/^Unattended-Upgrade::Origins-Pattern/ a "origin=nginx,codename=stretch";' $unattended_file
 fi
+
+echo "Done setting up Nginx!"

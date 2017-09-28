@@ -1,14 +1,15 @@
 #!/bin/bash
 
-# TODO:
-# Setup MySecureShell
-# Setup ACL
-
 # Variables - you may send these as command line options
 BASE_NAME=web
-echo "export BASE_NAME=$BASE_NAME" >> /root/.envrc
+if [ ! grep -w BASE_NAME /root/.envrc ]; then
+    echo "export BASE_NAME=$BASE_NAME" >> /root/.envrc
+fi
 
 source /root/.envrc
+
+
+echo 'Setting up SFTP user...'
 
 if [ "$WP_SFTP_USER" == "" ]; then
     # create SFTP username automatically
@@ -21,12 +22,12 @@ fi
 SSHD_CONFIG='/etc/ssh/sshd_config'
 
 if [ ! -d "/home/${BASE_NAME}" ]; then
-    useradd --shell=/bin/bash -m --home-dir /home/${BASE_NAME} $WP_SFTP_USER &> /dev/null
+    useradd --shell=/bin/bash -m --home-dir /home/${BASE_NAME} $WP_SFTP_USER
 
-    groupadd ${BASE_NAME} &> /dev/null
+    groupadd ${BASE_NAME}
 
     # "web" is meant for SFTP only user/s
-    gpasswd -a $WP_SFTP_USER ${BASE_NAME} &> /dev/null
+    gpasswd -a $WP_SFTP_USER ${BASE_NAME}
 
     chown root:root /home/${BASE_NAME}
     chmod 755 /home/${BASE_NAME}
@@ -113,3 +114,5 @@ else
     echo "the default directory /home/${BASE_NAME} already exists!"
     # exit 1
 fi # end of if ! -d "/home/${BASE_NAME}" - whoops
+
+echo "Done setting up SFTP user!"

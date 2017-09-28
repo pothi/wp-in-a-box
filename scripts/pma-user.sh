@@ -6,7 +6,9 @@ chmod +x ~/scripts/pma-auto-update.sh
 ~/scripts/pma-auto-update.sh
 
 # setup cron to self-update composer
-( crontab -l; echo; echo "# auto-update phpmyadmin - nightly" ) | crontab -
-( crontab -l; echo '5   5   *   *   *  ~/scripts/pma-auto-update.sh &> /dev/null' ) | crontab -
+if [ $(crontab -l | grep -w phpmyadmin) -eq 1 ]; then
+    ( crontab -l; echo; echo "# auto-update phpmyadmin - nightly" ) | crontab -
+    ( crontab -l; echo '5   5   *   *   *  ~/scripts/pma-auto-update.sh &> /dev/null' ) | crontab -
+fi
 
 

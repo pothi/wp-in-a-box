@@ -21,26 +21,29 @@
 
 # TODO - change the default repo, if needed - mostly not needed on most hosts
 
-# take a backup
-mkdir -p /root/{backups,git,log,others,scripts,src,tmp,bin} &> /dev/null
+# create some useful directories - create them on demand
+# mkdir -p /root/{backups,git,log,scripts} &> /dev/null
 
 LOG_FILE=/root/log/wp-in-a-box.log
 exec > >(tee -a ${LOG_FILE} )
 exec 2> >(tee -a ${LOG_FILE} >&2)
 
 # take a backup
-echo 'Taking an initial backup'
 LT_DIRECTORY="/root/backups/etc-before-wp-in-a-box-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
+    echo -n 'Taking an initial backup...'
+    mkdir $LT_DIRECTORY
     cp -a /etc $LT_DIRECTORY
+    echo 'done.'
 fi
 
 # install dependencies
-echo 'Updating the server'
+echo -n 'Updating the server...'
 apt-get update -y
-DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
-DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade -y
-apt-get autoremove -y
+DEBIAN_FRONTEND=noninteractive apt-get -q -y upgrade
+DEBIAN_FRONTEND=noninteractive apt-get -q -y dist-upgrade
+apt-get -q -y autoremove
+echo "done."
 
 LOCAL_WPINABOX_REPO=/root/git/wp-in-a-box
 
@@ -50,8 +53,8 @@ if [ -d $LOCAL_WPINABOX_REPO ] ; then
     git pull --recurse-submodules
     cd -
 else
-    DEBIAN_FRONTEND=noninteractive apt-get install git -y
-    git clone --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO
+    DEBIAN_FRONTEND=noninteractive apt-get -q -y install git 
+    git clone -q --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO
 fi
 
 source $LOCAL_WPINABOX_REPO/scripts/base-installation.sh
@@ -67,7 +70,7 @@ source $LOCAL_WPINABOX_REPO/scripts/emergency-user-creation.sh
 source $LOCAL_WPINABOX_REPO/scripts/swap.sh
 
 # post-install steps
-codename=`lsb_release -i -s`
+codename=`lsb_release -c -s`
 case "$codename" in
     "stretch")
         source $LOCAL_WPINABOX_REPO/scripts/post-install-stretch.sh
@@ -75,22 +78,22 @@ case "$codename" in
     "xenial")
         source $LOCAL_WPINABOX_REPO/scripts/post-install-xenial.sh
         ;;
-    "*")
-        echo 'Could not figure out the distribution. Skipping post-install steps!'
+    *)
+        echo 'Warning: Could not figure out the distribution codename. Skipping post-install steps!'
         ;;
 esac
 
 # take a backup, after doing everything
-echo 'Taking a final backup'
+echo -n 'Taking a final backup'
 LT_DIRECTORY="/root/backups/etc-after-wp-in-a-box-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
     cp -a /etc $LT_DIRECTORY
 fi
+echo "done."
 
 # logout and then login to see the changes
 echo 'All done.'
 
-echo '-----------------------------------'
 echo '-----------------------------------'
 echo "SFTP username is $WP_SFTP_USER"
 echo "SFTP password is $WP_SFTP_PASS"
@@ -98,13 +101,15 @@ echo '-----------------------------------'
 echo "Emergency username is $ICE_USER"
 echo "Emergency password is $ICE_PASS"
 echo '-----------------------------------'
-echo '-----------------------------------'
-echo 'Please type vi or vim as root to install vim plugins globally'
-echo '-----------------------------------'
 
 echo 'Please make a note of these somewhere safe'
 echo 'Also please test if things are okay!'
+# TODO
+# run automated tests
+# swap
+# PHP is setup correctly
+# Nginx is setup correctly
+# PhpMyAdmin
 
-echo 'You may reboot only once to apply all changes globally!'
-echo 'Or you may just logout and then log back in to see certain changes'
+echo 'You may reboot only once to apply certain updates (hint: kernel updates)!'
 echo
