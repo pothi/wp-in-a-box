@@ -10,19 +10,24 @@ Script/s to install WordPress in a linux box without much effort
 ```bash
 # as root
 
-apt-get install -y curl
-curl -LSs https://github.com/pothi/wp-in-a-box/raw/master/bootstrap.sh -o ~/bootstrap.sh
+apt install curl
 
-# go through the script to understand what it does. you are ***warned***!
-# vi ~/bootstrap.sh
+curl -LO https://github.com/pothi/wp-in-a-box/raw/master/.envrc-sample
+cp .envrc-sample .envrc
+# nano .envrc
 
-apt-get install -y screen
+curl -LO https://github.com/pothi/wp-in-a-box/raw/master/bootstrap.sh
+
+# go through the script to understand what it does. you may tweak it as necessary
+# nano ~/bootstrap.sh
+
+apt install screen
 screen
-# execute it and face the consequences
-bash ~/bootstrap.sh
+# execute it and wait for some time (approximately 10 minutes)
+bash bootstrap.sh
 
 # (optional) get rid of all the evidences of making the changes
-# rm ~/bootstrap.sh
+# rm bootstrap.sh
 
 ```
 
