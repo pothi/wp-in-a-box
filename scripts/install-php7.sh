@@ -52,7 +52,7 @@ fi
 echo; echo 'Setting up memory limits for PHP...'; echo;
 
 PHP_INI=/etc/php/${PHP_VER}/fpm/php.ini
-sed -i '/cgi.fix_pathinfo \?=/ s/;\? \?\(cgi.fix_pathinfo \?= \?\)1/\10/' $PHP_INI
+# sed -i '/cgi.fix_pathinfo \?=/ s/;\? \?\(cgi.fix_pathinfo \?= \?\)1/\10/' $PHP_INI # as per the note number 6 at https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/
 sed -i -e '/^max_execution_time/ s/=.*/= 300/' -e '/^max_input_time/ s/=.*/= 600/' $PHP_INI
 sed -i -e '/^memory_limit/ s/=.*/= 256M/' $PHP_INI
 sed -i -e '/^post_max_size/ s/=.*/= 64M/'      -e '/^upload_max_filesize/ s/=.*/= 64M/' $PHP_INI
