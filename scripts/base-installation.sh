@@ -22,7 +22,8 @@ required_packages="acl \
     apt-transport-https \
     bc \
     apache2-utils \
-    software-properties-common dirmngr"
+    software-properties-common dirmngr
+    tree"
 
 for package in $required_packages
 do  
