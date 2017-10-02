@@ -144,4 +144,15 @@ cd -
 #--- Misc Tweaks ---#
 sed -i 's/^#\(startup_message off\)$/\1/' /etc/screenrc
 
+#--- setup color for root terminal ---#
+rootbashrc=/root/.bashrc
+comment='#red_color for root'
+if [[ -f $rootbashrc && ! $(grep "^${comment}$" "$rootbashrc") ]]; then
+    printf "\n${comment}\n" >> $rootbashrc
+    echo 'PS1="\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u\[\033[01;33m\]@\[\033[01;36m\]\h \[\033[01;33m\]\w \[\033[01;35m\]\$ \[\033[00m\]"' >> $rootbashrc
+    printf '\n' >> $rootbashrc
+    source $rootbashrc
+fi
+
+
 echo 'Linux tweaks are done.'
