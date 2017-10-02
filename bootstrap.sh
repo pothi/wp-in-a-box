@@ -57,6 +57,7 @@ else
     git clone -q --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO
 fi
 
+source $LOCAL_WPINABOX_REPO/scripts/swap.sh
 source $LOCAL_WPINABOX_REPO/scripts/base-installation.sh
 source $LOCAL_WPINABOX_REPO/scripts/setup-linux-tweaks.sh
 source $LOCAL_WPINABOX_REPO/scripts/install-nginx.sh
@@ -67,7 +68,6 @@ source $LOCAL_WPINABOX_REPO/scripts/install-php7.sh
 # the following can be executed at any order
 # source $LOCAL_WPINABOX_REPO/scripts/install-firewall.sh
 source $LOCAL_WPINABOX_REPO/scripts/emergency-user-creation.sh
-source $LOCAL_WPINABOX_REPO/scripts/swap.sh
 
 # post-install steps
 codename=`lsb_release -c -s`

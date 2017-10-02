@@ -1,20 +1,56 @@
 #!/bin/bash
 
+swapfile=/swapfile
+
+# only create swap if unavailable
 if [ $(free | grep -iw swap | awk {'print $2'}) -eq 0 ]; then
-    echo 'Setting up Swap...'
-    fallocate -l 1G /swapfile
+    echo 'Swap not found. Creating and setting up Swap...'
+
+    # check if swapfile is found (but not used)
+    if [ -f $swapfile ]; then
+        fallocate -l 1G $swapfile
+        if [ $? != 0 ]; then
+            echo 'Could not create swap file using fllocate. Exiting!'
+            exit 1
+        fi
+    else
+        echo 'Note: Existing swap file found!'
+    fi
+
+    # only root should be able to read it
     chmod 600 /swapfile
-    echo '/swapfile none swap sw 0 0' >> /etc/fstab
-    mkswap /swapfile
+
+    # enable swap upon boot
+    echo "$swapfile none swap sw 0 0" >> /etc/fstab
+
+    mkswap $swapfile
+    if [ $? != 0 ]; then
+        echo 'Error running mkswap command while creating swap file. Exiting!'
+        exit 1
+    fi
+
+    # enable swap
     swapon -a
+    if [ $? != 0 ]; then
+        echo 'Error enabling swap using the command "swapon -a". Exiting!'
+        exit 1
+    fi
+
+    # display summary of swap (only for logging purpose)
     swapon -s
 
-    printf "vm.swappiness=10\nvm.vfs_cache_pressure = 50\n" > /etc/sysctl.d/60-swap-custom.conf
+    # fine-tune swap
+    printf "# Ref: https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04\n\nvm.swappiness=10\nvm.vfs_cache_pressure = 50\n" > /etc/sysctl.d/60-swap-custom.conf
 
+    # apply changes
     service procps restart
+    if [ $? != 0 ]; then
+        echo 'Error restarting procps while fine-tuning swap!'
+        exit 1
+    fi
+
     echo 'Done setting up swap!'
 fi
 
-# else skip this script since swap is already present
 # TODO: Setup alert if swap is used
-# Not necessary when we use something like DO's built-in monitoring that can alert of memory goes beyond a limi.
+# Not necessary when we use something like DO's built-in monitoring that can alert of memory goes beyond a limit.
