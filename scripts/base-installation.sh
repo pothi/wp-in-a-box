@@ -29,7 +29,7 @@ for package in $required_packages
 do  
     echo -n "Installing ${package}..."
     DEBIAN_FRONTEND=noninteractive apt-get install -qq $package
-    echo "done."
+    printf "\t\t\t\tdone.\n"
 done
 echo "Done installing required packages."
 
@@ -50,12 +50,12 @@ optional_packages="apt-file \
 #--- setup timezone ---#
 echo -n 'Setting up timezone...'
 ln -fs /usr/share/zoneinfo/UTC /etc/localtime
-dpkg-reconfigure -f noninteractive tzdata
+dpkg-reconfigure -f noninteractive tzdata >> $LOG_FILE
 # timedatectl set-timezone UTC
 if [ $? != 0 ]; then
     echo 'Error setting up timezone'
 fi
-echo "done."
+echo " done."
 
 #--- Unattended Upgrades ---#
 echo 'APT::Periodic::Update-Package-Lists "1";' > /etc/apt/apt.conf.d/20auto-upgrades

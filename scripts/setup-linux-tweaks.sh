@@ -8,7 +8,7 @@ cp $LOCAL_WPINABOX_REPO/config/custom_exports.sh /etc/profile.d/
 source $LOCAL_WPINABOX_REPO/config/custom_exports.sh
 
 #--- Common for all users ---#
-echo 'Setting up skel'
+echo 'Setting up skel...'
 
 mkdir -p /etc/skel/{.aws,.composer,.config,.gsutil,.nano,.npm,.npm-global,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
 mkdir -p /etc/skel/{backups,log,scripts,sites,tmp} &> /dev/null
@@ -73,7 +73,7 @@ cp $LOCAL_WPINABOX_REPO/config/gitconfig /etc/gitconfig
 
 # disable password authentication for root
 # make sure that SSH user has been created
-passwd -l root
+passwd -l root &> /dev/null
 
 # disable password authentication
 SSHD_CONFIG=/etc/ssh/sshd_config
@@ -106,9 +106,11 @@ sed -i '/PasswordAuthentication/I s/yes/no/' $SSHD_CONFIG
 
 
 #--- Tweak Logwatch ---#
-mv /etc/cron.daily/00logwatch /etc/cron.weekly/00logwatch &> /dev/null
-if [ $? != 0 ]; then
-    echo 'Error tweaking logwatch'
+if [ -f /etc/cron.daily/00logwatch ]; then
+    mv /etc/cron.daily/00logwatch /etc/cron.weekly/00logwatch &> /dev/null
+    if [ $? != 0 ]; then
+        echo 'Error tweaking logwatch'
+    fi
 fi
 
 LOGWATCH_CONF=/etc/logwatch/conf/logwatch.conf
@@ -136,10 +138,10 @@ printf "
 
 vim/plugged" >> /etc/.gitignore
 
-git init
-git add .
-git commit -m 'First commit'
-cd -
+git -q init
+git -q add .
+git -q commit -m 'First commit'
+cd - &> /dev/null
 
 #--- Misc Tweaks ---#
 sed -i 's/^#\(startup_message off\)$/\1/' /etc/screenrc
