@@ -22,8 +22,7 @@
 # TODO - change the default repo, if needed - mostly not needed on most hosts
 
 # create some useful directories - create them on demand
-# mkdir -p /root/{backups,git,log,scripts} &> /dev/null
-
+mkdir -p /root/{backups,git,log,scripts} &> /dev/null
 LOG_FILE=/root/log/wp-in-a-box.log
 exec > >(tee -a ${LOG_FILE} )
 exec 2> >(tee -a ${LOG_FILE} >&2)
@@ -43,9 +42,9 @@ LOCAL_WPINABOX_REPO=/root/git/wp-in-a-box
 
 if [ -d $LOCAL_WPINABOX_REPO ] ; then
     cd $LOCAL_WPINABOX_REPO
-    git pull origin master
-    git pull --recurse-submodules
-    cd -
+    git pull -q origin master
+    git pull -q --recurse-submodules
+    cd - &> /dev/null
 else
     DEBIAN_FRONTEND=noninteractive apt-get -q -y install git 
     git clone -q --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO

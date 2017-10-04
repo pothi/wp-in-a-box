@@ -5,8 +5,9 @@ echo 'Installing Nginx Server...'
 # no longer needed; it's part of apt
 # apt-get install -y apt-key
 
-curl http://nginx.org/keys/nginx_signing.key | apt-key add -
-rm nginx_signing.key &> /dev/null
+curl -LSsO http://nginx.org/keys/nginx_signing.key
+apt-key add nginx_signing.key
+rm nginx_signing.key
 
 DISTRO=$(gawk -F= '/^ID=/{print $2}' /etc/os-release)
 CODENAME=$(lsb_release -c -s)
@@ -39,7 +40,7 @@ cp -a /root/git/wordpress-nginx/* /etc/nginx/
 
 # unattended-upgrades
 unattended_file=/etc/apt/apt.conf.d/50unattended-upgrades
-if [ ! grep "origin=nginx,codename=stretch"; $unattended_file ] ; then
+if [ ! grep -q "origin=nginx,codename=stretch"; $unattended_file ] ; then
     sed -i -e '/^Unattended-Upgrade::Origins-Pattern/ a "origin=nginx,codename=stretch";' $unattended_file
 fi
 

@@ -10,25 +10,25 @@ source $LOCAL_WPINABOX_REPO/config/custom_exports.sh
 #--- Common for all users ---#
 echo 'Setting up skel'
 
-mkdir -p /etc/skel/{.aws,.composer,.config,.gsutil,.nano,.npm,.npm-global,.selected-editor,.ssh,.well-known,.wp-cli}
-mkdir -p /etc/skel/{backups,log,scripts,sites,tmp}
-mkdir -p /etc/skel/backups/{files,databases}
+mkdir -p /etc/skel/{.aws,.composer,.config,.gsutil,.nano,.npm,.npm-global,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
+mkdir -p /etc/skel/{backups,log,scripts,sites,tmp} &> /dev/null
+mkdir -p /etc/skel/backups/{files,databases} &> /dev/null
 
 touch /etc/skel/{.bash_history,.npmrc,.yarnrc,mbox}
 chmod 600 /etc/skel/mbox &> /dev/null
 
-mkdir /etc/skel/.config
+mkdir /etc/skel/.config &> /dev/null
 cp $LOCAL_WPINABOX_REPO/config/custom_aliases.sh /etc/skel/.config/
 cp $LOCAL_WPINABOX_REPO/config/custom_exports.sh /etc/skel/.config/
 
 
 # ~/.bashrc tweaks
 touch /etc/skel/.bashrc
-if ! grep 'direnv' /etc/skel/.bashrc ; then
+if ! grep -q 'direnv' /etc/skel/.bashrc ; then
     echo 'eval "$(direnv hook bash)"' >> /etc/skel/.bashrc &> /dev/null
 fi
 
-if ! grep -w custom_aliases.sh /etc/skel/.bashrc ; then
+if ! grep -qw custom_aliases.sh /etc/skel/.bashrc ; then
 printf "
 if [ -f ~/.config/custom_aliases.sh ]; then
     source ~/.config/custom_aliases.sh
@@ -36,7 +36,7 @@ fi
 " >> /etc/skel/.bashrc
 fi
 
-if ! grep -w custom_exports.sh /etc/skel/.bashrc ; then
+if ! grep -qw custom_exports.sh /etc/skel/.bashrc ; then
 printf "
 if [ -f ~/.config/custom_exports.sh ]; then
     source ~/.config/custom_exports.sh
@@ -46,15 +46,15 @@ fi
 # end of ~/.bashrc tweaks
 
 
-mkdir /etc/skel/.vim
+mkdir /etc/skel/.vim &> /dev/null
 touch /etc/skel/.vimrc
-if ! grep '" Custom Code - PK' /etc/skel/.vimrc ; then
+if ! grep -q '" Custom Code - PK' /etc/skel/.vimrc ; then
     echo '" Custom Code - PK' > /etc/skel/.vimrc
     echo "set viminfo+=n~/.vim/viminfo" >> /etc/skel/.vimrc
 fi
 
 # copy the skel info to root
-mkdir /root/.vim
+mkdir /root/.vim &> /dev/null
 cp /etc/skel/.vimrc /root/
 
 # Vim related configs
@@ -147,7 +147,7 @@ sed -i 's/^#\(startup_message off\)$/\1/' /etc/screenrc
 #--- setup color for root terminal ---#
 rootbashrc=/root/.bashrc
 comment='#red_color for root'
-if [[ -f $rootbashrc && ! $(grep "^${comment}$" "$rootbashrc") ]]; then
+if [[ -f $rootbashrc && ! $(grep -q "^${comment}$" "$rootbashrc") ]]; then
     printf "\n${comment}\n" >> $rootbashrc
     echo 'PS1="\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u\[\033[01;33m\]@\[\033[01;36m\]\h \[\033[01;33m\]\w \[\033[01;35m\]\$ \[\033[00m\]"' >> $rootbashrc
     printf '\n' >> $rootbashrc

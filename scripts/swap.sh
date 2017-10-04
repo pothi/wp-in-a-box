@@ -3,7 +3,7 @@
 swapfile=/swapfile
 
 # only create swap if unavailable
-if [ $(free | grep -iw swap | awk {'print $2'}) -eq 0 ]; then
+if [ $(free | grep -qiw swap | awk {'print $2'}) -eq 0 ]; then
     echo 'Swap not found. Creating and setting up Swap...'
 
     # check if swapfile is found (but not used)
@@ -22,7 +22,7 @@ if [ $(free | grep -iw swap | awk {'print $2'}) -eq 0 ]; then
 
     # enable swap upon boot
     fstabentry="$swapfile none swap sw 0 0"
-    if ! $(grep "^${fstabentry}$" /etc/fstab) ; then
+    if ! $(grep -q "^${fstabentry}$" /etc/fstab) ; then
         echo "$swapfile none swap sw 0 0" >> /etc/fstab
     else
         echo "Note: /etc/fstab already has an entry for swap!"

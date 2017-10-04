@@ -2,7 +2,7 @@
 
 # Variables - you may send these as command line options
 BASE_NAME=web
-if [ ! grep -w BASE_NAME /root/.envrc ]; then
+if [ ! grep -qw BASE_NAME /root/.envrc ]; then
     echo "export BASE_NAME=$BASE_NAME" >> /root/.envrc
 fi
 
@@ -58,7 +58,7 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
 
     # if the text 'match group ${BASE_NAME}' isn't found, then
     # insert it only once
-    if ! grep "Match group ${BASE_NAME}" "${SSHD_CONFIG}" &> /dev/null ; then
+    if ! grep -q "Match group ${BASE_NAME}" "${SSHD_CONFIG}" &> /dev/null ; then
         # remove the existing subsystem
         sed -i 's/^Subsystem/### &/' ${SSHD_CONFIG}
 
