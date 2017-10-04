@@ -27,8 +27,8 @@ if [ ! -d "/home/${ICE_USER}" ]; then
 
     echo "$ICE_USER:$ICE_PASS" | chpasswd
 else
-    echo "the default directory /home/${ICE_USER} already exists!"
-    echo "The user '${ICE_USER}' already exists"
+    echo "Note: The default directory /home/${ICE_USER} already exists!"
+    echo "Note: The user '${ICE_USER}' already exists"
 fi
 
 echo "Done setting up the emergency user!"
