@@ -37,6 +37,9 @@ if [ ! -d "$LT_DIRECTORY" ]; then
     echo 'done.'
 fi
 
+# create swap at first
+source $LOCAL_WPINABOX_REPO/scripts/swap.sh
+
 # install dependencies
 echo -n 'Updating the server...'
 apt-get update -y
@@ -57,7 +60,6 @@ else
     git clone -q --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO
 fi
 
-source $LOCAL_WPINABOX_REPO/scripts/swap.sh
 source $LOCAL_WPINABOX_REPO/scripts/base-installation.sh
 source $LOCAL_WPINABOX_REPO/scripts/setup-linux-tweaks.sh
 source $LOCAL_WPINABOX_REPO/scripts/install-nginx.sh
