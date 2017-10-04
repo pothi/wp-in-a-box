@@ -28,7 +28,7 @@ required_packages="acl \
 for package in $required_packages
 do  
     echo -n "Installing ${package}..."
-    DEBIAN_FRONTEND=noninteractive apt-get install -q -y $package
+    DEBIAN_FRONTEND=noninteractive apt-get install -qq $package
     echo "done."
 done
 echo "Done installing required packages."
@@ -125,7 +125,7 @@ fi
 
 #--- auto-renew SSL certs ---#
 # check for the line with the text "certbot"
-crontab -l | grep -w certbot
+crontab -l | grep -qw certbot
 if [ "$?" -ne "0" ]; then
     ( crontab -l; echo; echo "# auto-renew SSL certs" ) | crontab -
     ( crontab -l; echo '36   0,12   *   *   *   /usr/bin/certbot renew --post-hook "/usr/sbin/nginx -t && /usr/sbin/service nginx reload" &> /dev/null' ) | crontab -
