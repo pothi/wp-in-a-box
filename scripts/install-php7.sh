@@ -143,8 +143,8 @@ fi
 rm composer-setup.php &> /dev/null
 
 # setup cron to self-update composer
-is_composer_installed=$(crontab -l | grep -qw composer)
-if [ $is_composer_installed -eq 1 ]; then
+crontab -l | grep -qw composer
+if [ "$?" -ne "0" ]; then
     ( crontab -l; echo; echo "# auto-update composer - nightly" ) | crontab -
     ( crontab -l; echo '4   4   *   *   *   /usr/local/bin/composer self-update &> /dev/null' ) | crontab -
 fi
