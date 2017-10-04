@@ -29,7 +29,7 @@ for package in $required_packages
 do  
     echo -n "Installing ${package}..."
     DEBIAN_FRONTEND=noninteractive apt-get install -qq $package
-    printf "\t\t\t\tdone.\n"
+    echo " done."
 done
 echo "Done installing required packages."
 
