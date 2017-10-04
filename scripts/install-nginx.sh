@@ -40,7 +40,7 @@ cp -a /root/git/wordpress-nginx/* /etc/nginx/
 
 # unattended-upgrades
 unattended_file=/etc/apt/apt.conf.d/50unattended-upgrades
-if [ ! grep -q '"origin=nginx,codename=stretch";' $unattended_file ] ; then
+if ! grep -q '"origin=nginx,codename=stretch";' $unattended_file ; then
     sed -i -e '/^Unattended-Upgrade::Origins-Pattern/ a "origin=nginx,codename=stretch";' $unattended_file
 fi
 

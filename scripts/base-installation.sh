@@ -124,7 +124,9 @@ if [ ! -s /usr/local/bin/wp ]; then
 fi
 
 #--- auto-renew SSL certs ---#
-if [ ! $(crontab -l | grep -w certbot) ]; then
+# check for the line with the text "certbot"
+crontab -l | grep -w certbot
+if [ "$?" -ne "0" ]; then
     ( crontab -l; echo; echo "# auto-renew SSL certs" ) | crontab -
     ( crontab -l; echo '36   0,12   *   *   *   /usr/bin/certbot renew --post-hook "/usr/sbin/nginx -t && /usr/sbin/service nginx reload" &> /dev/null' ) | crontab -
 fi
