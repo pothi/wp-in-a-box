@@ -37,16 +37,7 @@ if [ ! -d "$LT_DIRECTORY" ]; then
     echo 'done.'
 fi
 
-# create swap at first
-source $LOCAL_WPINABOX_REPO/scripts/swap.sh
-
-# install dependencies
-echo -n 'Updating the server...'
 apt-get update -y
-DEBIAN_FRONTEND=noninteractive apt-get -q -y upgrade
-DEBIAN_FRONTEND=noninteractive apt-get -q -y dist-upgrade
-apt-get -q -y autoremove
-echo "done."
 
 LOCAL_WPINABOX_REPO=/root/git/wp-in-a-box
 
@@ -59,6 +50,16 @@ else
     DEBIAN_FRONTEND=noninteractive apt-get -q -y install git 
     git clone -q --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO
 fi
+
+# create swap at first
+source $LOCAL_WPINABOX_REPO/scripts/swap.sh
+
+# install dependencies
+echo -n 'Updating the server...'
+DEBIAN_FRONTEND=noninteractive apt-get -q -y upgrade
+DEBIAN_FRONTEND=noninteractive apt-get -q -y dist-upgrade
+apt-get -q -y autoremove
+echo "done."
 
 source $LOCAL_WPINABOX_REPO/scripts/base-installation.sh
 source $LOCAL_WPINABOX_REPO/scripts/setup-linux-tweaks.sh

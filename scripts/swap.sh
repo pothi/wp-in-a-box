@@ -21,7 +21,12 @@ if [ $(free | grep -iw swap | awk {'print $2'}) -eq 0 ]; then
     chmod 600 /swapfile
 
     # enable swap upon boot
-    echo "$swapfile none swap sw 0 0" >> /etc/fstab
+    fstabentry="$swapfile none swap sw 0 0"
+    if ! $(grep "^${fstabentry}$" /etc/fstab) ; then
+        echo "$swapfile none swap sw 0 0" >> /etc/fstab
+    else
+        echo "Note: /etc/fstab already has an entry for swap!"
+    fi
 
     mkswap $swapfile
     if [ $? != 0 ]; then
@@ -30,6 +35,8 @@ if [ $(free | grep -iw swap | awk {'print $2'}) -eq 0 ]; then
     fi
 
     # enable swap
+    echo "Waiting for swap file to get ready..."
+    sleep 5
     swapon -a
     if [ $? != 0 ]; then
         echo 'Error enabling swap using the command "swapon -a". Exiting!'
