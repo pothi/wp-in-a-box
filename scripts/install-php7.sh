@@ -69,7 +69,7 @@ sed -i -e '/^;session.save_path/ s/.*/session.save_path = "127.0.0.1:6379"/' $PH
 sed -i -e '/^;user_ini.filename =$/ s/;//' $PHP_INI
 
 POOL_FILE=/etc/php/${PHP_VER}/fpm/pool.d/${WP_SFTP_USER}.conf
-mv /etc/php/${PHP_VER}/fpm/pool.d/www.conf $POOL_FILE
+mv /etc/php/${PHP_VER}/fpm/pool.d/www.conf $POOL_FILE &> /dev/null
 
 echo; echo 'Setting up the user'; echo;
 
@@ -143,7 +143,8 @@ fi
 rm composer-setup.php &> /dev/null
 
 # setup cron to self-update composer
-if [ $(crontab -l | grep -qw composer) -eq 1 ]; then
+is_composer_installed=$(crontab -l | grep -qw composer)
+if [ $is_composer_installed -eq 1 ]; then
     ( crontab -l; echo; echo "# auto-update composer - nightly" ) | crontab -
     ( crontab -l; echo '4   4   *   *   *   /usr/local/bin/composer self-update &> /dev/null' ) | crontab -
 fi

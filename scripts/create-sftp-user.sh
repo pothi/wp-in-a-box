@@ -2,7 +2,7 @@
 
 # Variables - you may send these as command line options
 BASE_NAME=web
-if [ ! grep -qw BASE_NAME /root/.envrc ]; then
+if [ ! grep -qw $BASE_NAME /root/.envrc ]; then
     echo "export BASE_NAME=$BASE_NAME" >> /root/.envrc
 fi
 

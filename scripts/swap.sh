@@ -3,7 +3,8 @@
 swapfile=/swapfile
 
 # only create swap if unavailable
-if [ $(free | grep -qiw swap | awk {'print $2'}) -eq 0 ]; then
+swap_enabled=$(free | grep -qiw swap | awk {'print $2'}) # output should not be 0
+if [ $swap_enabled -eq 0 ]; then
     echo 'Swap not found. Creating and setting up Swap...'
 
     # check if swapfile is found (but not used)
