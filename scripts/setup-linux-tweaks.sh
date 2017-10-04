@@ -138,9 +138,9 @@ printf "
 
 vim/plugged" >> /etc/.gitignore
 
-git -q init
-git -q add .
-git -q commit -m 'First commit'
+git init -q
+git add .
+git commit -m 'First commit'
 cd - &> /dev/null
 
 #--- Misc Tweaks ---#
