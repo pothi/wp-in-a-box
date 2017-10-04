@@ -36,7 +36,7 @@ if [ ! -d "$LT_DIRECTORY" ]; then
     echo 'done.'
 fi
 
-apt-get update -y
+apt-get -qq update
 
 LOCAL_WPINABOX_REPO=/root/git/wp-in-a-box
 
@@ -55,10 +55,10 @@ source $LOCAL_WPINABOX_REPO/scripts/swap.sh
 
 # install dependencies
 echo -n 'Updating the server...'
-DEBIAN_FRONTEND=noninteractive apt-get -q -y upgrade
-DEBIAN_FRONTEND=noninteractive apt-get -q -y dist-upgrade
-apt-get -q -y autoremove
-echo "done."
+DEBIAN_FRONTEND=noninteractive apt-get -qq upgrade
+DEBIAN_FRONTEND=noninteractive apt-get -qq dist-upgrade
+apt-get -qq autoremove
+echo " done."
 
 source $LOCAL_WPINABOX_REPO/scripts/base-installation.sh
 source $LOCAL_WPINABOX_REPO/scripts/setup-linux-tweaks.sh
@@ -91,7 +91,7 @@ LT_DIRECTORY="/root/backups/etc-after-wp-in-a-box-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
     cp -a /etc $LT_DIRECTORY
 fi
-echo "done."
+echo " done."
 
 # logout and then login to see the changes
 echo 'All done.'
