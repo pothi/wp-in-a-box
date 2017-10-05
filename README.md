@@ -32,15 +32,15 @@ In sync with WordPress philosophy of “[decision, not options](https://wordpres
 
 ## Implementation Details
 
-    Agentless.
-    Idempotent
-    Random username (like GoDaddy generates).
-    Automatic restart of MySQL (and Varnish) upon failure.
-    Automatic backup of site (files and DB) to AWS S3 or to GCP.
-    Integrated wp-cli.
-    Support for version control (git, hg).
-    Composer pre-installed.
-    Auto-update of almost everything (wp-cli, composer, certbot certs, wp minor versions, plugins, etc).
+- Agentless.
+- Idempotent
+- Random username (like GoDaddy generates).
+- Automatic restart of MySQL (and Varnish) upon failure.
+- Automatic backup of site (files and DB) to AWS S3 or to GCP.
+- Integrated wp-cli.
+- Support for version control (git, hg).
+- Composer pre-installed.
+- Auto-update of almost everything (wp-cli, composer, certbot certs, wp minor versions, plugins, etc).
 
 ## Roadmap
 
