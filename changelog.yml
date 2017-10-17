@@ -1,0 +1,28 @@
+---
+
+latest_version: v1.3
+
+v1.3:
+    date: 2017-10-17
+    changes:
+        - separate changelog file
+        - install etckeeper by default
+        - no more backup after install
+        - set default timezone in php.ini (to UTC)
+
+v1.2:
+    date: 2017-02-13
+    changes:
+        - moved files around
+        - split bootstrap file into smaller segments to make it easier to replace a component (ex: postfix / exim)
+
+v1.1:
+    date: 2017-02-12
+    changes:
+        - awscli installation is simplified now
+
+v1.0:
+    date: 2017-02-12
+    changes:
+        - Tmux is not going to be installed and its config will be removed in a future version - just use screen going forward
+---

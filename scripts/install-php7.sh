@@ -27,12 +27,19 @@ if [ -z "$PHP_MEM_LIMIT" ]; then
     PHP_MEM_LIMIT=128
 fi
 
-LOG_FILE="/root/log/php-install.log"
-exec > >(tee -a ${LOG_FILE} )
-exec 2> >(tee -a ${LOG_FILE} >&2)
+# LOG_FILE="/root/log/php-install.log"
+# exec > >(tee -a ${LOG_FILE} )
+# exec 2> >(tee -a ${LOG_FILE} >&2)
 
 # php${PHP_VER}-mysqlnd package is not found in Ubuntu
 PHP_VER=7.0
+PHP_INI=/etc/php/${PHP_VER}/fpm/php.ini
+POOL_FILE=/etc/php/${PHP_VER}/fpm/pool.d/${WP_SFTP_USER}.conf
+
+
+### Please do not edit below this line ###
+
+
 PHP_PACKAGES="php${PHP_VER}-fpm php${PHP_VER}-mysql php${PHP_VER}-gd php${PHP_VER}-mcrypt php${PHP_VER}-xml php${PHP_VER}-mbstring php${PHP_VER}-soap php-curl php-xdebug"
 
 if apt-cache show php-redis &> /dev/null ; then
@@ -51,7 +58,10 @@ fi
 
 echo; echo 'Setting up memory limits for PHP...'; echo;
 
-PHP_INI=/etc/php/${PHP_VER}/fpm/php.ini
+
+### ---------- php.ini modifications ---------- ###
+
+
 # sed -i '/cgi.fix_pathinfo \?=/ s/;\? \?\(cgi.fix_pathinfo \?= \?\)1/\10/' $PHP_INI # as per the note number 6 at https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/
 sed -i -e '/^max_execution_time/ s/=.*/= 300/' -e '/^max_input_time/ s/=.*/= 600/' $PHP_INI
 sed -i -e '/^memory_limit/ s/=.*/= 256M/' $PHP_INI
@@ -68,7 +78,13 @@ sed -i -e '/^;session.save_path/ s/.*/session.save_path = "127.0.0.1:6379"/' $PH
 # Disable user.ini
 sed -i -e '/^;user_ini.filename =$/ s/;//' $PHP_INI
 
-POOL_FILE=/etc/php/${PHP_VER}/fpm/pool.d/${WP_SFTP_USER}.conf
+# Setup timezone
+sed -i -e 's/^;date\.timezone =$/date.timezone = "UTC"/' $PHP_INI
+
+
+### ---------- pool-file modifications ---------- ###
+
+
 mv /etc/php/${PHP_VER}/fpm/pool.d/www.conf $POOL_FILE &> /dev/null
 
 echo; echo 'Setting up the user'; echo;
@@ -130,6 +146,10 @@ echo; echo 'Restarting PHP daemon'; echo;
 if [ "$?" != 0 ]; then
     echo 'PHP-FPM failed to restart. Please check your configs!'; exit
 fi
+
+
+### ---------- other misc tasks ---------- ###
+
 
 echo 'Installing Composer for PHP...'
 EXPECTED_SIGNATURE=$(wget -q -O - https://composer.github.io/installer.sig)

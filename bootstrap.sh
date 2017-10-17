@@ -1,15 +1,6 @@
 #!/bin/bash
 
-# Version: 1.2
-
-# Changelog
-# 2017-02-13 - version 1.2
-#   moved files around
-#   split bootstrap file into smaller segments to make it easier to replace a component (ex: postfix / exim)
-# 2017-02-12 - version 1.1
-#   awscli installation is simplified now
-# 2017-02-12 - version 1.0
-#   Tmux is not going to be installed and its config will be removed in a future version - just use screen going forward
+# Version: 1.3
 
 # to be run as root, probably as a user-script just after a server is installed
 
@@ -30,13 +21,15 @@ exec 2> >(tee -a ${LOG_FILE} >&2)
 # take a backup
 LT_DIRECTORY="/root/backups/etc-before-wp-in-a-box-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
-    echo -n 'Taking an initial backup...'
+    echo -n "Taking an initial backup at $LT_DIRECTORY..."
     mkdir $LT_DIRECTORY
     cp -a /etc $LT_DIRECTORY
-    echo 'done.'
+    echo ' done.'
 fi
 
 apt-get -qq update
+DEBIAN_FRONTEND=noninteractive apt-get -qq install git
+DEBIAN_FRONTEND=noninteractive apt-get -qq install etckeeper
 
 LOCAL_WPINABOX_REPO=/root/git/wp-in-a-box
 
@@ -46,7 +39,6 @@ if [ -d $LOCAL_WPINABOX_REPO ] ; then
     git pull -q --recurse-submodules
     cd - &> /dev/null
 else
-    DEBIAN_FRONTEND=noninteractive apt-get -q -y install git 
     git clone -q --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO
 fi
 
@@ -86,14 +78,6 @@ case "$codename" in
         ;;
 esac
 
-# take a backup, after doing everything
-echo -n 'Taking a final backup'
-LT_DIRECTORY="/root/backups/etc-after-wp-in-a-box-$(date +%F)"
-if [ ! -d "$LT_DIRECTORY" ]; then
-    cp -a /etc $LT_DIRECTORY
-fi
-echo " done."
-
 # logout and then login to see the changes
 echo 'All done.'
 
@@ -107,6 +91,7 @@ echo '-----------------------------------'
 
 echo 'Please make a note of these somewhere safe'
 echo 'Also please test if things are okay!'
+
 # TODO
 # run automated tests
 # swap
