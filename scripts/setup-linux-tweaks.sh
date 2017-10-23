@@ -1,11 +1,26 @@
 #!/bin/bash
 
-# Common shell related configs
-cp $LOCAL_WPINABOX_REPO/config/custom_aliases.sh /etc/profile.d/
-source $LOCAL_WPINABOX_REPO/config/custom_aliases.sh
+mkdir ~/.config &> /dev/null
 
-cp $LOCAL_WPINABOX_REPO/config/custom_exports.sh /etc/profile.d/
-source $LOCAL_WPINABOX_REPO/config/custom_exports.sh
+# Common shell related configs for root user
+cp $LOCAL_WPINABOX_REPO/config/checks.sh ~/.config/
+cp $LOCAL_WPINABOX_REPO/config/common-aliases.sh ~/.config/
+cp $LOCAL_WPINABOX_REPO/config/common-exports.sh ~/.config/
+source ~/.config/checks.sh
+source ~/.config/common-aliases.sh
+source ~/.config/common-exports.sh
+
+if ! grep -qw checks.sh ~/.bashrc ; then
+printf "[[ -f ~/.config/checks.sh ]] && source ~/.config/checks.sh" >> ~/.bashrc
+fi
+
+if ! grep -qw common-aliases.sh ~/.bashrc ; then
+printf "[[ -f ~/.config/common-exports.sh ]] && source ~/.config/common-exports.sh" >> ~/.bashrc
+fi
+
+if ! grep -qw common-exports.sh ~/.bashrc ; then
+printf "[[ -f ~/.config/common-aliases.sh ]] && source ~/.config/common-aliases.sh" >> ~/.bashrc
+fi
 
 #--- Common for all users ---#
 echo 'Setting up skel...'
@@ -18,8 +33,9 @@ touch /etc/skel/{.bash_history,.npmrc,.yarnrc,mbox}
 chmod 600 /etc/skel/mbox &> /dev/null
 
 mkdir /etc/skel/.config &> /dev/null
-cp $LOCAL_WPINABOX_REPO/config/custom_aliases.sh /etc/skel/.config/
-cp $LOCAL_WPINABOX_REPO/config/custom_exports.sh /etc/skel/.config/
+cp $LOCAL_WPINABOX_REPO/config/checks.sh /etc/skel/.config/
+cp $LOCAL_WPINABOX_REPO/config/common-aliases.sh /etc/skel/.config/
+cp $LOCAL_WPINABOX_REPO/config/common-exports.sh /etc/skel/.config/
 
 
 # ~/.bashrc tweaks
@@ -28,18 +44,26 @@ if ! grep -q 'direnv' /etc/skel/.bashrc ; then
     echo 'eval "$(direnv hook bash)"' >> /etc/skel/.bashrc &> /dev/null
 fi
 
-if ! grep -qw custom_aliases.sh /etc/skel/.bashrc ; then
+if ! grep -qw checks.sh /etc/skel/.bashrc ; then
 printf "
-if [ -f ~/.config/custom_aliases.sh ]; then
-    source ~/.config/custom_aliases.sh
+if [ -f ~/.config/checks.sh ]; then
+    source ~/.config/checks.sh
 fi
 " >> /etc/skel/.bashrc
 fi
 
-if ! grep -qw custom_exports.sh /etc/skel/.bashrc ; then
+if ! grep -qw common-aliases.sh /etc/skel/.bashrc ; then
 printf "
-if [ -f ~/.config/custom_exports.sh ]; then
-    source ~/.config/custom_exports.sh
+if [ -f ~/.config/common-aliases.sh ]; then
+    source ~/.config/common-aliases.sh
+fi
+" >> /etc/skel/.bashrc
+fi
+
+if ! grep -qw common-exports.sh /etc/skel/.bashrc ; then
+printf "
+if [ -f ~/.config/common-exports.sh ]; then
+    source ~/.config/common-exports.sh
 fi
 " >> /etc/skel/.bashrc
 fi
