@@ -37,6 +37,7 @@ cp $LOCAL_WPINABOX_REPO/config/checks.sh /etc/skel/.config/
 cp $LOCAL_WPINABOX_REPO/config/common-aliases.sh /etc/skel/.config/
 cp $LOCAL_WPINABOX_REPO/config/common-exports.sh /etc/skel/.config/
 
+echo "gem: --user-install -n~/.gem/bin --no-document" > /etc/skel/.gemrc
 
 # ~/.bashrc tweaks
 touch /etc/skel/.bashrc
