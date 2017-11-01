@@ -33,15 +33,15 @@ echo -n Installing git...
 apt-get -qq install git
 echo ' done.'
 source ~/.envrc &> /dev/null
-if -z "$EMAIL" ; then
+if [ -z "$EMAIL" ] ; then
     export EMAIL=user@example.com
 fi
-git config --global user.email $EMAIL
+git config --global --replace-all user.email "$EMAIL"
 
-if -z "$NAME" ; then
+if [ -z "$NAME" ] ; then
     export NAME='Firstname Lastname'
 fi
-git config --global user.name $NAME
+git config --global --replace-all user.name "$NAME"
 
 echo -n Installing etckeeper...
 apt-get -qq install etckeeper
