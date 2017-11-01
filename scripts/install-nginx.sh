@@ -33,7 +33,9 @@ sed -i 's/#.\?gzip/gzip/' /etc/nginx/nginx.conf
 if [ -d /root/git/wordpress-nginx ] ; then
     cd /root/git/wordpress-nginx && git pull origin master && cd - &> /dev/null
 else
-    git clone https://github.com/pothi/wordpress-nginx /root/git/wordpress-nginx
+    # git clone https://github.com/pothi/wordpress-nginx /root/git/wordpress-nginx
+    # switch to gitlab repo
+    git clone https://gitlab.com/pothi/wordpress-nginx /root/git/wordpress-nginx
 fi
 
 cp -a /root/git/wordpress-nginx/* /etc/nginx/

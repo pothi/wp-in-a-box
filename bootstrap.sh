@@ -27,12 +27,29 @@ if [ ! -d "$LT_DIRECTORY" ]; then
     echo ' done.'
 fi
 
+export DEBIAN_FRONTEND=noninteractive
 apt-get -qq update
-DEBIAN_FRONTEND=noninteractive apt-get -qq install git
-DEBIAN_FRONTEND=noninteractive apt-get -qq install etckeeper
+echo -n Installing git...
+apt-get -qq install git
+echo ' done.'
+source ~/.envrc &> /dev/null
+if -z "$EMAIL" ; then
+    export EMAIL=user@example.com
+fi
+git config --global user.email $EMAIL
+
+if -z "$NAME" ; then
+    export NAME='Firstname Lastname'
+fi
+git config --global user.name $NAME
+
+echo -n Installing etckeeper...
+apt-get -qq install etckeeper
+echo ' done.'
 
 LOCAL_WPINABOX_REPO=/root/git/wp-in-a-box
 
+echo 'Fetching wp-in-a-box repo'
 if [ -d $LOCAL_WPINABOX_REPO ] ; then
     cd $LOCAL_WPINABOX_REPO
     git pull -q origin master
@@ -46,9 +63,9 @@ fi
 source $LOCAL_WPINABOX_REPO/scripts/swap.sh
 
 # install dependencies
-echo -n 'Updating the server...'
-DEBIAN_FRONTEND=noninteractive apt-get -qq upgrade
-DEBIAN_FRONTEND=noninteractive apt-get -qq dist-upgrade
+echo -n 'Updating installed packages...'
+apt-get -qq upgrade
+apt-get -qq dist-upgrade
 apt-get -qq autoremove
 echo " done."
 
@@ -91,13 +108,6 @@ echo '-----------------------------------'
 
 echo 'Please make a note of these somewhere safe'
 echo 'Also please test if things are okay!'
-
-# TODO
-# run automated tests
-# swap
-# PHP is setup correctly
-# Nginx is setup correctly
-# PhpMyAdmin
 
 echo 'You may reboot only once to apply certain updates (hint: kernel updates)!'
 echo

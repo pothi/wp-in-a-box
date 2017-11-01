@@ -11,15 +11,15 @@ source ~/.config/common-aliases.sh
 source ~/.config/common-exports.sh
 
 if ! grep -qw checks.sh ~/.bashrc ; then
-printf "[[ -f ~/.config/checks.sh ]] && source ~/.config/checks.sh" >> ~/.bashrc
-fi
-
-if ! grep -qw common-aliases.sh ~/.bashrc ; then
-printf "[[ -f ~/.config/common-exports.sh ]] && source ~/.config/common-exports.sh" >> ~/.bashrc
+printf "[[ -f ~/.config/checks.sh ]] && source ~/.config/checks.sh\n" >> ~/.bashrc
 fi
 
 if ! grep -qw common-exports.sh ~/.bashrc ; then
-printf "[[ -f ~/.config/common-aliases.sh ]] && source ~/.config/common-aliases.sh" >> ~/.bashrc
+printf "[[ -f ~/.config/common-exports.sh ]] && source ~/.config/common-exports.sh\n" >> ~/.bashrc
+fi
+
+if ! grep -qw common-aliases.sh ~/.bashrc ; then
+printf "[[ -f ~/.config/common-aliases.sh ]] && source ~/.config/common-aliases.sh\n" >> ~/.bashrc
 fi
 
 #--- Common for all users ---#
@@ -148,7 +148,6 @@ fi
 
 
 #--- Put /etc/ under version control ---#
-cd /etc
 printf "
 # ref: http://fallengamer.livejournal.com/93321.html
 # https://stackoverflow.com/q/1274057/1004587
@@ -156,12 +155,8 @@ printf "
 # https://stackoverflow.com/a/34511442/1004587
 # https://stackoverflow.com/a/44098435/1004587
 
-vim/plugged" >> /etc/.gitignore
-
-git init -q
-git add .
-git commit -m 'First commit'
-cd - &> /dev/null
+vim/plugged
+" >> /etc/.gitignore
 
 #--- Misc Tweaks ---#
 sed -i 's/^#\(startup_message off\)$/\1/' /etc/screenrc
