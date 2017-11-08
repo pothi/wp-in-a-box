@@ -22,13 +22,14 @@ required_packages="acl \
     apt-transport-https \
     bc \
     apache2-utils \
-    software-properties-common dirmngr
-    tree"
+    software-properties-common dirmngr \
+    tree \
+    debian-goodies"
 
 for package in $required_packages
 do  
     echo -n "Installing ${package}..."
-    DEBIAN_FRONTEND=noninteractive apt-get install -qq $package
+    DEBIAN_FRONTEND=noninteractive apt-get -qq install $package
     echo " done."
 done
 echo "Done installing required packages."
