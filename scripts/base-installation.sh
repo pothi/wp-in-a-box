@@ -24,7 +24,8 @@ required_packages="acl \
     apache2-utils \
     software-properties-common dirmngr \
     tree \
-    debian-goodies"
+    debian-goodies \
+    uptimed"
 
 for package in $required_packages
 do  
