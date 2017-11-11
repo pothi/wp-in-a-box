@@ -1,15 +1,19 @@
 #!/bin/bash
 
-swapfile=/swapfile
+# variables
+swap_file='/swapfile'
+swap_sysctl_file='/etc/sysctl.d/60-swap-local.conf'
+sleep_time_between_tasks=2
+swap_size='1G'
 
 # only create swap if unavailable
-swap_enabled=$(free | grep -iw swap | awk {'print $2'}) # output should not be 0
-if [ "$swap_enabled" -eq 0 ]; then
+is_swap_enabled=$(free | grep -iw swap | awk {'print $2'}) # 0 means no swap
+if [ "$is_swap_enabled" -eq 0 ]; then
     echo 'Swap not found. Creating and setting up Swap...'
 
-    # check if swapfile is found (but not used)
-    if [ -f $swapfile ]; then
-        fallocate -l 1G $swapfile
+    # check if swap file is found (but not used)
+    if [ -f $swap_file ]; then
+        fallocate -l $swap_size $swap_file
         if [ $? != 0 ]; then
             echo 'Could not create swap file using fllocate. Exiting!'
             exit 1
@@ -19,17 +23,17 @@ if [ "$swap_enabled" -eq 0 ]; then
     fi
 
     # only root should be able to read it
-    chmod 600 /swapfile
+    chmod 600 $swap_file
 
     # enable swap upon boot
-    fstabentry="$swapfile none swap sw 0 0"
-    if ! $(grep -q "^${fstabentry}$" /etc/fstab) ; then
-        echo "$swapfile none swap sw 0 0" >> /etc/fstab
+    fstab_entry="$swap_file none swap sw 0 0"
+    if ! $(grep -q "^${fstab_entry}$" /etc/fstab) ; then
+        echo $fstab_entry >> /etc/fstab
     else
         echo "Note: /etc/fstab already has an entry for swap!"
     fi
 
-    mkswap $swapfile
+    mkswap $swap_file
     if [ $? != 0 ]; then
         echo 'Error running mkswap command while creating swap file. Exiting!'
         exit 1
@@ -37,7 +41,7 @@ if [ "$swap_enabled" -eq 0 ]; then
 
     # enable swap
     echo "Waiting for swap file to get ready..."
-    sleep 5
+    sleep $sleep_time_between_tasks
     swapon -a
     if [ $? != 0 ]; then
         echo 'Error enabling swap using the command "swapon -a". Exiting!'
@@ -48,12 +52,18 @@ if [ "$swap_enabled" -eq 0 ]; then
     swapon -s
 
     # fine-tune swap
-    printf "# Ref: https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04\n\nvm.swappiness=10\nvm.vfs_cache_pressure = 50\n" > /etc/sysctl.d/60-swap-custom.conf
+    # printf "# Ref: https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04\n\nvm.swappiness=10\nvm.vfs_cache_pressure = 50\n" > $swap_sysctl_file
+    echo '# Ref: https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04' > $swap_sysctl_file
+    echo >> $swap_sysctl_file
+    echo 'nvm.swappiness=10' >> $swap_sysctl_file
+    echo 'nvm.vfs_cache_pressure = 50' >> $swap_sysctl_file
 
     # apply changes
     service procps restart
+    # alternative way
+    # sysctl -p $swap_sysctl_file
     if [ $? != 0 ]; then
-        echo 'Error restarting procps while fine-tuning swap!'
+        echo 'Error restarting procps!'
         exit 1
     fi
 

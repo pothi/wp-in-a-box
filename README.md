@@ -56,24 +56,23 @@ In sync with WordPress philosophy of “[decision, not options](https://wordpres
 ```bash
 # as root
 
-apt install curl
+apt install curl screen -y
 
-curl -LO https://github.com/pothi/wp-in-a-box/raw/master/.envrc-sample
-cp .envrc-sample .envrc
+# optional steps
+# curl -LO https://github.com/pothi/wp-in-a-box/raw/master/.envrc-sample
+# cp .envrc-sample .envrc
 # nano .envrc
 
+# download the bootstrap script
 curl -LO https://github.com/pothi/wp-in-a-box/raw/master/bootstrap.sh
 
-# go through the script to understand what it does. you may tweak it as necessary
-# nano ~/bootstrap.sh
+# please go through *any* script before executing it!
+nano ~/bootstrap.sh
 
-apt install screen
-screen
-# execute it and wait for some time (approximately 10 minutes)
-bash bootstrap.sh
+# execute it and wait for some time
+screen bash bootstrap.sh
 
-# (optional) get rid of all the evidences of making the changes
-# rm bootstrap.sh
+rm bootstrap.sh
 
 ```
 
