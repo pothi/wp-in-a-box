@@ -91,10 +91,6 @@ sed -i "s/VIM_VERSION/$VIM_VERSION/g" /etc/vim/vimrc.local
 
 #--- Tweak SSH config ---#
 
-# disable password authentication for root
-# make sure that SSH user has been created
-passwd -l root &> /dev/null
-
 # disable password authentication
 SSHD_CONFIG=/etc/ssh/sshd_config
 sed -i -E '/PasswordAuthentication (yes|no)/ s/^#//' $SSHD_CONFIG
