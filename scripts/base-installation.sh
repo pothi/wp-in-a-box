@@ -25,7 +25,9 @@ required_packages="acl \
     software-properties-common dirmngr \
     tree \
     debian-goodies \
-    uptimed"
+    uptimed \
+    nmap \
+    members"
 
 for package in $required_packages
 do  
