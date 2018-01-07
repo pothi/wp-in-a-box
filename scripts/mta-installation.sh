@@ -23,7 +23,14 @@ DEBIAN_FRONTEND=noninteractive apt-get install -qq $mta
 #- Linode: when swapping IPs, it only swaps IPv4, not IPv6 :(
 postconf -e 'inet_protocols = ipv4'
 
-postfix check && systemctl restart $mta
+# encrypt outgoing emails
+# ref: http://blog.snapdragon.cc/2013/07/07/setting-postfix-to-encrypt-all-traffic-when-talking-to-other-mailservers/
+postconf -e 'smtpd_tls_security_level = may'
+postconf -e 'smtp_tls_security_level = may'
+postconf -e 'smtpd_tls_loglevel = 1'
+postconf -e 'smtp_tls_loglevel = 1'
+
+/usr/sbin/postfix check && systemctl restart $mta
 
 if [ "$?" -ne 0 ]; then
     echo "Warning: Something went wrong while restarting MTA ($mta). Continuing..."
