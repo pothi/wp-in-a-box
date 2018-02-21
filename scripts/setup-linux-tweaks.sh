@@ -28,6 +28,7 @@ echo 'Setting up skel...'
 mkdir -p /etc/skel/{.aws,.composer,.config,.gsutil,.nano,.npm,.npm-global,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
 mkdir -p /etc/skel/{backups,log,scripts,sites,tmp} &> /dev/null
 mkdir -p /etc/skel/backups/{files,databases} &> /dev/null
+mkdir -p /etc/skel/.config/bash &> /dev/null
 
 touch /etc/skel/{.bash_history,.npmrc,.yarnrc,mbox}
 chmod 600 /etc/skel/mbox &> /dev/null
