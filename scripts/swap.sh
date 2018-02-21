@@ -11,8 +11,8 @@ is_swap_enabled=$(free | grep -iw swap | awk {'print $2'}) # 0 means no swap
 if [ "$is_swap_enabled" -eq 0 ]; then
     echo 'Swap not found. Creating and setting up Swap...'
 
-    # check if swap file is found (but not used)
-    if [ -f $swap_file ]; then
+    # check for swap
+    if [ ! -f $swap_file ]; then
         fallocate -l $swap_size $swap_file
         if [ $? != 0 ]; then
             echo 'Could not create swap file using fllocate. Exiting!'
