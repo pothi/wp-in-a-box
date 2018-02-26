@@ -38,6 +38,31 @@ cp $LOCAL_WPINABOX_REPO/config/checks.sh /etc/skel/.config/
 cp $LOCAL_WPINABOX_REPO/config/common-aliases.sh /etc/skel/.config/bash/
 cp $LOCAL_WPINABOX_REPO/config/common-exports.sh /etc/skel/.config/bash/
 
+# download scripts to backup wordpress
+if [ ! -s /etc/skel/scripts/full-backup.sh ]; then
+    echo -n 'Downloading full-backup.sh'
+    DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/full-backup.sh
+    wget -q -O /etc/skel/scripts/full-backup.sh $DB_BACKUP_URL
+    echo "done."
+fi
+
+if [ ! -s /etc/skel/scripts/db-backup.sh ]; then
+    echo -n 'Downloading db-backup.sh'
+    DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/db-backup.sh
+    wget -q -O /etc/skel/scripts/db-backup.sh $DB_BACKUP_URL
+    echo "done."
+fi
+
+if [ ! -s /etc/skel/scripts/files-backup-without-uploads-backup.sh ]; then
+    echo -n 'Downloading files-backup-without-uploads-backup.sh'
+    DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/files-backup-without-uploads-backup.sh
+    wget -q -O /etc/skel/scripts/files-backup-without-uploads-backup.sh $DB_BACKUP_URL
+    echo "done."
+fi
+
+# make scripts executable to all
+chmod +x /etc/skel/scripts/*.sh
+
 # ~/.bashrc tweaks
 touch /etc/skel/.bashrc
 if ! grep -q 'direnv' /etc/skel/.bashrc ; then
