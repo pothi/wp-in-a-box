@@ -33,7 +33,8 @@ fi
 
 # php${PHP_VER}-mysqlnd package is not found in Ubuntu
 PHP_VER=7.0
-PHP_INI=/etc/php/${PHP_VER}/fpm/php.ini
+FPM_PHP_CLI=/etc/php/${PHP_VER}/fpm/php.ini
+CLI_PHP_CLI=/etc/php/${PHP_VER}/cli/php.ini
 POOL_FILE=/etc/php/${PHP_VER}/fpm/pool.d/${WP_SFTP_USER}.conf
 
 
@@ -60,26 +61,27 @@ echo; echo 'Setting up memory limits for PHP...'; echo;
 
 
 ### ---------- php.ini modifications ---------- ###
+# for https://github.com/pothi/wp-in-a-box/issues/35
+sed -i -e '/^log_errors/ s/= On*/= Off/' $FPM_PHP_CLI
 
-
-# sed -i '/cgi.fix_pathinfo \?=/ s/;\? \?\(cgi.fix_pathinfo \?= \?\)1/\10/' $PHP_INI # as per the note number 6 at https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/
-sed -i -e '/^max_execution_time/ s/=.*/= 300/' -e '/^max_input_time/ s/=.*/= 600/' $PHP_INI
-sed -i -e '/^memory_limit/ s/=.*/= 256M/' $PHP_INI
-sed -i -e '/^post_max_size/ s/=.*/= 64M/'      -e '/^upload_max_filesize/ s/=.*/= 64M/' $PHP_INI
+# sed -i '/cgi.fix_pathinfo \?=/ s/;\? \?\(cgi.fix_pathinfo \?= \?\)1/\10/' $FPM_PHP_CLI # as per the note number 6 at https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/
+sed -i -e '/^max_execution_time/ s/=.*/= 300/' -e '/^max_input_time/ s/=.*/= 600/' $FPM_PHP_CLI
+sed -i -e '/^memory_limit/ s/=.*/= 256M/' $FPM_PHP_CLI
+sed -i -e '/^post_max_size/ s/=.*/= 64M/'      -e '/^upload_max_filesize/ s/=.*/= 64M/' $FPM_PHP_CLI
 
 # set max_input_vars to 5000 (from the default 1000)
-sed -i '/max_input_vars/ s/;\? \?\(max_input_vars \?= \?\)[[:digit:]]\+/\15000/p' $PHP_INI
+sed -i '/max_input_vars/ s/;\? \?\(max_input_vars \?= \?\)[[:digit:]]\+/\15000/p' $FPM_PHP_CLI
 
 # SESSION Handling
 echo; echo 'Setting up sessions...'; echo;
-sed -i -e '/^session.save_handler/ s/=.*/= redis/' $PHP_INI
-sed -i -e '/^;session.save_path/ s/.*/session.save_path = "127.0.0.1:6379"/' $PHP_INI
+sed -i -e '/^session.save_handler/ s/=.*/= redis/' $FPM_PHP_CLI
+sed -i -e '/^;session.save_path/ s/.*/session.save_path = "127.0.0.1:6379"/' $FPM_PHP_CLI
 
 # Disable user.ini
-sed -i -e '/^;user_ini.filename =$/ s/;//' $PHP_INI
+sed -i -e '/^;user_ini.filename =$/ s/;//' $FPM_PHP_CLI
 
 # Setup timezone
-sed -i -e 's/^;date\.timezone =$/date.timezone = "UTC"/' $PHP_INI
+sed -i -e 's/^;date\.timezone =$/date.timezone = "UTC"/' $FPM_PHP_CLI
 
 
 ### ---------- pool-file modifications ---------- ###
