@@ -30,6 +30,7 @@ fi
 sed -i 's/worker_processes.*/worker_processes auto;/' /etc/nginx/nginx.conf
 sed -i 's/#.\?gzip/gzip/' /etc/nginx/nginx.conf
 
+# deploy wordpress-nginx repo
 if [ -d /root/git/wordpress-nginx ] ; then
     cd /root/git/wordpress-nginx && git pull origin master && cd - &> /dev/null
 else
@@ -39,6 +40,9 @@ else
 fi
 
 cp -a /root/git/wordpress-nginx/* /etc/nginx/
+mkdir /etc/nginx/sites-enabled &> /dev/null
+cp /etc/nginx/nginx.conf /etc/nginx/ori-nginx.conf
+cp /etc/nginx/nginx-sample.conf /etc/nginx/nginx.conf
 
 # unattended-upgrades
 unattended_file=/etc/apt/apt.conf.d/50unattended-upgrades
