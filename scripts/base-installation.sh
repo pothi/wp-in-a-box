@@ -136,3 +136,16 @@ if [ "$?" -ne "0" ]; then
     ( crontab -l; echo '36   0,12   *   *   *   /usr/bin/certbot renew --post-hook "/usr/sbin/nginx -t && /usr/sbin/service nginx reload" &> /dev/null' ) | crontab -
 fi
 
+
+#--- separate cron log ---#
+# if ! grep -q '# Log cron stuff' /etc/rsyslog.conf ; then
+    # echo '# Log cron stuff' > /etc/rsyslog.conf
+    # echo "cron.*    /var/log/cron" >> /etc/rsyslog.conf
+# fi
+sed -i -e 's/^#cron.*/cron.*/' /etc/rsyslog.conf
+
+#- log only errors -#
+# the following solution may not work in the future, as /etc/default/cron is being deprecated!
+sed -i -e 's/^#EXTRA_OPTS=""$/EXTRA_OPTS=""/' -e 's/^EXTRA_OPTS=""$/EXTRA_OPTS="-L 0"/' /etc/default/cron
+systemctl restart syslog
+systemctl restart cron
