@@ -72,10 +72,10 @@ echo " done."
 source $LOCAL_WPINABOX_REPO/scripts/base-installation.sh
 source $LOCAL_WPINABOX_REPO/scripts/mta-installation.sh
 source $LOCAL_WPINABOX_REPO/scripts/setup-linux-tweaks.sh
-source $LOCAL_WPINABOX_REPO/scripts/install-nginx.sh
-source $LOCAL_WPINABOX_REPO/scripts/install-mysql.sh
+source $LOCAL_WPINABOX_REPO/scripts/nginx-installation.sh
+source $LOCAL_WPINABOX_REPO/scripts/mysql-installation.sh
 source $LOCAL_WPINABOX_REPO/scripts/create-sftp-user.sh
-source $LOCAL_WPINABOX_REPO/scripts/install-php7.sh
+source $LOCAL_WPINABOX_REPO/scripts/php7-installation.sh
 
 # the following can be executed at any order
 # source $LOCAL_WPINABOX_REPO/scripts/install-firewall.sh
