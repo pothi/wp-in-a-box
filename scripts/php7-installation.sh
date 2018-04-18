@@ -152,6 +152,12 @@ fi
 
 ### ---------- other misc tasks ---------- ###
 
+# restart php upon OOM or other failures
+sed -i '/^\[Service\]/!b;:a;n;/./ba;iRestart=on-failure' /lib/systemd/system/php7.0-fpm.service
+systemctl daemon-reload
+if [ "$?" != 0 ]; then
+    echo 'Could not update /lib/systemd/system/php7.0-fpm.service file!'
+fi
 
 echo 'Installing Composer for PHP...'
 EXPECTED_SIGNATURE=$(wget -q -O - https://composer.github.io/installer.sig)
