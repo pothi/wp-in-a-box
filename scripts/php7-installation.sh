@@ -153,6 +153,7 @@ fi
 ### ---------- other misc tasks ---------- ###
 
 # restart php upon OOM or other failures
+# ref: https://stackoverflow.com/a/45107512/1004587
 sed -i '/^\[Service\]/!b;:a;n;/./ba;iRestart=on-failure' /lib/systemd/system/php7.0-fpm.service
 systemctl daemon-reload
 if [ "$?" != 0 ]; then
