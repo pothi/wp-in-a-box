@@ -13,7 +13,7 @@ required_packages="acl \
     mlocate \
     unattended-upgrades apt-listchanges \
     zip unzip  \
-    awscli \
+    python-pip \
     redis-server \
     letsencrypt \
     pwgen \
@@ -36,6 +36,10 @@ do
     echo " done."
 done
 echo "Done installing required packages."
+
+# install AWS cli
+pip install --upgrade pip
+pip install awscli
 
 optional_packages="apt-file \
     vim-scripts \
