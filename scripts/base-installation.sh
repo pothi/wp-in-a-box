@@ -39,7 +39,8 @@ echo "Done installing required packages."
 
 # install AWS cli
 pip_cli=$(which pip)
-$pip_cli install --upgrade pip
+# created issue for many
+# $pip_cli install --upgrade pip
 $pip_cli install awscli
 
 optional_packages="apt-file \
