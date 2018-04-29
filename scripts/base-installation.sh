@@ -38,7 +38,7 @@ done
 echo "Done installing required packages."
 
 # install AWS cli
-pip_cli=$(/bin/which pip)
+pip_cli=$(which pip)
 $pip_cli install --upgrade pip
 $pip_cli install awscli
 
