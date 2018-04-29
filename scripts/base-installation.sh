@@ -38,8 +38,9 @@ done
 echo "Done installing required packages."
 
 # install AWS cli
-/usr/local/bin/pip install --upgrade pip
-/usr/local/bin/pip install awscli
+pip_cli=$(/bin/which pip)
+$pip_cli install --upgrade pip
+$pip_cli install awscli
 
 optional_packages="apt-file \
     vim-scripts \
