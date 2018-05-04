@@ -44,7 +44,9 @@ fi
 git config --global --replace-all user.name "$NAME"
 
 echo -n Installing etckeeper...
-apt-get -qq install etckeeper
+# sending the output to /dev/null to reduce the noise
+apt-get -qq install etckeeper &> /dev/null
+sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
 echo ' done.'
 
 LOCAL_WPINABOX_REPO=/root/git/wp-in-a-box
