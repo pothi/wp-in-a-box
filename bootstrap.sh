@@ -51,7 +51,7 @@ echo ' done.'
 
 LOCAL_WPINABOX_REPO=/root/git/wp-in-a-box
 
-echo 'Fetching wp-in-a-box repo'
+echo -n 'Fetching wp-in-a-box repo'
 if [ -d $LOCAL_WPINABOX_REPO ] ; then
     cd $LOCAL_WPINABOX_REPO
     git pull -q origin master
@@ -60,6 +60,7 @@ if [ -d $LOCAL_WPINABOX_REPO ] ; then
 else
     git clone -q --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO
 fi
+echo ' done.'
 
 # create swap at first
 source $LOCAL_WPINABOX_REPO/scripts/swap.sh

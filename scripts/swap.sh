@@ -13,7 +13,8 @@ if [ "$is_swap_enabled" -eq 0 ]; then
 
     # check for swap
     if [ ! -f $swap_file ]; then
-        fallocate -l $swap_size $swap_file
+        # send the output to /dev/null to reduce the noise
+        fallocate -l $swap_size $swap_file &> /dev/null
         if [ $? != 0 ]; then
             echo 'Could not create swap file using fllocate. Exiting!'
             exit 1
@@ -27,7 +28,8 @@ if [ "$is_swap_enabled" -eq 0 ]; then
 
     # enable swap upon boot
     fstab_entry="$swap_file none swap sw 0 0"
-    if ! $(grep -q "^${fstab_entry}$" /etc/fstab) ; then
+    # send the output of grep to /dev/null to reduce the noise
+    if ! $(grep -q "^${fstab_entry}$" /etc/fstab &> /dev/null) ; then
         echo $fstab_entry >> /etc/fstab
     else
         echo "Note: /etc/fstab already has an entry for swap!"
