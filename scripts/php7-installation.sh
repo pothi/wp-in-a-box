@@ -52,7 +52,7 @@ POOL_FILE=/etc/php/${PHP_VER}/fpm/pool.d/${WP_SFTP_USER}.conf
 
 ### Please do not edit below this line ###
 
-PHP_PACKAGES="php${PHP_VER}-fpm php${PHP_VER}-mysql php${PHP_VER}-gd php${PHP_VER}-mcrypt php${PHP_VER}-xml php${PHP_VER}-mbstring php${PHP_VER}-soap php-curl"
+PHP_PACKAGES="php${PHP_VER}-fpm php${PHP_VER}-mysql php${PHP_VER}-gd php${PHP_VER}-cli php${PHP_VER}-xml php${PHP_VER}-mbstring php${PHP_VER}-soap php-curl"
 
 if [ "$PHP_VER" = "7.0" ] ; then
     PHP_PACKAGES="$PHP_PACKAGES php${PHP_VER}-mcrypt"
@@ -64,6 +64,7 @@ fi
 
 if [ "$PHP_VER" = "7.2" ] ; then
     # todo: https://stackoverflow.com/questions/48275494/issue-in-installing-php7-2-mcrypt
+    echo 'todo: mycrypt installation'
 fi
 
 if apt-cache show php-redis &> /dev/null ; then
