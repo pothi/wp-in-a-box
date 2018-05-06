@@ -32,10 +32,6 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
     chown root:root /home/${BASE_NAME}
     chmod 755 /home/${BASE_NAME}
 
-    echo "u:$WP_SFTP_USER:rwx" > /root/tempacl
-    setfacl --modify-file=/root/tempacl /home/$BASE_NAME/*
-    rm /root/tempacl
-
     #-- allow the user to login to the server --#
     # older way of doing things by appending it to AllowUsers directive
     # if ! grep "$WP_SFTP_USER" ${SSHD_CONFIG} &> /dev/null ; then
@@ -103,13 +99,6 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
     WP_SFTP_PASS=$(pwgen -cns 12 1)
 
     echo "$WP_SFTP_USER:$WP_SFTP_PASS" | chpasswd
-
-    echo; echo "SFTP username is $WP_SFTP_USER"; echo;
-    echo; echo "SFTP password is $WP_SFTP_PASS"; echo;
-    echo 'Please make a note of these somewhere safe'
-    echo 'Also please test if things are okay!'
-
-    # Next Step - Setup PHP-FPM pool
 else
     echo "the default directory /home/${BASE_NAME} already exists!"
     # exit 1

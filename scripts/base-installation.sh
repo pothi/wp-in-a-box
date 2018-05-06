@@ -3,7 +3,8 @@
 #--- Install pre-requisites ---#
 # landscape-common update-notifier-common \
 echo 'Install prerequisites. It may take some time to complete...'
-required_packages="bash-completion \
+required_packages="acl \
+    bash-completion \
     dnsutils \
     mlocate \
     unattended-upgrades apt-listchanges \

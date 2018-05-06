@@ -7,11 +7,14 @@
 # WP_SFTP_USER=
 # PHP_MAX_CHILDREN=
 # MY_MEMCACHED_MEMORY
+# PM_METHOD
 
 echo "Setting up PHP..."
 
 # get the variables
 source /root/.envrc
+
+PM_METHOD=ondemand
 
 if [ -z "$WP_SFTP_USER" ]; then
     echo 'SFTP User is not found. Exiting prematurely!'; exit
@@ -19,12 +22,40 @@ fi
 
 if [ -z "$PHP_MAX_CHILDREN" ]; then
     # let's be safe with a minmal value
-    PHP_MAX_CHILDREN=4
+    sys_memory=$(free -m | grep -oP '\d+' | head -n 1)
+    case "$sys_memory" in
+        $(($sys_memory <= 600)))
+            PHP_MAX_CHILDREN=4
+            ;;
+        $(($sys_memory <= 1600)))
+            PHP_MAX_CHILDREN=6
+            ;;
+        $(($sys_memory <= 5600)))
+            PHP_MAX_CHILDREN=10
+            ;;
+        $(($sys_memory <= 10600)))
+            PM_METHOD=static
+            PHP_MAX_CHILDREN=20
+            ;;
+        $(($sys_memory <= 20600)))
+            PM_METHOD=static
+            PHP_MAX_CHILDREN=40
+            ;;
+        $(($sys_memory <= 30600)))
+            PM_METHOD=static
+            PHP_MAX_CHILDREN=60
+            ;;
+        *)
+            PHP_MAX_CHILDREN=4
+            echo 'Error: Could not figure out the distribution codename to install PHP. Exiting now!'
+            exit 1
+            ;;
+    esac
 fi
 
 if [ -z "$PHP_MEM_LIMIT" ]; then
     # let's be safe with a minmal value
-    PHP_MEM_LIMIT=128
+    PHP_MEM_LIMIT=256
 fi
 
 # LOG_FILE="/root/log/php-install.log"
@@ -90,7 +121,7 @@ sed -i -e '/^log_errors/ s/= On*/= Off/' $FPM_PHP_CLI
 
 # sed -i '/cgi.fix_pathinfo \?=/ s/;\? \?\(cgi.fix_pathinfo \?= \?\)1/\10/' $FPM_PHP_CLI # as per the note number 6 at https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/
 sed -i -e '/^max_execution_time/ s/=.*/= 300/' -e '/^max_input_time/ s/=.*/= 600/' $FPM_PHP_CLI
-sed -i -e '/^memory_limit/ s/=.*/= 256M/' $FPM_PHP_CLI
+sed -i -e '/^memory_limit/ s/=.*/= '$PHP_MEM_LIMIT'M/' $FPM_PHP_CLI
 sed -i -e '/^post_max_size/ s/=.*/= 64M/'      -e '/^upload_max_filesize/ s/=.*/= 64M/' $FPM_PHP_CLI
 
 # set max_input_vars to 5000 (from the default 1000)
@@ -131,7 +162,7 @@ echo; echo 'Setting up the port / socket for PHP'; echo;
 sed -i "/^listen =/ s:=.*:= /var/lock/php-fpm-${PHP_VER}-${WP_SFTP_USER}:" $POOL_FILE
 sed -i "s:/var/lock/php-fpm:/var/lock/php-fpm-${PHP_VER}-${WP_SFTP_USER}:" /etc/nginx/conf.d/lb.conf
 
-sed -i -e 's/^pm = .*/pm = ondemand/' $POOL_FILE
+sed -i -e 's/^pm = .*/pm = '$PM_METHOD'/' $POOL_FILE
 sed -i '/^pm.max_children/ s/=.*/= '$PHP_MAX_CHILDREN'/' $POOL_FILE
 
 echo; echo 'Setting up the processes...'; echo;
@@ -165,6 +196,13 @@ sed -i '/^;emergency_restart_interval/ s/^;//' $FPMCONF
 sed -i '/^emergency_restart_interval/ s/=.*$/= 1m/' $FPMCONF
 sed -i '/^;process_control_timeout/ s/^;//' $FPMCONF
 sed -i '/^process_control_timeout/ s/=.*$/= 10s/' $FPMCONF
+
+# slow log
+PHP_SLOW_LOG_PATH=/home/${BASE_NAME}/log/slow-php.log
+sed -i '/^;slowlog/ s/^;//' $FPMCONF
+sed -i '/^slowlog/ s/=.*$/ = '$PHP_SLOW_LOG_PATH'/' $FPMCONF
+sed -i '/^;request_slowlog_timeout/ s/^;//' $FPMCONF
+sed -i '/^request_slowlog_timeout/ s/= .*$/= 60/' $FPMCONF
 
 echo; echo 'Restarting PHP daemon'; echo;
 
