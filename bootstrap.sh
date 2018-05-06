@@ -79,6 +79,7 @@ source $LOCAL_WPINABOX_REPO/scripts/nginx-installation.sh
 source $LOCAL_WPINABOX_REPO/scripts/mysql-installation.sh
 source $LOCAL_WPINABOX_REPO/scripts/create-sftp-user.sh
 source $LOCAL_WPINABOX_REPO/scripts/php7-installation.sh
+source $LOCAL_WPINABOX_REPO/scripts/phpmyadmin-installation.sh
 
 # the following can be executed at any order
 # source $LOCAL_WPINABOX_REPO/scripts/install-firewall.sh
