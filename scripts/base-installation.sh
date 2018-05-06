@@ -3,31 +3,14 @@
 #--- Install pre-requisites ---#
 # landscape-common update-notifier-common \
 echo 'Install prerequisites. It may take some time to complete...'
-required_packages="acl \
-    vim \
-    bash-completion \
+required_packages="bash-completion \
     dnsutils \
-    postfix \
-    logwatch \
-    mailutils \
     mlocate \
     unattended-upgrades apt-listchanges \
     zip unzip  \
     python-pip \
-    redis-server \
-    letsencrypt \
-    pwgen \
     fail2ban \
-    gawk \
-    apt-transport-https \
-    bc \
-    apache2-utils \
-    software-properties-common dirmngr \
-    tree \
-    debian-goodies \
-    uptimed \
-    nmap \
-    members"
+    bc"
 
 for package in $required_packages
 do  

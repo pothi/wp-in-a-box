@@ -73,17 +73,18 @@ apt-get -qq autoremove
 echo " done."
 
 source $LOCAL_WPINABOX_REPO/scripts/base-installation.sh
-source $LOCAL_WPINABOX_REPO/scripts/mta-installation.sh
-source $LOCAL_WPINABOX_REPO/scripts/setup-linux-tweaks.sh
+source $LOCAL_WPINABOX_REPO/scripts/email-mta-installation.sh
+source $LOCAL_WPINABOX_REPO/scripts/linux-tweaks.sh
 source $LOCAL_WPINABOX_REPO/scripts/nginx-installation.sh
 source $LOCAL_WPINABOX_REPO/scripts/mysql-installation.sh
-source $LOCAL_WPINABOX_REPO/scripts/create-sftp-user.sh
+source $LOCAL_WPINABOX_REPO/scripts/sftp-user-creation.sh
 source $LOCAL_WPINABOX_REPO/scripts/php7-installation.sh
 source $LOCAL_WPINABOX_REPO/scripts/phpmyadmin-installation.sh
 
-# the following can be executed at any order
+# the following can be executed at any order as they are mostly optional
 # source $LOCAL_WPINABOX_REPO/scripts/install-firewall.sh
-source $LOCAL_WPINABOX_REPO/scripts/emergency-user-creation.sh
+source $LOCAL_WPINABOX_REPO/scripts/ssh-user-creation.sh
+# source $LOCAL_WPINABOX_REPO/scripts/optional.sh
 
 # post-install steps
 codename=`lsb_release -c -s`
@@ -106,8 +107,8 @@ echo '-----------------------------------'
 echo "SFTP username is $WP_SFTP_USER"
 echo "SFTP password is $WP_SFTP_PASS"
 echo '-----------------------------------'
-echo "Emergency username is $ICE_USER"
-echo "Emergency password is $ICE_PASS"
+echo "SSH username is $SSH_USER"
+echo "SSH password is $SSH_PASS"
 echo '-----------------------------------'
 
 echo 'Please make a note of these somewhere safe'
