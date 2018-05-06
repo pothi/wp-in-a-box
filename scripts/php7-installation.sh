@@ -23,34 +23,28 @@ fi
 if [ -z "$PHP_MAX_CHILDREN" ]; then
     # let's be safe with a minmal value
     sys_memory=$(free -m | grep -oP '\d+' | head -n 1)
-    case "$sys_memory" in
-        $(($sys_memory <= 600)))
-            PHP_MAX_CHILDREN=4
-            ;;
-        $(($sys_memory <= 1600)))
-            PHP_MAX_CHILDREN=6
-            ;;
-        $(($sys_memory <= 5600)))
-            PHP_MAX_CHILDREN=10
-            ;;
-        $(($sys_memory <= 10600)))
-            PM_METHOD=static
-            PHP_MAX_CHILDREN=20
-            ;;
-        $(($sys_memory <= 20600)))
-            PM_METHOD=static
-            PHP_MAX_CHILDREN=40
-            ;;
-        $(($sys_memory <= 30600)))
-            PM_METHOD=static
-            PHP_MAX_CHILDREN=60
-            ;;
-        *)
-            PHP_MAX_CHILDREN=4
-            echo 'Error: Could not figure out the distribution codename to install PHP. Exiting now!'
-            exit 1
-            ;;
-    esac
+    if (($sys_memory <= 600)) ; then
+        PHP_MAX_CHILDREN=4
+    elif (($sys_memory <= 1600)) ; then
+        PHP_MAX_CHILDREN=6
+    elif (($sys_memory <= 5600)) ; then
+        PHP_MAX_CHILDREN=10
+    elif (($sys_memory <= 10600)) ; then
+        PM_METHOD=static
+        PHP_MAX_CHILDREN=20
+    elif (($sys_memory <= 20600)) ; then
+        PM_METHOD=static
+        PHP_MAX_CHILDREN=40
+    elif (($sys_memory <= 30600)) ; then
+        PM_METHOD=static
+        PHP_MAX_CHILDREN=60
+    elif (($sys_memory <= 40600)) ; then
+        PM_METHOD=static
+        PHP_MAX_CHILDREN=80
+    else
+        PM_METHOD=static
+        PHP_MAX_CHILDREN=100
+    fi
 fi
 
 if [ -z "$PHP_MEM_LIMIT" ]; then
@@ -188,6 +182,13 @@ sed -i '/^;pm.status_path/ s/^;//' $POOL_FILE
 sed -i '/^;ping.path/ s/^;//' $POOL_FILE
 sed -i '/^;ping.response/ s/^;//' $POOL_FILE
 
+# slow log
+PHP_SLOW_LOG_PATH="\/home\/${BASE_NAME}\/log\/slow-php.log"
+sed -i '/^;slowlog/ s/^;//' $POOL_FILE
+sed -i '/^slowlog/ s/=.*$/ = '$PHP_SLOW_LOG_PATH'/' $POOL_FILE
+sed -i '/^;request_slowlog_timeout/ s/^;//' $POOL_FILE
+sed -i '/^request_slowlog_timeout/ s/= .*$/= 60/' $POOL_FILE
+
 # automatic restart upon random failure - directly from http://tweaked.io/guide/nginx/
 FPMCONF="/etc/php/${PHP_VER}/fpm/php-fpm.conf"
 sed -i '/^;emergency_restart_threshold/ s/^;//' $FPMCONF
@@ -196,13 +197,6 @@ sed -i '/^;emergency_restart_interval/ s/^;//' $FPMCONF
 sed -i '/^emergency_restart_interval/ s/=.*$/= 1m/' $FPMCONF
 sed -i '/^;process_control_timeout/ s/^;//' $FPMCONF
 sed -i '/^process_control_timeout/ s/=.*$/= 10s/' $FPMCONF
-
-# slow log
-PHP_SLOW_LOG_PATH=/home/${BASE_NAME}/log/slow-php.log
-sed -i '/^;slowlog/ s/^;//' $FPMCONF
-sed -i '/^slowlog/ s/=.*$/ = '$PHP_SLOW_LOG_PATH'/' $FPMCONF
-sed -i '/^;request_slowlog_timeout/ s/^;//' $FPMCONF
-sed -i '/^request_slowlog_timeout/ s/= .*$/= 60/' $FPMCONF
 
 echo; echo 'Restarting PHP daemon'; echo;
 
