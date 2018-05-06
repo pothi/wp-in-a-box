@@ -32,7 +32,19 @@ fi
 # exec 2> >(tee -a ${LOG_FILE} >&2)
 
 # php${PHP_VER}-mysqlnd package is not found in Ubuntu
-PHP_VER=7.0
+codename=`lsb_release -c -s`
+case "$codename" in
+    "bionic")
+        PHP_VER=7.2
+        ;;
+    "xenial")
+        PHP_VER=7.0
+        ;;
+    *)
+        echo 'Error: Could not figure out the distribution codename to install PHP. Exiting now!'
+        exit 1
+        ;;
+esac
 FPM_PHP_CLI=/etc/php/${PHP_VER}/fpm/php.ini
 CLI_PHP_CLI=/etc/php/${PHP_VER}/cli/php.ini
 POOL_FILE=/etc/php/${PHP_VER}/fpm/pool.d/${WP_SFTP_USER}.conf
@@ -40,8 +52,19 @@ POOL_FILE=/etc/php/${PHP_VER}/fpm/pool.d/${WP_SFTP_USER}.conf
 
 ### Please do not edit below this line ###
 
-
 PHP_PACKAGES="php${PHP_VER}-fpm php${PHP_VER}-mysql php${PHP_VER}-gd php${PHP_VER}-mcrypt php${PHP_VER}-xml php${PHP_VER}-mbstring php${PHP_VER}-soap php-curl"
+
+if [ "$PHP_VER" = "7.0" ] ; then
+    PHP_PACKAGES="$PHP_PACKAGES php${PHP_VER}-mcrypt"
+fi
+
+if [ "$PHP_VER" = "7.1" ] ; then
+    PHP_PACKAGES="$PHP_PACKAGES php${PHP_VER}-mcrypt"
+fi
+
+if [ "$PHP_VER" = "7.2" ] ; then
+    # todo: https://stackoverflow.com/questions/48275494/issue-in-installing-php7-2-mcrypt
+fi
 
 if apt-cache show php-redis &> /dev/null ; then
     PHP_PACKAGES=$(echo "$PHP_PACKAGES" 'php-redis')
@@ -154,10 +177,10 @@ fi
 
 # restart php upon OOM or other failures
 # ref: https://stackoverflow.com/a/45107512/1004587
-sed -i '/^\[Service\]/!b;:a;n;/./ba;iRestart=on-failure' /lib/systemd/system/php7.0-fpm.service
+sed -i '/^\[Service\]/!b;:a;n;/./ba;iRestart=on-failure' /lib/systemd/system/php${PHP_VER}-fpm.service
 systemctl daemon-reload
 if [ "$?" != 0 ]; then
-    echo 'Could not update /lib/systemd/system/php7.0-fpm.service file!'
+    echo "Could not update /lib/systemd/system/php${PHP_VER}-fpm.service file!"
 fi
 
 echo 'Installing Composer for PHP...'
