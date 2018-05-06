@@ -27,8 +27,11 @@ if [ ! -d "$LT_DIRECTORY" ]; then
     echo ' done.'
 fi
 
+echo -n 'Updating apt repos...'
 export DEBIAN_FRONTEND=noninteractive
 apt-get -qq update
+echo ' done'
+
 echo -n Installing git...
 apt-get -qq install git
 echo ' done.'
@@ -51,7 +54,7 @@ echo ' done.'
 
 LOCAL_WPINABOX_REPO=/root/git/wp-in-a-box
 
-echo -n 'Fetching wp-in-a-box repo'
+echo -n 'Fetching wp-in-a-box repo...'
 if [ -d $LOCAL_WPINABOX_REPO ] ; then
     cd $LOCAL_WPINABOX_REPO
     git pull -q origin master
@@ -66,10 +69,14 @@ echo ' done.'
 source $LOCAL_WPINABOX_REPO/scripts/swap.sh
 
 # install dependencies
-echo -n 'Updating installed packages...'
-apt-get -qq upgrade
-apt-get -qq dist-upgrade
-apt-get -qq autoremove
+echo -n 'Running apt upgrade...'
+apt-get -qq upgrade &> /dev/null
+echo " done."
+echo -n 'Running apt dist-upgrade...'
+apt-get -qq dist-upgrade &> /dev/null
+echo " done."
+echo -n 'Running apt autoremove...'
+apt-get -qq autoremove &> /dev/null
 echo " done."
 
 source $LOCAL_WPINABOX_REPO/scripts/base-installation.sh

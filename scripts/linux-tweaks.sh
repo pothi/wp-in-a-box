@@ -40,23 +40,23 @@ cp $LOCAL_WPINABOX_REPO/config/common-exports.sh /etc/skel/.config/bash/
 
 # download scripts to backup wordpress
 if [ ! -s /etc/skel/scripts/full-backup.sh ]; then
-    echo -n 'Downloading full-backup.sh'
+    echo -n 'Downloading full-backup.sh... '
     DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/full-backup.sh
     wget -q -O /etc/skel/scripts/full-backup.sh $DB_BACKUP_URL
     echo "done."
 fi
 
 if [ ! -s /etc/skel/scripts/db-backup.sh ]; then
-    echo -n 'Downloading db-backup.sh'
+    echo -n 'Downloading db-backup.sh... '
     DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/db-backup.sh
     wget -q -O /etc/skel/scripts/db-backup.sh $DB_BACKUP_URL
     echo "done."
 fi
 
-if [ ! -s /etc/skel/scripts/files-backup-without-uploads-backup.sh ]; then
-    echo -n 'Downloading files-backup-without-uploads-backup.sh'
-    DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/files-backup-without-uploads-backup.sh
-    wget -q -O /etc/skel/scripts/files-backup-without-uploads-backup.sh $DB_BACKUP_URL
+if [ ! -s /etc/skel/scripts/files-backup-without-uploads.sh ]; then
+    echo -n 'Downloading files-backup-without-uploads.sh... '
+    DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/files-backup-without-uploads.sh
+    wget -q -O /etc/skel/scripts/files-backup-without-uploads.sh $DB_BACKUP_URL
     echo "done."
 fi
 
@@ -153,23 +153,26 @@ if [ -f /etc/cron.daily/00logwatch ]; then
     if [ $? != 0 ]; then
         echo 'Error tweaking logwatch'
     fi
-fi
 
-LOGWATCH_CONF=/etc/logwatch/conf/logwatch.conf
-touch $LOGWATCH_CONF
-echo 'Range = "between -7 days and -1 days"' >> $LOGWATCH_CONF
-echo 'Details = High' >> $LOGWATCH_CONF
-if [ "$EMAIL" != '' ]; then
-    echo "mailto = $EMAIL" >> $LOGWATCH_CONF
-fi
+    LOGWATCH_CONF=/etc/logwatch/conf/logwatch.conf
+    touch $LOGWATCH_CONF
+    echo 'Range = "between -7 days and -1 days"' >> $LOGWATCH_CONF
+    echo 'Details = High' >> $LOGWATCH_CONF
+    if [ "$EMAIL" != '' ]; then
+        echo "mailto = $EMAIL" >> $LOGWATCH_CONF
+    fi
 
-if [ "$WP_DOMAIN" != '' ]; then
-    echo "MailFrom = logwatch@$WP_DOMAIN" >> $LOGWATCH_CONF
-    echo "Subject = 'Weekly log from $WP_DOMAIN server'" >> $LOGWATCH_CONF
-fi
+    if [ "$WP_DOMAIN" != '' ]; then
+        echo "MailFrom = logwatch@$WP_DOMAIN" >> $LOGWATCH_CONF
+        echo "Subject = 'Weekly log from $WP_DOMAIN server'" >> $LOGWATCH_CONF
+    fi
 
+fi # test for logwatch cron
 
 #--- Put /etc/ under version control ---#
+comment='vim/plugged'
+if [ -f /etc/.gitignore ] ; then
+if ! $(grep -q "^${comment}$" "/etc/.gitignore") ; then
 printf "
 # ref: http://fallengamer.livejournal.com/93321.html
 # https://stackoverflow.com/q/1274057/1004587
@@ -179,6 +182,8 @@ printf "
 
 vim/plugged
 " >> /etc/.gitignore
+fi # test if comment is found in file
+fi # test if file exists
 
 #--- Misc Tweaks ---#
 sed -i 's/^#\(startup_message off\)$/\1/' /etc/screenrc
@@ -186,12 +191,13 @@ sed -i 's/^#\(startup_message off\)$/\1/' /etc/screenrc
 #--- setup color for root terminal ---#
 rootbashrc=/root/.bashrc
 comment='#red_color for root'
-if [[ -f $rootbashrc && ! $(grep -q "^${comment}$" "$rootbashrc") ]]; then
+if [ -f $rootbashrc ]; then
+if ! $(grep -q "^${comment}$" "$rootbashrc") ; then
     printf "\n${comment}\n" >> $rootbashrc
     echo 'PS1="\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u\[\033[01;33m\]@\[\033[01;36m\]\h \[\033[01;33m\]\w \[\033[01;35m\]\$ \[\033[00m\]"' >> $rootbashrc
     printf '\n' >> $rootbashrc
     source $rootbashrc
-fi
-
+fi # test if the comment is found in file
+fi # test if file exists
 
 echo 'Linux tweaks are done.'

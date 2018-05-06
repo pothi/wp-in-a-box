@@ -15,9 +15,9 @@ echo 'Installing / setting up MTA...'
 
 # dependencies
 # https://serverfault.com/a/325975/102173
-DEBIAN_FRONTEND=noninteractive apt-get install -qq libsasl2-modules
+DEBIAN_FRONTEND=noninteractive apt-get install -qq libsasl2-modules &> /dev/null
 
-DEBIAN_FRONTEND=noninteractive apt-get install -qq $mta
+DEBIAN_FRONTEND=noninteractive apt-get install -qq $mta &> /dev/null
 
 # setup mta to use only ipv4 to send emails
 #- why:
@@ -42,5 +42,5 @@ postconf -e 'smtpd_tls_CApath = /etc/ssl/certs'
 if [ "$?" -ne 0 ]; then
     echo "Warning: Something went wrong while restarting MTA ($mta). Continuing..."
 else
-    echo "... done setting up MTA."
+    echo "... done setting up MTA ({$mta})!"
 fi

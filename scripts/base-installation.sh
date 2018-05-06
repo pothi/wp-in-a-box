@@ -9,6 +9,7 @@ required_packages="bash-completion \
     unattended-upgrades apt-listchanges \
     zip unzip  \
     python-pip \
+    pwgen \
     fail2ban \
     bc"
 
@@ -24,7 +25,9 @@ echo "Done installing required packages."
 pip_cli=$(which pip)
 # created issue for many
 # $pip_cli install --upgrade pip
+echo -n "Installing awscli... "
 $pip_cli install awscli
+echo 'done.'
 
 optional_packages="apt-file \
     vim-scripts \
@@ -41,9 +44,9 @@ optional_packages="apt-file \
 # done
 
 #--- setup timezone ---#
-echo -n 'Setting up timezone...'
+echo -n 'Setting up timezone... '
 ln -fs /usr/share/zoneinfo/UTC /etc/localtime
-dpkg-reconfigure -f noninteractive tzdata >> $LOG_FILE
+dpkg-reconfigure -f noninteractive tzdata &> /dev/null
 # timedatectl set-timezone UTC
 if [ $? != 0 ]; then
     echo 'Error setting up timezone'
@@ -73,7 +76,7 @@ fi
 
 #--- Setup some helper tools ---#
 if [ ! -s /root/ps_mem.py ]; then
-    echo -n 'Downloading ps_mem.py'
+    echo -n 'Downloading ps_mem.py... '
     PSMEMURL=http://www.pixelbeat.org/scripts/ps_mem.py
     wget -q -O /root/ps_mem.py $PSMEMURL
     chmod +x /root/ps_mem.py
@@ -81,7 +84,7 @@ if [ ! -s /root/ps_mem.py ]; then
 fi
 
 if [ ! -s /root/scripts/mysqltuner.pl ]; then
-    echo -n 'Downloading mysqltuner'
+    echo -n 'Downloading mysqltuner... '
     TUNERURL=https://raw.github.com/major/MySQltuner-perl/master/mysqltuner.pl
     wget -q -O /root/scripts/mysqltuner.pl $TUNERURL
     chmod +x /root/scripts/mysqltuner.pl
@@ -89,7 +92,7 @@ if [ ! -s /root/scripts/mysqltuner.pl ]; then
 fi
 
 if [ ! -s /root/scripts/tuning-primer.sh ]; then
-    echo -n 'Downloading tuning-primer'
+    echo -n 'Downloading tuning-primer... '
     PRIMERURL=https://launchpad.net/mysql-tuning-primer/trunk/1.6-r1/+download/tuning-primer.sh
     wget -q -O /root/scripts/tuning-primer.sh $PRIMERURL
     chmod +x /root/scripts/tuning-primer.sh
@@ -100,7 +103,7 @@ fi
 
 #--- Setup wp cli ---#
 if [ ! -s /usr/local/bin/wp ]; then
-    echo -n 'Setting up WP CLI'
+    echo -n 'Setting up WP CLI '
     WPCLIURL=https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
     curl -LSsO $WPCLIURL
     chmod +x wp-cli.phar

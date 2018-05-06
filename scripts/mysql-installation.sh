@@ -5,7 +5,7 @@ echo 'Installing MySQL / MariaDB Server'
 SQL_SERVER=mariadb-server
 if ! apt-cache show mariadb-server &> /dev/null ; then SQL_SERVER=mysql-server ; fi
 
-DEBIAN_FRONTEND=noninteractive apt-get install ${SQL_SERVER} -qq 
+DEBIAN_FRONTEND=noninteractive apt-get install ${SQL_SERVER} -qq &> /dev/null
 
 systemctl stop mysql
 # enable slow log and other tweaks

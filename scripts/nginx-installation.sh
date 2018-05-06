@@ -21,7 +21,7 @@ echo "deb-src https://nginx.org/packages/${NGX_BRANCH}${DISTRO}/ ${CODENAME} ngi
 
 apt-get update -qq
 
-DEBIAN_FRONTEND=noninteractive apt-get install -qq nginx
+DEBIAN_FRONTEND=noninteractive apt-get install -qq nginx &> /dev/null
 LT_DIRECTORY="/root/backups/etc-nginx-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
     cp -a /etc $LT_DIRECTORY
@@ -46,8 +46,26 @@ cp /etc/nginx/nginx-sample.conf /etc/nginx/nginx.conf
 
 # unattended-upgrades
 unattended_file=/etc/apt/apt.conf.d/50unattended-upgrades
-if ! grep -q '"origin=nginx,codename=stretch";' $unattended_file ; then
-    sed -i -e '/^Unattended-Upgrade::Origins-Pattern/ a "origin=nginx,codename=stretch";' $unattended_file
-fi
+codename=`lsb_release -c -s`
+case "$codename" in
+    "stretch")
+        if ! grep -q '"origin=nginx,codename=${distro_codename}";' $unattended_file ; then
+            sed -i -e '/^Unattended-Upgrade::Origins-Pattern/ a "origin=nginx,codename=${distro_codename}";' $unattended_file
+        fi
+        ;;
+    "xenial")
+        if ! grep -q '"nginx:${distro_codename}";' $unattended_file ; then
+            sed -i -e '/^Unattended-Upgrade::Allowed-Origins/ a "nginx:${distro_codename}";' $unattended_file
+        fi
+        ;;
+    "bionic")
+        if ! grep -q '"nginx:${distro_codename}";' $unattended_file ; then
+            sed -i -e '/^Unattended-Upgrade::Allowed-Origins/ a "nginx:${distro_codename}";' $unattended_file
+        fi
+        ;;
+    *)
+        echo 'Warning: Could not figure out the distribution codename. Skipping unattended upgrade for nginx!'
+        ;;
+esac
 
 echo "Done setting up Nginx!"
