@@ -103,6 +103,7 @@ case "$codename" in
         source $LOCAL_WPINABOX_REPO/scripts/post-install-xenial.sh
         ;;
     *)
+        echo "Distro: $codename"
         echo 'Warning: Could not figure out the distribution codename. Skipping post-install steps!'
         ;;
 esac

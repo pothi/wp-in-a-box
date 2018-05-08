@@ -27,7 +27,7 @@ pip_cli=$(which pip)
 # created issue for many
 # $pip_cli install --upgrade pip
 echo -n "Installing awscli... "
-$pip_cli install awscli
+$pip_cli install awscli &> /dev/null
 echo 'done.'
 
 optional_packages="apt-file \
