@@ -98,7 +98,7 @@ else
     PHP_PACKAGES=$(echo "$PHP_PACKAGES" "php${PHP_VER}-redis")
 fi
 
-apt-get install -qq ${PHP_PACKAGES}
+apt-get install -qq ${PHP_PACKAGES} &> /dev/null
 
 # let's take a backup of config before modifing them
 BACKUP_PHP_DIR="/root/backups/etc-php-$(date +%F)"

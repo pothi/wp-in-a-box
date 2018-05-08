@@ -17,7 +17,7 @@ required_packages="acl \
 for package in $required_packages
 do  
     echo -n "Installing ${package}..."
-    DEBIAN_FRONTEND=noninteractive apt-get -qq install $package
+    DEBIAN_FRONTEND=noninteractive apt-get -qq install $package &> /dev/null
     echo " done."
 done
 echo "Done installing required packages."
