@@ -9,7 +9,7 @@ source /root/.envrc
 
 if [ "$SSH_USER" == "" ]; then
     # create SSH username automatically
-    SSH_USER="ice_$(pwgen -A 8 1)"
+    SSH_USER="ssh_$(pwgen -A 8 1)"
     echo "export SSH_USER=$SSH_USER" >> /root/.envrc
 fi
 
