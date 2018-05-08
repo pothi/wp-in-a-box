@@ -3,7 +3,7 @@
 # Variables - you may set the following in envrc file
 # SSH_USER
 
-echo "Setting up emergency user..."
+echo "Setting up SSH user..."
 
 source /root/.envrc
 
@@ -31,4 +31,4 @@ else
     echo "Note: The user '${SSH_USER}' already exists"
 fi
 
-echo "Done setting up the emergency user!"
+echo "Done setting up SSH user!"

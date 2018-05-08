@@ -23,7 +23,8 @@ fi
 mysql -e "CREATE DATABASE phpmyadmin"
 mysql -e "GRANT ALL PRIVILEGES ON phpmyadmin.* TO $pma_db_user@localhost IDENTIFIED BY '$pma_db_pass'"
 
-sudo -H -u $PMA_USER bash pma-user.sh
+# sudo -H -u $PMA_USER bash pma-user.sh
+sudo -H -u $PMA_USER bash $LOCAL_WPINABOX_REPO/scripts/pma-user.sh
 
 mkdir ${PMA_TMP}
 chown ${WP_SFTP_USER}:${WP_SFTP_USER} ${PMA_TMP}
