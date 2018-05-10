@@ -86,7 +86,10 @@ source $LOCAL_WPINABOX_REPO/scripts/nginx-installation.sh
 source $LOCAL_WPINABOX_REPO/scripts/mysql-installation.sh
 source $LOCAL_WPINABOX_REPO/scripts/sftp-user-creation.sh
 source $LOCAL_WPINABOX_REPO/scripts/php-installation.sh
+
+# depends on mysql & php installation
 source $LOCAL_WPINABOX_REPO/scripts/pma-installation.sh
+source $LOCAL_WPINABOX_REPO/scripts/redis.sh
 
 # the following can be executed at any order as they are mostly optional
 # source $LOCAL_WPINABOX_REPO/scripts/install-firewall.sh

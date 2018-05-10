@@ -57,6 +57,7 @@ fi
 # exec 2> >(tee -a ${LOG_FILE} >&2)
 
 # php${PHP_VER}-mysqlnd package is not found in Ubuntu
+
 codename=`lsb_release -c -s`
 case "$codename" in
     "bionic")
@@ -70,6 +71,7 @@ case "$codename" in
         exit 1
         ;;
 esac
+
 FPM_PHP_CLI=/etc/php/${PHP_VER}/fpm/php.ini
 CLI_PHP_CLI=/etc/php/${PHP_VER}/cli/php.ini
 POOL_FILE=/etc/php/${PHP_VER}/fpm/pool.d/${WP_SFTP_USER}.conf
@@ -89,13 +91,7 @@ fi
 
 if [ "$PHP_VER" = "7.2" ] ; then
     # todo: https://stackoverflow.com/questions/48275494/issue-in-installing-php7-2-mcrypt
-    echo 'todo: mycrypt installation'
-fi
-
-if apt-cache show php-redis &> /dev/null ; then
-    PHP_PACKAGES=$(echo "$PHP_PACKAGES" 'php-redis')
-else
-    PHP_PACKAGES=$(echo "$PHP_PACKAGES" "php${PHP_VER}-redis")
+    echo; echo 'TODO: mycrypt installation'
 fi
 
 apt-get install -qq ${PHP_PACKAGES} &> /dev/null
@@ -106,7 +102,7 @@ if [ ! -d "$BACKUP_PHP_DIR" ]; then
     cp -a /etc $BACKUP_PHP_DIR
 fi
 
-echo; echo 'Setting up memory limits for PHP...'; echo;
+echo; echo 'Setting up memory limits for PHP...'
 
 
 ### ---------- php.ini modifications ---------- ###
@@ -121,11 +117,6 @@ sed -i -e '/^post_max_size/ s/=.*/= 64M/'      -e '/^upload_max_filesize/ s/=.*/
 # set max_input_vars to 5000 (from the default 1000)
 sed -i '/max_input_vars/ s/;\? \?\(max_input_vars \?= \?\)[[:digit:]]\+/\15000/p' $FPM_PHP_CLI
 
-# SESSION Handling
-echo; echo 'Setting up sessions...'; echo;
-sed -i -e '/^session.save_handler/ s/=.*/= redis/' $FPM_PHP_CLI
-sed -i -e '/^;session.save_path/ s/.*/session.save_path = "127.0.0.1:6379"/' $FPM_PHP_CLI
-
 # Disable user.ini
 sed -i -e '/^;user_ini.filename =$/ s/;//' $FPM_PHP_CLI
 
@@ -138,7 +129,7 @@ sed -i -e 's/^;date\.timezone =$/date.timezone = "UTC"/' $FPM_PHP_CLI
 
 mv /etc/php/${PHP_VER}/fpm/pool.d/www.conf $POOL_FILE &> /dev/null
 
-echo; echo 'Setting up the user'; echo;
+echo; echo 'Setting up the user...'
 
 # Change default user
 sed -i -e 's/^\[www\]$/['$WP_SFTP_USER']/' $POOL_FILE
@@ -149,7 +140,7 @@ sed -i -e 's/www-data/'$WP_SFTP_USER'/' $POOL_FILE
 sed -i -e '/^;listen.\(owner\|group\|mode\)/ s/^;//' $POOL_FILE
 sed -i -e '/^listen.mode = / s/[0-9]\{4\}/0666/' $POOL_FILE
 
-echo; echo 'Setting up the port / socket for PHP'; echo;
+echo; echo 'Setting up the port / socket for PHP...'
 
 # Setup port / socket
 # sed -i '/^listen =/ s/=.*/= 127.0.0.1:9006/' $POOL_FILE
@@ -159,7 +150,7 @@ sed -i "s:/var/lock/php-fpm:/var/lock/php-fpm-${PHP_VER}-${WP_SFTP_USER}:" /etc/
 sed -i -e 's/^pm = .*/pm = '$PM_METHOD'/' $POOL_FILE
 sed -i '/^pm.max_children/ s/=.*/= '$PHP_MAX_CHILDREN'/' $POOL_FILE
 
-echo; echo 'Setting up the processes...'; echo;
+echo; echo 'Setting up the processes...'
 
 #--- for dynamic PHP workers ---#
 # PHP_MIN=$(expr $PHP_MAX_CHILDREN / 10)
@@ -198,7 +189,7 @@ sed -i '/^emergency_restart_interval/ s/=.*$/= 1m/' $FPMCONF
 sed -i '/^;process_control_timeout/ s/^;//' $FPMCONF
 sed -i '/^process_control_timeout/ s/=.*$/= 10s/' $FPMCONF
 
-echo; echo 'Restarting PHP daemon'; echo;
+echo; echo 'Restarting PHP daemon...'
 
 /usr/sbin/php-fpm${PHP_VER} -t && systemctl restart php${PHP_VER}-fpm
 if [ "$?" != 0 ]; then
