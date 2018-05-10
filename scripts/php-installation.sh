@@ -63,6 +63,9 @@ case "$codename" in
     "bionic")
         PHP_VER=7.2
         ;;
+    "stretch")
+        PHP_VER=7.0
+        ;;
     "xenial")
         PHP_VER=7.0
         ;;
