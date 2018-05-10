@@ -192,6 +192,12 @@ sed -i '/^emergency_restart_interval/ s/=.*$/= 1m/' $FPMCONF
 sed -i '/^;process_control_timeout/ s/^;//' $FPMCONF
 sed -i '/^process_control_timeout/ s/=.*$/= 10s/' $FPMCONF
 
+# tweaking opcache
+echo -n 'Tweaking opcache... '
+cp $LOCAL_WPINABOX_REPO/config/php/mods-available/custom-opcache.ini /etc/php/${PHP_VER}/mods-available
+ln -s /etc/php/${PHP_VER}/mods-available/custom-opcache.ini /etc/php/${PHP_VER}/fpm/conf.d/99-custom-opcache.ini
+echo 'done.'
+
 echo; echo 'Restarting PHP daemon...'
 
 /usr/sbin/php-fpm${PHP_VER} -t && systemctl restart php${PHP_VER}-fpm
