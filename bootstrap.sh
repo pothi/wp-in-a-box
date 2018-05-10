@@ -96,6 +96,9 @@ source $LOCAL_WPINABOX_REPO/scripts/ssh-user-creation.sh
 # post-install steps
 codename=`lsb_release -c -s`
 case "$codename" in
+    "bionic")
+        source $LOCAL_WPINABOX_REPO/scripts/post-install-bionic.sh
+        ;;
     "stretch")
         source $LOCAL_WPINABOX_REPO/scripts/post-install-stretch.sh
         ;;
