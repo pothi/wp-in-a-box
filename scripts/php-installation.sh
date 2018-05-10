@@ -79,8 +79,8 @@ if ! grep -qw "$PHP_VER" /root/.envrc &> /dev/null ; then
     echo "export PHP_VER=$PHP_VER" >> /root/.envrc
 fi
 
-FPM_PHP_CLI=/etc/php/${PHP_VER}/fpm/php.ini
-CLI_PHP_CLI=/etc/php/${PHP_VER}/cli/php.ini
+FPM_PHP_INI=/etc/php/${PHP_VER}/fpm/php.ini
+CLI_PHP_INI=/etc/php/${PHP_VER}/cli/php.ini
 POOL_FILE=/etc/php/${PHP_VER}/fpm/pool.d/${WP_SFTP_USER}.conf
 
 
@@ -114,21 +114,21 @@ echo; echo 'Setting up memory limits for PHP...'
 
 ### ---------- php.ini modifications ---------- ###
 # for https://github.com/pothi/wp-in-a-box/issues/35
-sed -i -e '/^log_errors/ s/= On*/= Off/' $FPM_PHP_CLI
+sed -i -e '/^log_errors/ s/= On*/= Off/' $FPM_PHP_INI
 
-# sed -i '/cgi.fix_pathinfo \?=/ s/;\? \?\(cgi.fix_pathinfo \?= \?\)1/\10/' $FPM_PHP_CLI # as per the note number 6 at https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/
-sed -i -e '/^max_execution_time/ s/=.*/= 300/' -e '/^max_input_time/ s/=.*/= 600/' $FPM_PHP_CLI
-sed -i -e '/^memory_limit/ s/=.*/= '$PHP_MEM_LIMIT'M/' $FPM_PHP_CLI
-sed -i -e '/^post_max_size/ s/=.*/= 64M/'      -e '/^upload_max_filesize/ s/=.*/= 64M/' $FPM_PHP_CLI
+# sed -i '/cgi.fix_pathinfo \?=/ s/;\? \?\(cgi.fix_pathinfo \?= \?\)1/\10/' $FPM_PHP_INI # as per the note number 6 at https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/
+sed -i -e '/^max_execution_time/ s/=.*/= 300/' -e '/^max_input_time/ s/=.*/= 600/' $FPM_PHP_INI
+sed -i -e '/^memory_limit/ s/=.*/= '$PHP_MEM_LIMIT'M/' $FPM_PHP_INI
+sed -i -e '/^post_max_size/ s/=.*/= 64M/'      -e '/^upload_max_filesize/ s/=.*/= 64M/' $FPM_PHP_INI
 
 # set max_input_vars to 5000 (from the default 1000)
-sed -i '/max_input_vars/ s/;\? \?\(max_input_vars \?= \?\)[[:digit:]]\+/\15000/p' $FPM_PHP_CLI
+sed -i '/max_input_vars/ s/;\? \?\(max_input_vars \?= \?\)[[:digit:]]\+/\15000/p' $FPM_PHP_INI
 
 # Disable user.ini
-sed -i -e '/^;user_ini.filename =$/ s/;//' $FPM_PHP_CLI
+sed -i -e '/^;user_ini.filename =$/ s/;//' $FPM_PHP_INI
 
 # Setup timezone
-sed -i -e 's/^;date\.timezone =$/date.timezone = "UTC"/' $FPM_PHP_CLI
+sed -i -e 's/^;date\.timezone =$/date.timezone = "UTC"/' $FPM_PHP_INI
 
 
 ### ---------- pool-file modifications ---------- ###
