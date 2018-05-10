@@ -52,7 +52,10 @@ apt-get -qq install etckeeper &> /dev/null
 sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
 echo ' done.'
 
-LOCAL_WPINABOX_REPO=/root/git/wp-in-a-box
+if [ -z "$LOCAL_WPINABOX_REPO" ] ; then
+    LOCAL_WPINABOX_REPO=/root/git/wp-in-a-box
+    echo "export LOCAL_WPINABOX_REPO=$LOCAL_WPINABOX_REPO" >> /root/.envrc
+fi
 
 echo -n 'Fetching wp-in-a-box repo...'
 if [ -d $LOCAL_WPINABOX_REPO ] ; then

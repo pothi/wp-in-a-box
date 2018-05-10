@@ -75,6 +75,10 @@ case "$codename" in
         ;;
 esac
 
+if ! grep -qw "$PHP_VER" /root/.envrc &> /dev/null ; then
+    echo "export PHP_VER=$PHP_VER" >> /root/.envrc
+fi
+
 FPM_PHP_CLI=/etc/php/${PHP_VER}/fpm/php.ini
 CLI_PHP_CLI=/etc/php/${PHP_VER}/cli/php.ini
 POOL_FILE=/etc/php/${PHP_VER}/fpm/pool.d/${WP_SFTP_USER}.conf
