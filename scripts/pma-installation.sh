@@ -24,7 +24,7 @@ mysql -e "CREATE DATABASE phpmyadmin" &> /dev/null
 mysql -e "GRANT ALL PRIVILEGES ON phpmyadmin.* TO $pma_db_user@localhost IDENTIFIED BY '$pma_db_pass'" &> /dev/null
 
 cd $LOCAL_WPINABOX_REPO/scripts/ &> /dev/null
-sudo -H -u $PMA_USER bash pma-user.sh
+sudo -H -u $PMA_USER bash pma-user-creation.sh
 cd - &> /dev/null
 
 mkdir ${PMA_TMP} &> /dev/null
