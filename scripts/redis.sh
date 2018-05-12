@@ -51,7 +51,7 @@ echo 'done.'
 # SESSION Handling
 echo 'Setting up PHP sessions to use redis... '
 sed -i -e '/^session.save_handler/ s/=.*/= redis/' $FPM_PHP_INI
-sed -i -e '/^;session.save_path/ s/.*/session.save_path = "127.0.0.1:6379"/' $FPM_PHP_INI
+sed -i -e '/^;session.save_path/ s/.*/session.save_path = "127.0.0.1:6379?auth='$redis_pass'"/' $FPM_PHP_INI
 
 /usr/sbin/php-fpm${PHP_VER} -t && systemctl restart php${PHP_VER}-fpm &> /dev/null
 if [ "$?" != 0 ]; then
