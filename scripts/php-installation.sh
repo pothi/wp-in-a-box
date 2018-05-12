@@ -98,7 +98,12 @@ fi
 
 if [ "$PHP_VER" = "7.2" ] ; then
     # todo: https://stackoverflow.com/questions/48275494/issue-in-installing-php7-2-mcrypt
-    echo; echo 'TODO: mycrypt installation'
+    echo
+    echo 'mycrypt is removed in PHP 7.2+.'
+    echo 'Please check if any plugins or theme still use mcrypt by running...'
+    echo 'cd ~/wproot/wp-content/'
+    echo 'find ./ -type f -name '*.php' -print | xargs grep -inr mcrypt'
+    echo
 fi
 
 apt-get install -qq ${PHP_PACKAGES} &> /dev/null
