@@ -4,7 +4,9 @@ Script/s to install WordPress in a linux box without much effort. For more detai
 
 ## Supported Platforms
 
-Debian Stretch (9.x), Ubuntu Xenial (16.04.x)
++ Debian Stretch (9.x)
++ Ubuntu Xenial Xerus (16.04.x)
++ Ubuntu Bionic Beaver (18.04.x)
 
 ## Generic Goals
 
@@ -20,20 +22,21 @@ In sync with WordPress philosophy of “[decision, not options](https://wordpres
 
 ## Security Considerations
 
-- only ports 80, 443, and port for SSH are open
-- no phoning home
-- no external dependencies (such as third-party repositories, unless there is a strong reason to use it)
-- automatic security updates (with an option to update everything)
-- disable password authentication for root
-- Nginx (possibly with Naxsi WAF when h2 issue is resolved)
-- umask 027 or 077
-- ACL integration
-- weekly logwatch (if email is supplied)
+- only ports 80, 443, and port for SSH are open.
+- no phoning home.
+- no external dependencies (such as third-party repositories, unless there is a strong reason to use it).
+- automatic security updates (with an option to update everything).
+- disable password authentication for root.
+- Nginx (possibly with Naxsi WAF when h2 issue is resolved).
+- umask 027 or 077.
+- ACL integration.
+- weekly logwatch (if email is supplied).
+- isolated user for PhpMyAdmin.
 
 ## Implementation Details
 
 - Agentless.
-- Idempotent
+- Idempotent.
 - Random username (like GoDaddy generates).
 - Automatic restart of MySQL (and Varnish) upon failure.
 - Automatic backup of site (files and DB) to AWS S3 or to GCP.
