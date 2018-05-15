@@ -2,11 +2,12 @@
 
 echo 'Installing Nginx Server...'
 
-# no longer needed; it's part of apt
-# apt-get install -y apt-key
-
+rm nginx_signing.key &> /dev/null
 curl -LSsO http://nginx.org/keys/nginx_signing.key
-apt-key add nginx_signing.key
+apt-key add nginx_signing.key &> /dev/null
+if [ "$?" -ne "0" ]; then
+    echo 'Nginx key could not be added!'
+fi
 rm nginx_signing.key
 
 DISTRO=$(gawk -F= '/^ID=/{print $2}' /etc/os-release)
@@ -14,10 +15,16 @@ CODENAME=$(lsb_release -c -s)
 
 # for updated info, please see https://nginx.org/en/linux_packages.html#stable
 NGX_BRANCH= # leave this empty to install stable version
-# or NGX_BRANCH="mainline/"
+# or NGX_BRANCH="mainline"
 
-echo "deb https://nginx.org/packages/${NGX_BRANCH}${DISTRO}/ ${CODENAME} nginx" > /etc/apt/sources.list.d/nginx.list
-echo "deb-src https://nginx.org/packages/${NGX_BRANCH}${DISTRO}/ ${CODENAME} nginx" >> /etc/apt/sources.list.d/nginx.list
+if [ "$NGX_BRANCH" == 'mainline' ]; then
+    nginx_src_url="https://nginx.org/packages/mainline/${DISTRO}/"
+else
+    nginx_src_url="https://nginx.org/packages/${DISTRO}/"
+fi
+
+echo "deb ${nginx_src_url} ${CODENAME} nginx" > /etc/apt/sources.list.d/nginx.list
+echo "deb-src ${nginx_src_url} ${CODENAME} nginx" >> /etc/apt/sources.list.d/nginx.list
 
 apt-get update -qq
 
@@ -27,8 +34,9 @@ if [ ! -d "$LT_DIRECTORY" ]; then
     cp -a /etc $LT_DIRECTORY
 fi
 
-sed -i 's/worker_processes.*/worker_processes auto;/' /etc/nginx/nginx.conf
-sed -i 's/#.\?gzip/gzip/' /etc/nginx/nginx.conf
+# no longer necessary
+# sed -i 's/worker_processes.*/worker_processes auto;/' /etc/nginx/nginx.conf
+# sed -i 's/#.\?gzip/gzip/' /etc/nginx/nginx.conf
 
 # deploy wordpress-nginx repo
 if [ -d /root/git/wordpress-nginx ] ; then
@@ -40,9 +48,14 @@ else
 fi
 
 cp -a /root/git/wordpress-nginx/* /etc/nginx/
-mkdir /etc/nginx/sites-enabled &> /dev/null
-cp /etc/nginx/nginx.conf /etc/nginx/ori-nginx.conf
 cp /etc/nginx/nginx-sample.conf /etc/nginx/nginx.conf
+mkdir /etc/nginx/sites-enabled &> /dev/null
+ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
+
+nginx -t && systemctl restart nginx &> /dev/null
+if [ $? -ne 0 ] ; then
+    echo 'Nginx: could not be restarted'
+fi
 
 # unattended-upgrades
 unattended_file=/etc/apt/apt.conf.d/50unattended-upgrades
