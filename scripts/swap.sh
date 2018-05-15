@@ -15,9 +15,8 @@ if [ "$is_swap_enabled" -eq 0 ]; then
     if [ ! -f $swap_file ]; then
         # send the output to /dev/null to reduce the noise
         fallocate -l $swap_size $swap_file &> /dev/null
-        if [ $? != 0 ]; then
+        if [ $? -ne 0 ]; then
             echo 'Could not create swap file using fllocate. Exiting!'
-            exit 1
         fi
     else
         echo 'Note: Existing swap file found!'
@@ -45,7 +44,7 @@ if [ "$is_swap_enabled" -eq 0 ]; then
     echo "Waiting for swap file to get ready..."
     sleep $sleep_time_between_tasks
     swapon -a
-    if [ $? != 0 ]; then
+    if [ $? -ne 0 ]; then
         echo 'Error enabling swap using the command "swapon -a". Exiting!'
         exit 1
     fi
