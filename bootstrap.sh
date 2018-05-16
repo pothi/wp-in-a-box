@@ -18,23 +18,26 @@ LOG_FILE=/root/log/wp-in-a-box.log
 exec > >(tee -a ${LOG_FILE} )
 exec 2> >(tee -a ${LOG_FILE} >&2)
 
+echo First things first...
+echo ---------------------
 # take a backup
 LT_DIRECTORY="/root/backups/etc-before-wp-in-a-box-$(date +%F)"
 if [ ! -d "$LT_DIRECTORY" ]; then
-    echo -n "Taking an initial backup at $LT_DIRECTORY..."
+    printf '%-72s' "Taking initial backup..."
     mkdir $LT_DIRECTORY
     cp -a /etc $LT_DIRECTORY
-    echo ' done.'
+    echo done.
 fi
 
-echo -n 'Updating apt repos...'
+printf '%-72s' "Updating apt repos..."
 export DEBIAN_FRONTEND=noninteractive
 apt-get -qq update
-echo ' done'
+echo done.
 
-echo -n Installing git...
+# git is prerequisite for etckeeper
+printf '%-72s' "Installing git..."
 apt-get -qq install git
-echo ' done.'
+echo done.
 source ~/.envrc &> /dev/null
 if [ -z "$EMAIL" ] ; then
     export EMAIL=user@example.com
@@ -46,18 +49,33 @@ if [ -z "$NAME" ] ; then
 fi
 git config --global --replace-all user.name "$NAME"
 
-echo -n Installing etckeeper...
+printf '%-72s' "Installing etckeeper..."
 # sending the output to /dev/null to reduce the noise
 apt-get -qq install etckeeper &> /dev/null
 sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
-echo ' done.'
+echo done.
+
+# install dependencies
+echo
+echo Updating the server...
+echo ----------------------
+printf '%-72s' "Running apt-get upgrade..."
+apt-get -qq upgrade &> /dev/null
+echo done.
+printf '%-72s' "Running apt-get dist-upgrade..."
+apt-get -qq dist-upgrade &> /dev/null
+echo done.
+printf '%-72s' "Running apt-get autoremove..."
+apt-get -qq autoremove &> /dev/null
+echo done.
+echo
 
 if [ -z "$LOCAL_WPINABOX_REPO" ] ; then
     LOCAL_WPINABOX_REPO=/root/git/wp-in-a-box
     echo "export LOCAL_WPINABOX_REPO=$LOCAL_WPINABOX_REPO" >> /root/.envrc
 fi
 
-echo -n 'Fetching wp-in-a-box repo...'
+printf '%-72s' "Fetching wp-in-a-box repo..."
 if [ -d $LOCAL_WPINABOX_REPO ] ; then
     cd $LOCAL_WPINABOX_REPO
     git pull -q origin master
@@ -66,33 +84,31 @@ if [ -d $LOCAL_WPINABOX_REPO ] ; then
 else
     git clone -q --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO
 fi
-echo ' done.'
+echo done.
 
 # create swap at first
 source $LOCAL_WPINABOX_REPO/scripts/swap.sh
 
-# install dependencies
-echo -n 'Running apt upgrade...'
-apt-get -qq upgrade &> /dev/null
-echo " done."
-echo -n 'Running apt dist-upgrade...'
-apt-get -qq dist-upgrade &> /dev/null
-echo " done."
-echo -n 'Running apt autoremove...'
-apt-get -qq autoremove &> /dev/null
-echo " done."
-
 source $LOCAL_WPINABOX_REPO/scripts/base-installation.sh
+echo
 source $LOCAL_WPINABOX_REPO/scripts/email-mta-installation.sh
+echo
 source $LOCAL_WPINABOX_REPO/scripts/linux-tweaks.sh
+echo
 source $LOCAL_WPINABOX_REPO/scripts/nginx-installation.sh
+echo
 source $LOCAL_WPINABOX_REPO/scripts/mysql-installation.sh
+echo
 source $LOCAL_WPINABOX_REPO/scripts/sftp-user-creation.sh
+echo
 source $LOCAL_WPINABOX_REPO/scripts/php-installation.sh
+echo
 
 # depends on mysql & php installation
 source $LOCAL_WPINABOX_REPO/scripts/pma-installation.sh
+echo
 source $LOCAL_WPINABOX_REPO/scripts/redis.sh
+echo
 
 # the following can be executed at any order as they are mostly optional
 # source $LOCAL_WPINABOX_REPO/scripts/install-firewall.sh
@@ -118,17 +134,17 @@ case "$codename" in
 esac
 
 # logout and then login to see the changes
-echo 'All done.'
+echo All done.
 
-echo '-----------------------------------'
-echo "SFTP username is $WP_SFTP_USER"
-echo "SFTP password is $WP_SFTP_PASS"
-echo '-----------------------------------'
-echo "SSH username is $SSH_USER"
-echo "SSH password is $SSH_PASS"
-echo '-----------------------------------'
+echo -----------------------------------
+echo SFTP username is $WP_SFTP_USER
+echo SFTP password is $WP_SFTP_PASS
+echo -----------------------------------
+echo SSH username is $SSH_USER
+echo SSH password is $SSH_PASS
+echo -----------------------------------
 
-echo 'Please make a note of these somewhere safe'
+echo Please make a note of these somewhere safe
 echo 'Also please test if things are okay!'
 
 echo 'You may reboot only once to apply certain updates (hint: kernel updates)!'

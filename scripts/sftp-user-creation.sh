@@ -91,8 +91,6 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
             systemctl status sshd
         else
             echo 'SSH Daemon restarted!'
-            echo 'WARNING: Try to create another SSH connection from another terminal, just incase...!'
-            echo 'Do NOT ignore this warning'
         fi
     # fi # end of sshd -t check
 

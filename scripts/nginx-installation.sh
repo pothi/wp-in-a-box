@@ -44,7 +44,7 @@ if [ -d /root/git/wordpress-nginx ] ; then
 else
     # git clone https://github.com/pothi/wordpress-nginx /root/git/wordpress-nginx
     # switch to gitlab repo
-    git clone https://gitlab.com/pothi/wordpress-nginx /root/git/wordpress-nginx
+    git clone --quiet https://gitlab.com/pothi/wordpress-nginx /root/git/wordpress-nginx
 fi
 
 cp -a /root/git/wordpress-nginx/* /etc/nginx/

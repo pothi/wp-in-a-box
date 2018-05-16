@@ -9,7 +9,8 @@ swap_size='1G'
 # only create swap if unavailable
 is_swap_enabled=$(free | grep -iw swap | awk {'print $2'}) # 0 means no swap
 if [ "$is_swap_enabled" -eq 0 ]; then
-    echo 'Swap not found. Creating and setting up Swap...'
+    echo 'Creating and setting up Swap...'
+    echo '-------------------------------------------------------------------------'
 
     # check for swap
     if [ ! -f $swap_file ]; then
@@ -68,6 +69,7 @@ if [ "$is_swap_enabled" -eq 0 ]; then
         exit 1
     fi
 
+    echo '-------------------------------------------------------------------------'
     echo 'Done setting up swap!'
 fi
 
