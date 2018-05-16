@@ -113,6 +113,7 @@ echo
 # the following can be executed at any order as they are mostly optional
 # source $LOCAL_WPINABOX_REPO/scripts/install-firewall.sh
 source $LOCAL_WPINABOX_REPO/scripts/ssh-user-creation.sh
+echo
 # source $LOCAL_WPINABOX_REPO/scripts/optional.sh
 
 # post-install steps

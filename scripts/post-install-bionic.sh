@@ -2,6 +2,8 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
+echo Bionic specific changes:
+echo ------------------------
 echo -n 'Installing certbot... '
 apt-get install -qq certbot &> /dev/null
 echo 'done.'
