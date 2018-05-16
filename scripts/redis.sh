@@ -37,8 +37,8 @@ sed -i -e 's/^#\? \?\(maxmemory\-policy\).*$/\1 '$redis_maxmemory_policy'/' $red
 sed -i -e 's/^#\? \?\(requirepass\).*$/\1 '$redis_pass'/' $redis_conf_file
 
 # create / overwrite and append our custom values in it
-printf "vm.overcommit_memory = 1\n" > $redis_sysctl_file
-printf "net.core.somaxconn = 1024\n" >> $redis_sysctl_file
+printf "vm.overcommit_memory = 1\n" > $redis_sysctl_file &> /dev/null
+printf "net.core.somaxconn = 1024\n" >> $redis_sysctl_file &> /dev/null
 
 # Load settings from the redis sysctl file
 sysctl -p $redis_sysctl_file

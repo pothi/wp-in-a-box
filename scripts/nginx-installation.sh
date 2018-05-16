@@ -40,9 +40,9 @@ fi
 
 # deploy wordpress-nginx repo
 if [ -d /root/git/wordpress-nginx ] ; then
-    cd /root/git/wordpress-nginx && git pull origin master && cd - &> /dev/null
+    cd /root/git/wordpress-nginx && git pull --quiet origin master && cd - &> /dev/null
 else
-    # git clone https://github.com/pothi/wordpress-nginx /root/git/wordpress-nginx
+    # git clone --quiet https://github.com/pothi/wordpress-nginx /root/git/wordpress-nginx
     # switch to gitlab repo
     git clone --quiet https://gitlab.com/pothi/wordpress-nginx /root/git/wordpress-nginx
 fi

@@ -209,7 +209,7 @@ ln -s /etc/php/${PHP_VER}/mods-available/custom-opcache.ini /etc/php/${PHP_VER}/
 
 echo 'Restarting PHP daemon...'
 
-/usr/sbin/php-fpm${PHP_VER} -t && systemctl restart php${PHP_VER}-fpm
+/usr/sbin/php-fpm${PHP_VER} -t &> /dev/null && systemctl restart php${PHP_VER}-fpm &> /dev/null
 if [ $? -ne 0 ]; then
     echo 'PHP-FPM failed to restart. Please check your configs!'; exit
 else
