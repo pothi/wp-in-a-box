@@ -23,7 +23,7 @@ echo -n 'Installing redis for PHP... '
 apt-get install -qq ${redis_php_package} &> /dev/null
 echo 'done.'
 
-echo -n 'Tweaking redis cache... '
+echo Tweaking redis cache...
 
 # calculate memory to use for redis
 sys_memory=$(free -m | grep -oP '\d+' | head -n 1)
@@ -37,8 +37,8 @@ sed -i -e 's/^#\? \?\(maxmemory\-policy\).*$/\1 '$redis_maxmemory_policy'/' $red
 sed -i -e 's/^#\? \?\(requirepass\).*$/\1 '$redis_pass'/' $redis_conf_file
 
 # create / overwrite and append our custom values in it
-echo 'vm.overcommit_memory = 1' > $redis_sysctl_file
-echo 'net.core.somaxconn = 1024' >> $redis_sysctl_file
+printf "vm.overcommit_memory = 1\n" > $redis_sysctl_file
+printf "net.core.somaxconn = 1024\n" >> $redis_sysctl_file
 
 # Load settings from the redis sysctl file
 sysctl -p $redis_sysctl_file
@@ -46,16 +46,16 @@ sysctl -p $redis_sysctl_file
 # restart redis
 /bin/systemctl restart redis-server
 
-echo 'done.'
+echo '... done tweaking redis cache.'
 
 # SESSION Handling
 echo 'Setting up PHP sessions to use redis... '
 sed -i -e '/^session.save_handler/ s/=.*/= redis/' $FPM_PHP_INI
 sed -i -e '/^;session.save_path/ s/.*/session.save_path = "127.0.0.1:6379?auth='$redis_pass'"/' $FPM_PHP_INI
 
-/usr/sbin/php-fpm${PHP_VER} -t && systemctl restart php${PHP_VER}-fpm &> /dev/null
+/usr/sbin/php-fpm${PHP_VER} -t &> /dev/null && systemctl restart php${PHP_VER}-fpm &> /dev/null
 if [ "$?" != 0 ]; then
     echo 'PHP-FPM failed to restart. Please check your configs!'; exit
 fi
 
-echo 'done'
+echo '... done setting up PHP sessions to use redis!'

@@ -50,7 +50,7 @@ fi
 cp -a /root/git/wordpress-nginx/* /etc/nginx/
 cp /etc/nginx/nginx-sample.conf /etc/nginx/nginx.conf
 mkdir /etc/nginx/sites-enabled &> /dev/null
-ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
+ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf &> /dev/null
 
 nginx -t && systemctl restart nginx &> /dev/null
 if [ $? -ne 0 ] ; then

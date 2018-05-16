@@ -141,8 +141,6 @@ sed -i '/PasswordAuthentication/I s/yes/no/' $SSHD_CONFIG
         systemctl status sshd
     else
         echo 'SSH Daemon restarted!'
-        echo 'WARNING: Try to create another SSH connection from another terminal, just incase...!'
-        echo 'Do NOT ignore this warning'
     fi
 # fi
 

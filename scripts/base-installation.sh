@@ -20,7 +20,6 @@ do
     DEBIAN_FRONTEND=noninteractive apt-get -qq install $package &> /dev/null
     echo done.
 done
-echo "Done installing prerequisites!"
 
 # install AWS cli
 pip_cli=$(which pip)
@@ -43,6 +42,9 @@ optional_packages="apt-file \
     # DEBIAN_FRONTEND=noninteractive apt-get install -y $package
     # echo "done."
 # done
+
+echo "Done installing prerequisites!"
+echo
 
 if [ ! -s /var/spool/cron/crontabs/root ]; then
     echo '# ┌───────────── minute (0 - 59)
