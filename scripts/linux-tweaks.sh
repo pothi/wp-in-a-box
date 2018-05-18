@@ -23,7 +23,7 @@ printf "[[ -f ~/.config/bash/common-aliases.sh ]] && source ~/.config/bash/commo
 fi
 
 #--- Common for all users ---#
-printf '%-72s' "Setting up linux tweaks..."
+echo Setting up linux tweaks...
 
 mkdir -p /etc/skel/{.aws,.composer,.config,.gsutil,.nano,.npm,.npm-global,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
 mkdir -p /etc/skel/{backups,log,scripts,sites,tmp} &> /dev/null
@@ -54,7 +54,6 @@ if [ ! -s /etc/skel/scripts/db-backup.sh ]; then
 fi
 
 if [ ! -s /etc/skel/scripts/files-backup-without-uploads.sh ]; then
-    echo -n 'Downloading files-backup-without-uploads.sh... '
     printf '%-72s' "Downloading files-backup-without-uploads.sh"
     DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/files-backup-without-uploads.sh
     wget -q -O /etc/skel/scripts/files-backup-without-uploads.sh $DB_BACKUP_URL
