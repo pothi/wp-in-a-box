@@ -9,7 +9,8 @@
 # MY_MEMCACHED_MEMORY
 # PM_METHOD
 
-echo "Setting up PHP..."
+echo Setting up PHP...
+echo -------------------------------------------------------------------------
 
 # get the variables
 source /root/.envrc
@@ -17,7 +18,8 @@ source /root/.envrc
 PM_METHOD=ondemand
 
 if [ -z "$WP_SFTP_USER" ]; then
-    echo 'SFTP User is not found. Exiting prematurely!'; exit
+    echo SFTP User is not found. Exiting now!
+    exit
 fi
 
 if [ -z "$PHP_MAX_CHILDREN" ]; then
@@ -99,9 +101,11 @@ fi
 if [ "$PHP_VER" = "7.2" ] ; then
     # todo: https://stackoverflow.com/questions/48275494/issue-in-installing-php7-2-mcrypt
     echo
-    echo 'mycrypt is removed in PHP 7.2+.'
-    echo 'Please check if any plugins or theme still use mcrypt by running...'
-    echo 'cd ~/wproot/wp-content/'
+    echo Note on mcrypt
+    echo --------------
+    echo mycrypt is removed in PHP 7.2
+    echo Please check if any plugins or theme still use mcrypt by running...
+    echo cd ~/wproot/wp-content/
     echo 'find ./ -type f -name '*.php' -print | xargs grep -inr mcrypt'
     echo
 fi
@@ -114,7 +118,7 @@ if [ ! -d "$BACKUP_PHP_DIR" ]; then
     cp -a /etc $BACKUP_PHP_DIR
 fi
 
-echo 'Setting up memory limits for PHP...'
+# echo 'Setting up memory limits for PHP...'
 
 
 ### ---------- php.ini modifications ---------- ###
@@ -141,7 +145,7 @@ sed -i -e 's/^;date\.timezone =$/date.timezone = "UTC"/' $FPM_PHP_INI
 
 mv /etc/php/${PHP_VER}/fpm/pool.d/www.conf $POOL_FILE &> /dev/null
 
-echo 'Setting up the initial PHP user...'
+# echo 'Setting up the initial PHP user...'
 
 # Change default user
 sed -i -e 's/^\[www\]$/['$WP_SFTP_USER']/' $POOL_FILE
@@ -152,7 +156,7 @@ sed -i -e 's/www-data/'$WP_SFTP_USER'/' $POOL_FILE
 sed -i -e '/^;listen.\(owner\|group\|mode\)/ s/^;//' $POOL_FILE
 sed -i -e '/^listen.mode = / s/[0-9]\{4\}/0666/' $POOL_FILE
 
-echo 'Setting up the port / socket for PHP...'
+# echo 'Setting up the port / socket for PHP...'
 
 # Setup port / socket
 # sed -i '/^listen =/ s/=.*/= 127.0.0.1:9006/' $POOL_FILE
@@ -162,7 +166,7 @@ sed -i "s:/var/lock/php-fpm:/var/lock/php-fpm-${PHP_VER}-${WP_SFTP_USER}:" /etc/
 sed -i -e 's/^pm = .*/pm = '$PM_METHOD'/' $POOL_FILE
 sed -i '/^pm.max_children/ s/=.*/= '$PHP_MAX_CHILDREN'/' $POOL_FILE
 
-echo 'Setting up the processes...'
+# echo 'Setting up the processes...'
 
 #--- for dynamic PHP workers ---#
 # PHP_MIN=$(expr $PHP_MAX_CHILDREN / 10)
@@ -202,7 +206,7 @@ sed -i '/^;process_control_timeout/ s/^;//' $FPMCONF
 sed -i '/^process_control_timeout/ s/=.*$/= 10s/' $FPMCONF
 
 # tweaking opcache
-echo Tweaking opcache...
+# echo Tweaking opcache...
 cp $LOCAL_WPINABOX_REPO/config/php/mods-available/custom-opcache.ini /etc/php/${PHP_VER}/mods-available
 ln -s /etc/php/${PHP_VER}/mods-available/custom-opcache.ini /etc/php/${PHP_VER}/fpm/conf.d/99-custom-opcache.ini &> /dev/null
 ln -s /etc/php/${PHP_VER}/mods-available/custom-opcache.ini /etc/php/${PHP_VER}/cli/conf.d/99-custom-opcache.ini &> /dev/null
@@ -213,7 +217,7 @@ echo 'Restarting PHP daemon...'
 if [ $? -ne 0 ]; then
     echo 'PHP-FPM failed to restart. Please check your configs!'; exit
 else
-    echo PHP-FPM successfully restarted.
+    echo ...PHP-FPM was successfully restarted.
 fi
 
 
@@ -245,4 +249,5 @@ if [ "$?" -ne "0" ]; then
     ( crontab -l; echo '4   4   *   *   *   /usr/local/bin/composer self-update &> /dev/null' ) | crontab -
 fi
 
-echo 'All done with PHP-FPM!'
+echo -------------------------------------------------------------------------
+echo ... all done with PHP!

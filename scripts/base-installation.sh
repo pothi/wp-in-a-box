@@ -3,6 +3,7 @@
 #--- Install pre-requisites ---#
 # landscape-common update-notifier-common \
 echo Installing prerequisites...
+echo -------------------------------------------------------------------------
 required_packages="acl \
     bash-completion \
     dnsutils \
@@ -43,7 +44,8 @@ optional_packages="apt-file \
     # echo "done."
 # done
 
-echo "Done installing prerequisites!"
+echo -------------------------------------------------------------------------
+echo ... done installing prerequisites!
 echo
 
 if [ ! -s /var/spool/cron/crontabs/root ]; then

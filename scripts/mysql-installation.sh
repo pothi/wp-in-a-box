@@ -25,5 +25,6 @@ if [ "$MYSQL_ADMIN_USER" == "" ]; then
     mysql -e "CREATE USER ${MYSQL_ADMIN_USER}@localhost IDENTIFIED BY '${MYSQL_ADMIN_PASS}';"
     mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${MYSQL_ADMIN_USER}@localhost WITH GRANT OPTION"
 fi
+echo ... done setting up MySQL user.
 
-echo "Done installing MySQL / MariaDB server!"
+echo ... done installing MySQL / MariaDB server!

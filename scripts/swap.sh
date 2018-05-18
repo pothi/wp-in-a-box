@@ -42,8 +42,9 @@ if [ $is_swap_enabled -eq 0 ]; then
     fi
 
     # enable swap
-    echo Waiting for swap file to get ready...
+    printf '%-72s' "Waiting for swap file to get ready..."
     sleep $sleep_time_between_tasks
+    echo done.
     swapon -a
     if [ $? -ne 0 ]; then
         echo Error enabling swap using the command "swapon -a". Exiting!
@@ -68,7 +69,7 @@ if [ $is_swap_enabled -eq 0 ]; then
     fi
 
     echo -------------------------------------------------------------------------
-    echo Done setting up swap!
+    echo ... done setting up swap!
 fi
 
 # TODO: Setup alert if swap is used

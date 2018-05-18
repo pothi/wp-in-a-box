@@ -24,13 +24,13 @@ echo '
             PasswordAuthentication yes
 ' >> $SSHD_CONFIG
 
-echo 'Restarting SSH Daemon...'
+echo 'Restarting SSH daemon...'
 systemctl restart sshd &> /dev/null
 if [ $? -ne 0 ]; then
     echo 'Something went wrong while creating SFTP user! See below...'; echo; echo;
     systemctl status sshd
 else
-    echo 'SSH Daemon restarted!'
+    echo ... SSH Daemon restarted!
 fi
 
 if [ ! -d "/home/${SSH_USER}" ]; then
@@ -43,10 +43,10 @@ if [ ! -d "/home/${SSH_USER}" ]; then
 
     echo "$SSH_USER:$SSH_PASS" | chpasswd
 
-    gpasswd -a $SSH_USER ssh_users
+    gpasswd -a $SSH_USER ssh_users &> /dev/null
 else
     echo "Note: The default directory /home/${SSH_USER} already exists!"
     echo "Note: The user '${SSH_USER}' already exists"
 fi
 
-echo "Done setting up SSH user!"
+echo ...done setting up SSH user!

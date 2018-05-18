@@ -23,7 +23,7 @@ printf "[[ -f ~/.config/bash/common-aliases.sh ]] && source ~/.config/bash/commo
 fi
 
 #--- Common for all users ---#
-echo 'Setting up skel...'
+printf '%-72s' "Setting up linux tweaks..."
 
 mkdir -p /etc/skel/{.aws,.composer,.config,.gsutil,.nano,.npm,.npm-global,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
 mkdir -p /etc/skel/{backups,log,scripts,sites,tmp} &> /dev/null
@@ -40,24 +40,25 @@ cp $LOCAL_WPINABOX_REPO/config/common-exports.sh /etc/skel/.config/bash/
 
 # download scripts to backup wordpress
 if [ ! -s /etc/skel/scripts/full-backup.sh ]; then
-    echo -n 'Downloading full-backup.sh... '
+    printf '%-72s' "Downloading full-backup.sh"
     DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/full-backup.sh
     wget -q -O /etc/skel/scripts/full-backup.sh $DB_BACKUP_URL
-    echo "done."
+    echo done.
 fi
 
 if [ ! -s /etc/skel/scripts/db-backup.sh ]; then
-    echo -n 'Downloading db-backup.sh... '
+    printf '%-72s' "Downloading db-backup.sh"
     DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/db-backup.sh
     wget -q -O /etc/skel/scripts/db-backup.sh $DB_BACKUP_URL
-    echo "done."
+    echo done.
 fi
 
 if [ ! -s /etc/skel/scripts/files-backup-without-uploads.sh ]; then
     echo -n 'Downloading files-backup-without-uploads.sh... '
+    printf '%-72s' "Downloading files-backup-without-uploads.sh"
     DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/files-backup-without-uploads.sh
     wget -q -O /etc/skel/scripts/files-backup-without-uploads.sh $DB_BACKUP_URL
-    echo "done."
+    echo done.
 fi
 
 # make scripts executable to all
@@ -134,13 +135,13 @@ sed -i '/PasswordAuthentication/I s/yes/no/' $SSHD_CONFIG
     # exit 1
 # else
     # echo 'Cool. Things seem fine.'
-    echo 'Restarting SSH Daemon...'
+    printf '%-72s' "Restarting SSH daemon..."
     systemctl restart sshd &> /dev/null
-    if [ "$?" != 0 ]; then
+    if [ $? -ne 0 ]; then
         echo 'Something went wrong while creating SFTP user! See below...'; echo; echo;
         systemctl status sshd
     else
-        echo 'SSH Daemon restarted!'
+        echo '... SSH daemon restarted!'
     fi
 # fi
 
@@ -149,18 +150,18 @@ sed -i '/PasswordAuthentication/I s/yes/no/' $SSHD_CONFIG
 if [ -f /etc/cron.daily/00logwatch ]; then
     mv /etc/cron.daily/00logwatch /etc/cron.weekly/00logwatch &> /dev/null
     if [ $? != 0 ]; then
-        echo 'Error tweaking logwatch'
+        echo 'Error moving logwatch'
     fi
 
     LOGWATCH_CONF=/etc/logwatch/conf/logwatch.conf
     touch $LOGWATCH_CONF
     echo 'Range = "between -7 days and -1 days"' >> $LOGWATCH_CONF
     echo 'Details = High' >> $LOGWATCH_CONF
-    if [ "$EMAIL" != '' ]; then
+    if [ ! -z "$EMAIL" ]; then
         echo "mailto = $EMAIL" >> $LOGWATCH_CONF
     fi
 
-    if [ "$WP_DOMAIN" != '' ]; then
+    if [ ! -z "$WP_DOMAIN" ]; then
         echo "MailFrom = logwatch@$WP_DOMAIN" >> $LOGWATCH_CONF
         echo "Subject = 'Weekly log from $WP_DOMAIN server'" >> $LOGWATCH_CONF
     fi
@@ -198,4 +199,4 @@ if ! $(grep -q "^${comment}$" "$rootbashrc") ; then
 fi # test if the comment is found in file
 fi # test if file exists
 
-echo 'Linux tweaks are done.'
+echo ... linux tweaks are done.

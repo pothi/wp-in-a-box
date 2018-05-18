@@ -52,7 +52,7 @@ cp /etc/nginx/nginx-sample.conf /etc/nginx/nginx.conf
 mkdir /etc/nginx/sites-enabled &> /dev/null
 ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf &> /dev/null
 
-nginx -t && systemctl restart nginx &> /dev/null
+nginx -t &> /dev/null && systemctl restart nginx &> /dev/null
 if [ $? -ne 0 ] ; then
     echo 'Nginx: could not be restarted'
 fi
@@ -81,4 +81,4 @@ case "$codename" in
         ;;
 esac
 
-echo "Done setting up Nginx!"
+echo ... done setting up Nginx!

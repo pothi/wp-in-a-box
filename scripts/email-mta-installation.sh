@@ -42,5 +42,5 @@ postconf -e 'smtpd_tls_CApath = /etc/ssl/certs'
 if [ "$?" -ne 0 ]; then
     echo "Warning: Something went wrong while restarting MTA ($mta). Continuing..."
 else
-    echo "... done setting up MTA ({$mta})!"
+    echo "... done setting up MTA (${mta})!"
 fi

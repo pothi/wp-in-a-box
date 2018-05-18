@@ -27,7 +27,7 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
     groupadd ${BASE_NAME}
 
     # "web" is meant for SFTP only user/s
-    gpasswd -a $WP_SFTP_USER ${BASE_NAME}
+    gpasswd -a $WP_SFTP_USER ${BASE_NAME} &> /dev/null
 
     chown root:root /home/${BASE_NAME}
     chmod 755 /home/${BASE_NAME}
@@ -84,13 +84,13 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
         # exit 1
     # else
         # echo 'Cool. Things seem fine.'
-        echo 'Restarting SSH Daemon...'
+        echo 'Restarting SSH daemon...'
         systemctl restart sshd &> /dev/null
         if [ "$?" != 0 ]; then
             echo 'Something went wrong while creating SFTP user! See below...'; echo; echo;
             systemctl status sshd
         else
-            echo 'SSH Daemon restarted!'
+            echo ...SSH daemon restarted!
         fi
     # fi # end of sshd -t check
 
@@ -102,4 +102,4 @@ else
     # exit 1
 fi # end of if ! -d "/home/${BASE_NAME}" - whoops
 
-echo "Done setting up SFTP user!"
+echo ...done setting up SFTP user!

@@ -88,7 +88,7 @@ echo done.
 
 # create swap at first
 source $LOCAL_WPINABOX_REPO/scripts/swap.sh
-
+echo
 source $LOCAL_WPINABOX_REPO/scripts/base-installation.sh
 echo
 source $LOCAL_WPINABOX_REPO/scripts/email-mta-installation.sh
