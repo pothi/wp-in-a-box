@@ -13,6 +13,7 @@ required_packages="acl \
     python-pip \
     pwgen \
     fail2ban \
+    python-setuptools \
     bc"
 
 for package in $required_packages
