@@ -82,6 +82,10 @@ if ! grep -qw "$PHP_VER" /root/.envrc &> /dev/null ; then
 fi
 
 FPM_PHP_INI=/etc/php/${PHP_VER}/fpm/php.ini
+if ! grep -qw "$FPM_PHP_INI" /root/.envrc &> /dev/null ; then
+    echo "export FPM_PHP_INI=$FPM_PHP_INI" >> /root/.envrc
+fi
+
 CLI_PHP_INI=/etc/php/${PHP_VER}/cli/php.ini
 POOL_FILE=/etc/php/${PHP_VER}/fpm/pool.d/${WP_SFTP_USER}.conf
 
