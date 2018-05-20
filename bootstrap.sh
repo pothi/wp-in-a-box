@@ -75,16 +75,16 @@ if [ -z "$LOCAL_WPINABOX_REPO" ] ; then
     echo "export LOCAL_WPINABOX_REPO=$LOCAL_WPINABOX_REPO" >> /root/.envrc
 fi
 
-printf '%-72s' "Fetching wp-in-a-box repo..."
+printf '%-72s' "Fetching wp-in-a-box repo ..."
 if [ -d $LOCAL_WPINABOX_REPO ] ; then
     cd $LOCAL_WPINABOX_REPO
-    git pull -q origin master
-    git pull -q --recurse-submodules
+    git pull -q origin master &> /dev/null
+    git pull -q --recurse-submodules &> /dev/null
     cd - &> /dev/null
 else
-    git clone -q --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO
+    git clone -q --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO &> /dev/null
 fi
-echo done.
+echo ... done fetching wp-in-a-box repo.
 
 # create swap at first
 source $LOCAL_WPINABOX_REPO/scripts/swap.sh
