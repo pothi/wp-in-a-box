@@ -34,7 +34,8 @@ optional_packages="apt-file \
     vim-scripts \
     nodejs npm \
     direnv \
-    duplicity"
+    duplicity \
+    molly-guard"
 
 # TODO - ask user consent
 # for package in $optional_packages
