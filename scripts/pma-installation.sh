@@ -5,7 +5,7 @@ export PMA_HOME=/var/www/pma
 export PMA_ENV=${PMA_HOME}/.envrc
 export PMA_TMP=${PMA_HOME}/phpmyadmin/tmp
 
-mkdir -p /var/www &> /dev/null
+[ ! -d /var/www ] && mkdir -p /var/www
 
 useradd --home-dir $PMA_HOME -m $PMA_USER &> /dev/null
 chown ${PMA_USER} $PMA_HOME
@@ -23,9 +23,9 @@ fi
 mysql -e "CREATE DATABASE phpmyadmin" &> /dev/null
 mysql -e "GRANT ALL PRIVILEGES ON phpmyadmin.* TO $pma_db_user@localhost IDENTIFIED BY '$pma_db_pass'" &> /dev/null
 
-cd $LOCAL_WPINABOX_REPO/scripts/ &> /dev/null
+cd $local_wp_in_a_box_repo/scripts/ &> /dev/null
 sudo -H -u $PMA_USER bash pma-user-creation.sh
 cd - &> /dev/null
 
-mkdir ${PMA_TMP} &> /dev/null
+[ ! -d ${PMA_TMP} ] && mkdir ${PMA_TMP}
 chown ${WP_SFTP_USER}:${WP_SFTP_USER} ${PMA_TMP}

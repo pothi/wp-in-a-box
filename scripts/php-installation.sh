@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# TODO
-# - Setup error log inside the user's home / log directory
+export DEBIAN_FRONTEND=noninteractive
 
 # Variable/s
 # WP_SFTP_USER=
@@ -54,22 +53,18 @@ if [ -z "$PHP_MEM_LIMIT" ]; then
     PHP_MEM_LIMIT=256
 fi
 
-# LOG_FILE="/root/log/php-install.log"
-# exec > >(tee -a ${LOG_FILE} )
-# exec 2> >(tee -a ${LOG_FILE} >&2)
-
-# php${PHP_VER}-mysqlnd package is not found in Ubuntu
+# php${php_version}-mysqlnd package is not found in Ubuntu
 
 codename=`lsb_release -c -s`
 case "$codename" in
     "bionic")
-        PHP_VER=7.2
+        php_version=7.2
         ;;
     "stretch")
-        PHP_VER=7.0
+        php_version=7.0
         ;;
     "xenial")
-        PHP_VER=7.0
+        php_version=7.0
         ;;
     *)
         echo 'Error: Could not figure out the distribution codename to install PHP. Exiting now!'
@@ -77,32 +72,32 @@ case "$codename" in
         ;;
 esac
 
-if ! grep -qw "$PHP_VER" /root/.envrc &> /dev/null ; then
-    echo "export PHP_VER=$PHP_VER" >> /root/.envrc
+if ! grep -qw "$php_version" /root/.envrc &> /dev/null ; then
+    echo "export php_version=$php_version" >> /root/.envrc
 fi
 
-FPM_PHP_INI=/etc/php/${PHP_VER}/fpm/php.ini
+FPM_PHP_INI=/etc/php/${php_version}/fpm/php.ini
 if ! grep -qw "$FPM_PHP_INI" /root/.envrc &> /dev/null ; then
     echo "export FPM_PHP_INI=$FPM_PHP_INI" >> /root/.envrc
 fi
 
-CLI_PHP_INI=/etc/php/${PHP_VER}/cli/php.ini
-POOL_FILE=/etc/php/${PHP_VER}/fpm/pool.d/${WP_SFTP_USER}.conf
+CLI_PHP_INI=/etc/php/${php_version}/cli/php.ini
+POOL_FILE=/etc/php/${php_version}/fpm/pool.d/${WP_SFTP_USER}.conf
 
 
 ### Please do not edit below this line ###
 
-PHP_PACKAGES="php${PHP_VER}-fpm php${PHP_VER}-mysql php${PHP_VER}-gd php${PHP_VER}-cli php${PHP_VER}-xml php${PHP_VER}-mbstring php${PHP_VER}-soap php-curl"
+PHP_PACKAGES="php${php_version}-fpm php${php_version}-mysql php${php_version}-gd php${php_version}-cli php${php_version}-xml php${php_version}-mbstring php${php_version}-soap php-curl"
 
-if [ "$PHP_VER" = "7.0" ] ; then
-    PHP_PACKAGES="$PHP_PACKAGES php${PHP_VER}-mcrypt"
+if [ "$php_version" = "7.0" ] ; then
+    PHP_PACKAGES="$PHP_PACKAGES php${php_version}-mcrypt"
 fi
 
-if [ "$PHP_VER" = "7.1" ] ; then
-    PHP_PACKAGES="$PHP_PACKAGES php${PHP_VER}-mcrypt"
+if [ "$php_version" = "7.1" ] ; then
+    PHP_PACKAGES="$PHP_PACKAGES php${php_version}-mcrypt"
 fi
 
-if [ "$PHP_VER" = "7.2" ] ; then
+if [ "$php_version" = "7.2" ] ; then
     # todo: https://stackoverflow.com/questions/48275494/issue-in-installing-php7-2-mcrypt
     echo
     echo Note on mcrypt
@@ -147,7 +142,7 @@ sed -i -e 's/^;date\.timezone =$/date.timezone = "UTC"/' $FPM_PHP_INI
 ### ---------- pool-file modifications ---------- ###
 
 
-mv /etc/php/${PHP_VER}/fpm/pool.d/www.conf $POOL_FILE &> /dev/null
+mv /etc/php/${php_version}/fpm/pool.d/www.conf $POOL_FILE &> /dev/null
 
 # echo 'Setting up the initial PHP user...'
 
@@ -164,8 +159,8 @@ sed -i -e '/^listen.mode = / s/[0-9]\{4\}/0666/' $POOL_FILE
 
 # Setup port / socket
 # sed -i '/^listen =/ s/=.*/= 127.0.0.1:9006/' $POOL_FILE
-sed -i "/^listen =/ s:=.*:= /var/lock/php-fpm-${PHP_VER}-${WP_SFTP_USER}:" $POOL_FILE
-sed -i "s:/var/lock/php-fpm:/var/lock/php-fpm-${PHP_VER}-${WP_SFTP_USER}:" /etc/nginx/conf.d/lb.conf
+sed -i "/^listen =/ s:=.*:= /var/lock/php-fpm-${php_version}-${WP_SFTP_USER}:" $POOL_FILE
+sed -i "s:/var/lock/php-fpm:/var/lock/php-fpm-${php_version}-${WP_SFTP_USER}:" /etc/nginx/conf.d/lb.conf
 
 sed -i -e 's/^pm = .*/pm = '$PM_METHOD'/' $POOL_FILE
 sed -i '/^pm.max_children/ s/=.*/= '$PHP_MAX_CHILDREN'/' $POOL_FILE
@@ -201,7 +196,7 @@ sed -i '/^;request_slowlog_timeout/ s/^;//' $POOL_FILE
 sed -i '/^request_slowlog_timeout/ s/= .*$/= 60/' $POOL_FILE
 
 # automatic restart upon random failure - directly from http://tweaked.io/guide/nginx/
-FPMCONF="/etc/php/${PHP_VER}/fpm/php-fpm.conf"
+FPMCONF="/etc/php/${php_version}/fpm/php-fpm.conf"
 sed -i '/^;emergency_restart_threshold/ s/^;//' $FPMCONF
 sed -i '/^emergency_restart_threshold/ s/=.*$/= '$PHP_MIN'/' $FPMCONF
 sed -i '/^;emergency_restart_interval/ s/^;//' $FPMCONF
@@ -211,13 +206,13 @@ sed -i '/^process_control_timeout/ s/=.*$/= 10s/' $FPMCONF
 
 # tweaking opcache
 # echo Tweaking opcache...
-cp $LOCAL_WPINABOX_REPO/config/php/mods-available/custom-opcache.ini /etc/php/${PHP_VER}/mods-available
-ln -s /etc/php/${PHP_VER}/mods-available/custom-opcache.ini /etc/php/${PHP_VER}/fpm/conf.d/99-custom-opcache.ini &> /dev/null
-ln -s /etc/php/${PHP_VER}/mods-available/custom-opcache.ini /etc/php/${PHP_VER}/cli/conf.d/99-custom-opcache.ini &> /dev/null
+cp $local_wp_in_a_box_repo/config/php/mods-available/custom-opcache.ini /etc/php/${php_version}/mods-available
+ln -s /etc/php/${php_version}/mods-available/custom-opcache.ini /etc/php/${php_version}/fpm/conf.d/99-custom-opcache.ini &> /dev/null
+ln -s /etc/php/${php_version}/mods-available/custom-opcache.ini /etc/php/${php_version}/cli/conf.d/99-custom-opcache.ini &> /dev/null
 
 echo 'Restarting PHP daemon...'
 
-/usr/sbin/php-fpm${PHP_VER} -t &> /dev/null && systemctl restart php${PHP_VER}-fpm &> /dev/null
+/usr/sbin/php-fpm${php_version} -t &> /dev/null && systemctl restart php${php_version}-fpm &> /dev/null
 if [ $? -ne 0 ]; then
     echo 'PHP-FPM failed to restart. Please check your configs!'; exit
 else
@@ -229,11 +224,9 @@ fi
 
 # restart php upon OOM or other failures
 # ref: https://stackoverflow.com/a/45107512/1004587
-sed -i '/^\[Service\]/!b;:a;n;/./ba;iRestart=on-failure' /lib/systemd/system/php${PHP_VER}-fpm.service
+sed -i '/^\[Service\]/!b;:a;n;/./ba;iRestart=on-failure' /lib/systemd/system/php${php_version}-fpm.service
 systemctl daemon-reload
-if [ "$?" != 0 ]; then
-    echo "Could not update /lib/systemd/system/php${PHP_VER}-fpm.service file!"
-fi
+check_result $? "Could not update /lib/systemd/system/php${php_version}-fpm.service file!"
 
 echo 'Installing Composer for PHP...'
 EXPECTED_SIGNATURE=$(wget -q -O - https://composer.github.io/installer.sig)

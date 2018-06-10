@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export DEBIAN_FRONTEND=noninteractive
+
 echo 'Install optional packages. It may take some time to complete...'
 optional_packages="acl \
     postfix \
@@ -7,7 +9,6 @@ optional_packages="acl \
     mailutils \
     redis-server \
     letsencrypt \
-    pwgen \
     gawk \
     apt-transport-https \
     apache2-utils \
@@ -20,9 +21,9 @@ optional_packages="acl \
 
 for package in $optional_packages
 do  
-    echo -n "Installing ${package}..."
-    DEBIAN_FRONTEND=noninteractive apt-get -qq install $package
-    echo " done."
+    printf '%-72s' "Installing ${package}..."
+    apt-get -qq install $package
+    echo done.
 done
-echo "Done installing optional packages."
+echo "... done installing optional packages."
 

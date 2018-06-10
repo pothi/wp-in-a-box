@@ -42,6 +42,7 @@ if [ ! -d "/home/${SSH_USER}" ]; then
     SSH_PASS=$(pwgen -cns 12 1)
 
     echo "$SSH_USER:$SSH_PASS" | chpasswd
+    echo "export SSH_PASS=$SSH_PASS" >> /root/.envrc
 
     gpasswd -a $SSH_USER ssh_users &> /dev/null
 else

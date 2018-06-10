@@ -8,7 +8,6 @@ fi
 
 source /root/.envrc
 
-
 echo 'Setting up SFTP user...'
 
 if [ "$WP_SFTP_USER" == "" ]; then
@@ -79,7 +78,7 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
     # if [ "$?" != 0 ]; then
         # echo 'Something is messed up in the SSH config file'
         # echo 'Please re-run after fixing errors'
-        # echo "See the logfile ${LOG_FILE} for details of the error"
+        # echo "See the logfile ${log_file} for details of the error"
         # echo 'Exiting pre-maturely'
         # exit 1
     # else
@@ -95,6 +94,7 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
     # fi # end of sshd -t check
 
     WP_SFTP_PASS=$(pwgen -cns 12 1)
+    echo "export WP_SFTP_PASS=$WP_SFTP_PASS" >> /root/.envrc
 
     echo "$WP_SFTP_USER:$WP_SFTP_PASS" | chpasswd
 else

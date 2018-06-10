@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export DEBIAN_FRONTEND=noninteractive
+
 echo "Setting up memcached..."
 
 if [ "$MEMCACHED_MEM_LIMIT" == "" ]; then
@@ -41,4 +43,4 @@ if [ "$?" != 0 ]; then
     echo 'PHP-FPM failed to restart after integrating memcached. Please check your configs!'
 fi
 
-echo "Done setting up memcached!"
+echo "... done setting up memcached!"

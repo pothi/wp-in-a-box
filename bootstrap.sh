@@ -14,18 +14,29 @@
 
 # create some useful directories - create them on demand
 mkdir -p /root/{backups,git,log,scripts} &> /dev/null
-LOG_FILE=/root/log/wp-in-a-box.log
-exec > >(tee -a ${LOG_FILE} )
-exec 2> >(tee -a ${LOG_FILE} >&2)
+
+# logging everything
+log_file=/root/log/wp-in-a-box.log
+exec > >(tee -a ${log_file} )
+exec 2> >(tee -a ${log_file} >&2)
+
+# Defining return code check function
+check_result() {
+    if [ $1 -ne 0 ]; then
+        echo "Error: $2"
+        exit $1
+    fi
+}
 
 echo First things first...
 echo ---------------------
+
 # take a backup
-LT_DIRECTORY="/root/backups/etc-before-wp-in-a-box-$(date +%F)"
-if [ ! -d "$LT_DIRECTORY" ]; then
+backup_dir="/root/backups/etc-before-wp-in-a-box-$(date +%F)"
+if [ ! -d "$backup_dir" ]; then
     printf '%-72s' "Taking initial backup..."
-    mkdir $LT_DIRECTORY
-    cp -a /etc $LT_DIRECTORY
+    mkdir $backup_dir
+    cp -a /etc $backup_dir
     echo done.
 fi
 
@@ -70,63 +81,63 @@ apt-get -qq autoremove &> /dev/null
 echo done.
 echo
 
-if [ -z "$LOCAL_WPINABOX_REPO" ] ; then
-    LOCAL_WPINABOX_REPO=/root/git/wp-in-a-box
-    echo "export LOCAL_WPINABOX_REPO=$LOCAL_WPINABOX_REPO" >> /root/.envrc
+if [ -z "$local_wp_in_a_box_repo" ] ; then
+    local_wp_in_a_box_repo=/root/git/wp-in-a-box
+    echo "export local_wp_in_a_box_repo=$local_wp_in_a_box_repo" >> /root/.envrc
 fi
 
 printf '%-72s' "Fetching wp-in-a-box repo ..."
-if [ -d $LOCAL_WPINABOX_REPO ] ; then
-    cd $LOCAL_WPINABOX_REPO
+if [ -d $local_wp_in_a_box_repo ] ; then
+    cd $local_wp_in_a_box_repo
     git pull -q origin master &> /dev/null
     git pull -q --recurse-submodules &> /dev/null
     cd - &> /dev/null
 else
-    git clone -q --recursive https://github.com/pothi/wp-in-a-box $LOCAL_WPINABOX_REPO &> /dev/null
+    git clone -q --recursive https://github.com/pothi/wp-in-a-box $local_wp_in_a_box_repo &> /dev/null
 fi
 echo ... done fetching wp-in-a-box repo.
 
 # create swap at first
-source $LOCAL_WPINABOX_REPO/scripts/swap.sh
+source $local_wp_in_a_box_repo/scripts/swap.sh
 echo
-source $LOCAL_WPINABOX_REPO/scripts/base-installation.sh
+source $local_wp_in_a_box_repo/scripts/base-installation.sh
 echo
-source $LOCAL_WPINABOX_REPO/scripts/email-mta-installation.sh
+source $local_wp_in_a_box_repo/scripts/email-mta-installation.sh
 echo
-source $LOCAL_WPINABOX_REPO/scripts/linux-tweaks.sh
+source $local_wp_in_a_box_repo/scripts/linux-tweaks.sh
 echo
-source $LOCAL_WPINABOX_REPO/scripts/nginx-installation.sh
+source $local_wp_in_a_box_repo/scripts/nginx-installation.sh
 echo
-source $LOCAL_WPINABOX_REPO/scripts/mysql-installation.sh
+source $local_wp_in_a_box_repo/scripts/mysql-installation.sh
 echo
-source $LOCAL_WPINABOX_REPO/scripts/sftp-user-creation.sh
+source $local_wp_in_a_box_repo/scripts/sftp-user-creation.sh
 echo
-source $LOCAL_WPINABOX_REPO/scripts/php-installation.sh
+source $local_wp_in_a_box_repo/scripts/php-installation.sh
 echo
 
 # depends on mysql & php installation
-source $LOCAL_WPINABOX_REPO/scripts/pma-installation.sh
+source $local_wp_in_a_box_repo/scripts/pma-installation.sh
 echo
-source $LOCAL_WPINABOX_REPO/scripts/redis.sh
+source $local_wp_in_a_box_repo/scripts/redis.sh
 echo
 
 # the following can be executed at any order as they are mostly optional
-# source $LOCAL_WPINABOX_REPO/scripts/install-firewall.sh
-source $LOCAL_WPINABOX_REPO/scripts/ssh-user-creation.sh
+# source $local_wp_in_a_box_repo/scripts/install-firewall.sh
+source $local_wp_in_a_box_repo/scripts/ssh-user-creation.sh
 echo
-# source $LOCAL_WPINABOX_REPO/scripts/optional.sh
+# source $local_wp_in_a_box_repo/scripts/optional.sh
 
 # post-install steps
 codename=`lsb_release -c -s`
 case "$codename" in
     "bionic")
-        source $LOCAL_WPINABOX_REPO/scripts/post-install-bionic.sh
+        source $local_wp_in_a_box_repo/scripts/post-install-bionic.sh
         ;;
     "stretch")
-        source $LOCAL_WPINABOX_REPO/scripts/post-install-stretch.sh
+        source $local_wp_in_a_box_repo/scripts/post-install-stretch.sh
         ;;
     "xenial")
-        source $LOCAL_WPINABOX_REPO/scripts/post-install-xenial.sh
+        source $local_wp_in_a_box_repo/scripts/post-install-xenial.sh
         ;;
     *)
         echo "Distro: $codename"
@@ -137,16 +148,9 @@ esac
 # logout and then login to see the changes
 echo All done.
 
-echo -----------------------------------
-echo SFTP username is $WP_SFTP_USER
-echo SFTP password is $WP_SFTP_PASS
-echo -----------------------------------
-echo SSH username is $SSH_USER
-echo SSH password is $SSH_PASS
-echo -----------------------------------
+echo -------------------------------------------------------------------------
+echo You may find the login credentials of SFTP/SSH user in /root/.envrc file.
+echo -------------------------------------------------------------------------
 
-echo Please make a note of these somewhere safe
-echo 'Also please test if things are okay!'
-
-echo 'You may reboot only once to apply certain updates (hint: kernel updates)!'
+echo 'You may reboot only once to apply certain updates (ex: kernel updates)!'
 echo

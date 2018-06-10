@@ -1,15 +1,17 @@
 #!/bin/bash
 
+export DEBIAN_FRONTEND=noninteractive
+
 echo 'Installing MySQL / MariaDB Server'
 # lets check if mariadb-server exists
-SQL_SERVER=mariadb-server
-if ! apt-cache show mariadb-server &> /dev/null ; then SQL_SERVER=mysql-server ; fi
+sql_server=mariadb-server
+if ! apt-cache show mariadb-server &> /dev/null ; then sql_server=mysql-server ; fi
 
-DEBIAN_FRONTEND=noninteractive apt-get install ${SQL_SERVER} -qq &> /dev/null
+apt-get install ${sql_server} -qq &> /dev/null
 
 systemctl stop mysql
 # enable slow log and other tweaks
-cp $LOCAL_WPINABOX_REPO/config/mariadb.conf.d/*.cnf /etc/mysql/mariadb.conf.d/
+cp $local_wp_in_a_box_repo/config/mariadb.conf.d/*.cnf /etc/mysql/mariadb.conf.d/
 systemctl start mysql
 
 source /root/.envrc

@@ -1,12 +1,12 @@
 # WP In A Box
 
-Script/s to install WordPress in a linux box without much effort. For more details, please see the blog post at [https://www.tinywp.in/wp-in-a-box/](https://www.tinywp.in/wp-in-a-box/).
+Script/s to install LEMP in a linux box without much effort. This LEMP stack is fine-tuned towards WordPress installations. It may not work for other PHP based applications. For more details, please see the blog post at [https://www.tinywp.in/wp-in-a-box/](https://www.tinywp.in/wp-in-a-box/).
 
 ## Supported Platforms
 
++ Ubuntu Bionic Beaver (18.04.x)
 + Debian Stretch (9.x)
 + Ubuntu Xenial Xerus (16.04.x)
-+ Ubuntu Bionic Beaver (18.04.x)
 
 ## Generic Goals
 
@@ -22,16 +22,16 @@ In sync with WordPress philosophy of “[decision, not options](https://wordpres
 
 ## Security Considerations
 
-- only ports 80, 443, and port for SSH are open.
-- no phoning home.
-- no external dependencies (such as third-party repositories, unless there is a strong reason to use it).
-- automatic security updates (with an option to update everything).
-- disable password authentication for root.
+- Only ports 80, 443, and port for SSH are open.
+- No phoning home.
+- No external dependencies (such as third-party repositories, unless there is a strong reason to use it).
+- Automatic security updates (with an option to update everything).
+- Disable password authentication for root.
 - Nginx (possibly with Naxsi WAF when h2 issue is resolved).
-- umask 027 or 077.
+- Umask 027 or 077.
 - ACL integration.
-- weekly logwatch (if email is supplied).
-- isolated user for PhpMyAdmin.
+- Weekly logwatch (if email is supplied).
+- Isolated user for PhpMyAdmin.
 
 ## Implementation Details
 
@@ -39,17 +39,17 @@ In sync with WordPress philosophy of “[decision, not options](https://wordpres
 - Idempotent.
 - Random username (like GoDaddy generates).
 - Automatic restart of MySQL (and Varnish) upon failure.
-- Automatic backup of site (files and DB) to AWS S3 or to GCP.
 - Integrated wp-cli.
 - Support for version control (git, hg).
 - Composer pre-installed.
-- Auto-update of almost everything (wp-cli, composer, certbot certs, wp minor versions, plugins, etc).
+- Auto-update of almost everything (wp-cli, composer, certbot certs, etc).
 
 ## Roadmap
 
-- automatic Certbot / LetsEncrypt installation and renewal (like Caddy).
-- automated setup of sites using backups.
-- web interface (planned, but no ETA).
+- Automatic Certbot / LetsEncrypt installation and renewal (like Caddy).
+- Automated setup of sites using backups.
+- Web interface (planned, but no ETA).
+- Automatic backup of site/s (files and DB) to AWS S3 or to GCP.
 
 ## Install procedure
 
@@ -69,11 +69,14 @@ apt install curl screen -y
 # download the bootstrap script
 curl -LO https://github.com/pothi/wp-in-a-box/raw/master/bootstrap.sh
 
-# please go through *any* script before executing it!
+# please do not trust any script on the internet or github
+# so, please go through it!
 nano ~/bootstrap.sh
 
 # execute it and wait for some time
-screen bash bootstrap.sh
+# screen bash bootstrap.sh
+# or simply
+bash bootstrap.sh
 
 rm bootstrap.sh
 
