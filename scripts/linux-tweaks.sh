@@ -28,7 +28,7 @@ fi
 #--- Common for all users ---#
 echo Setting up linux tweaks...
 
-mkdir -p /etc/skel/{.aws,.composer,.config,.gsutil,.nano,.npm,.npm-global,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
+mkdir -p /etc/skel/{.aws,.cache,.composer,.config,.gsutil,.nano,.npm,.npm-global,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
 mkdir -p /etc/skel/{backups,log,scripts,sites,tmp} &> /dev/null
 mkdir -p /etc/skel/backups/{files,databases} &> /dev/null
 mkdir -p /etc/skel/.config/bash &> /dev/null
