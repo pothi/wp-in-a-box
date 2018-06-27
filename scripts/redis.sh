@@ -7,7 +7,7 @@ redis_maxmemory_policy='allkeys-lru'
 redis_conf_file='/etc/redis/redis.conf'
 redis_sysctl_file='/etc/sysctl.d/60-redis-local.conf'
 redis_pass=$(pwgen -cns 20 1)
-# PHP_VER from php-installation.php
+# php_version from php-installation.php
 
 echo -n 'Installing redis... '
 apt-get install -qq redis &> /dev/null
@@ -16,7 +16,7 @@ echo 'done.'
 if apt-cache show php-redis &> /dev/null ; then
     redis_php_package=php-redis
 else
-    redis_php_package="php${PHP_VER}-redis"
+    redis_php_package="php${php_version}-redis"
 fi
 
 echo -n 'Installing redis for PHP... '
@@ -53,7 +53,7 @@ echo 'Setting up PHP sessions to use redis... '
 sed -i -e '/^session.save_handler/ s/=.*/= redis/' $FPM_PHP_INI
 sed -i -e '/^;session.save_path/ s/.*/session.save_path = "tcp:\/\/127.0.0.1:6379?auth='$redis_pass'"/' $FPM_PHP_INI
 
-/usr/sbin/php-fpm${PHP_VER} -t &> /dev/null && systemctl restart php${PHP_VER}-fpm &> /dev/null
+/usr/sbin/php-fpm${php_version} -t &> /dev/null && systemctl restart php${php_version}-fpm &> /dev/null
 if [ "$?" != 0 ]; then
     echo 'PHP-FPM failed to restart. Please check your configs!'; exit
 fi
