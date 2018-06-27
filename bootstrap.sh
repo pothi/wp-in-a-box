@@ -86,7 +86,7 @@ if [ -z "$local_wp_in_a_box_repo" ] ; then
     echo "export local_wp_in_a_box_repo=$local_wp_in_a_box_repo" >> /root/.envrc
 fi
 
-printf '%-72s' "Fetching wp-in-a-box repo ..."
+printf '%-72s' "Fetching wp-in-a-box repo..."
 if [ -d $local_wp_in_a_box_repo ] ; then
     cd $local_wp_in_a_box_repo
     git pull -q origin master &> /dev/null
@@ -95,7 +95,7 @@ if [ -d $local_wp_in_a_box_repo ] ; then
 else
     git clone -q --recursive https://github.com/pothi/wp-in-a-box $local_wp_in_a_box_repo &> /dev/null
 fi
-echo ... done fetching wp-in-a-box repo.
+echo done.
 
 # create swap at first
 source $local_wp_in_a_box_repo/scripts/swap.sh
