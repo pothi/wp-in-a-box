@@ -3,7 +3,7 @@
 export DEBIAN_FRONTEND=noninteractive
 
 # Variable/s
-# WP_SFTP_USER=
+# SFTP_USER=
 # PHP_MAX_CHILDREN=
 # MY_MEMCACHED_MEMORY
 # PM_METHOD
@@ -16,7 +16,7 @@ source /root/.envrc
 
 PM_METHOD=ondemand
 
-if [ -z "$WP_SFTP_USER" ]; then
+if [ -z "$SFTP_USER" ]; then
     echo SFTP User is not found. Exiting now!
     exit
 fi
@@ -82,7 +82,7 @@ if ! grep -qw "$FPM_PHP_INI" /root/.envrc &> /dev/null ; then
 fi
 
 CLI_PHP_INI=/etc/php/${php_version}/cli/php.ini
-POOL_FILE=/etc/php/${php_version}/fpm/pool.d/${WP_SFTP_USER}.conf
+POOL_FILE=/etc/php/${php_version}/fpm/pool.d/${SFTP_USER}.conf
 
 
 ### Please do not edit below this line ###
@@ -147,10 +147,10 @@ mv /etc/php/${php_version}/fpm/pool.d/www.conf $POOL_FILE &> /dev/null
 # echo 'Setting up the initial PHP user...'
 
 # Change default user
-sed -i -e 's/^\[www\]$/['$WP_SFTP_USER']/' $POOL_FILE
-sed -i -e 's/www-data/'$WP_SFTP_USER'/' $POOL_FILE
-# sed -i -e '/^\(user\|group\)/ s/=.*/= '$WP_SFTP_USER'/' $POOL_FILE
-# sed -i -e '/^listen.\(owner\|group\)/ s/=.*/= '$WP_SFTP_USER'/' $POOL_FILE
+sed -i -e 's/^\[www\]$/['$SFTP_USER']/' $POOL_FILE
+sed -i -e 's/www-data/'$SFTP_USER'/' $POOL_FILE
+# sed -i -e '/^\(user\|group\)/ s/=.*/= '$SFTP_USER'/' $POOL_FILE
+# sed -i -e '/^listen.\(owner\|group\)/ s/=.*/= '$SFTP_USER'/' $POOL_FILE
 
 sed -i -e '/^;listen.\(owner\|group\|mode\)/ s/^;//' $POOL_FILE
 sed -i -e '/^listen.mode = / s/[0-9]\{4\}/0666/' $POOL_FILE
@@ -159,8 +159,8 @@ sed -i -e '/^listen.mode = / s/[0-9]\{4\}/0666/' $POOL_FILE
 
 # Setup port / socket
 # sed -i '/^listen =/ s/=.*/= 127.0.0.1:9006/' $POOL_FILE
-sed -i "/^listen =/ s:=.*:= /var/lock/php-fpm-${php_version}-${WP_SFTP_USER}:" $POOL_FILE
-sed -i "s:/var/lock/php-fpm:/var/lock/php-fpm-${php_version}-${WP_SFTP_USER}:" /etc/nginx/conf.d/lb.conf
+sed -i "/^listen =/ s:=.*:= /var/lock/php-fpm-${php_version}-${SFTP_USER}:" $POOL_FILE
+sed -i "s:/var/lock/php-fpm:/var/lock/php-fpm-${php_version}-${SFTP_USER}:" /etc/nginx/conf.d/lb.conf
 
 sed -i -e 's/^pm = .*/pm = '$PM_METHOD'/' $POOL_FILE
 sed -i '/^pm.max_children/ s/=.*/= '$PHP_MAX_CHILDREN'/' $POOL_FILE

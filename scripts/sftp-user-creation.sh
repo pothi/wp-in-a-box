@@ -10,10 +10,10 @@ source /root/.envrc
 
 echo 'Setting up SFTP user...'
 
-if [ "$WP_SFTP_USER" == "" ]; then
+if [ "$SFTP_USER" == "" ]; then
     # create SFTP username automatically
-    WP_SFTP_USER="sftp_$(pwgen -A 8 1)"
-    echo "export WP_SFTP_USER=$WP_SFTP_USER" >> /root/.envrc
+    SFTP_USER="sftp_$(pwgen -A 8 1)"
+    echo "export SFTP_USER=$SFTP_USER" >> /root/.envrc
 fi
 
 #--- please do not edit below this file ---#
@@ -21,20 +21,20 @@ fi
 SSHD_CONFIG='/etc/ssh/sshd_config'
 
 if [ ! -d "/home/${BASE_NAME}" ]; then
-    useradd --shell=/bin/bash -m --home-dir /home/${BASE_NAME} $WP_SFTP_USER
+    useradd --shell=/bin/bash -m --home-dir /home/${BASE_NAME} $SFTP_USER
 
     groupadd ${BASE_NAME}
 
     # "web" is meant for SFTP only user/s
-    gpasswd -a $WP_SFTP_USER ${BASE_NAME} &> /dev/null
+    gpasswd -a $SFTP_USER ${BASE_NAME} &> /dev/null
 
     chown root:root /home/${BASE_NAME}
     chmod 755 /home/${BASE_NAME}
 
     #-- allow the user to login to the server --#
     # older way of doing things by appending it to AllowUsers directive
-    # if ! grep "$WP_SFTP_USER" ${SSHD_CONFIG} &> /dev/null ; then
-      # sed -i '/AllowUsers/ s/$/ '$WP_SFTP_USER'/' ${SSHD_CONFIG}
+    # if ! grep "$SFTP_USER" ${SSHD_CONFIG} &> /dev/null ; then
+      # sed -i '/AllowUsers/ s/$/ '$SFTP_USER'/' ${SSHD_CONFIG}
     # fi
     # latest way of doing things
     # ref: https://knowledgelayer.softlayer.com/learning/how-do-i-permit-specific-users-ssh-access
@@ -49,7 +49,7 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
     # fi
 
     # add new users into the 'sshusers' now
-    # usermod -a -G sshusers ${WP_SFTP_USER}
+    # usermod -a -G sshusers ${SFTP_USER}
 
     # if the text 'match group ${BASE_NAME}' isn't found, then
     # insert it only once
@@ -96,7 +96,7 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
     WP_SFTP_PASS=$(pwgen -cns 12 1)
     echo "export WP_SFTP_PASS=$WP_SFTP_PASS" >> /root/.envrc
 
-    echo "$WP_SFTP_USER:$WP_SFTP_PASS" | chpasswd
+    echo "$SFTP_USER:$WP_SFTP_PASS" | chpasswd
 else
     echo "the default directory /home/${BASE_NAME} already exists!"
     # exit 1

@@ -42,8 +42,8 @@
 
 
 # create the following dynamically
-#export WP_SFTP_USER=sftprandom
-#export WP_SSH_USER=sshrandom
+#export SFTP_USER=sftprandom
+#export SSH_USER=sshrandom
 
 # set PHP-FPM in work in on-demand mode with a fixed set up max_children
 # probably, you may calculate the max_childen depending on the total available memory in the server!
