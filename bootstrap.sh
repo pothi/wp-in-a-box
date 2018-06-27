@@ -47,7 +47,7 @@ echo done.
 
 # git is prerequisite for etckeeper
 printf '%-72s' "Installing git..."
-apt-get -qq install git
+apt-get -qq install git &> /dev/null
 echo done.
 source ~/.envrc &> /dev/null
 if [ -z "$EMAIL" ] ; then
