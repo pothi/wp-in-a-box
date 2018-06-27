@@ -27,6 +27,7 @@ fi
 
 #--- Common for all users ---#
 echo Setting up linux tweaks...
+echo -----------------------------------------------------------------------------
 
 mkdir -p /etc/skel/{.aws,.cache,.composer,.config,.gsutil,.nano,.npm,.npm-global,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
 mkdir -p /etc/skel/{backups,log,scripts,sites,tmp} &> /dev/null
@@ -137,13 +138,15 @@ sed -i '/PasswordAuthentication/I s/yes/no/' $sshd_config_file
     # exit 1
 # else
     # echo 'Cool. Things seem fine.'
-    echo "Restarting SSH daemon..."
+    # echo "Restarting SSH daemon..."
+    printf '%-72s' "Restarting SSH daemon..."
     systemctl restart sshd &> /dev/null
     if [ $? -ne 0 ]; then
         echo 'Something went wrong while creating SFTP user! See below...'; echo; echo;
         systemctl status sshd
     else
-        echo '... SSH daemon restarted!'
+        # echo '... SSH daemon restarted!'
+        echo done.
     fi
 # fi
 
@@ -199,4 +202,5 @@ if ! $(grep -q "^${entry}$" "$rootbashrc") ; then
 fi # test if the entry is found in file
 fi # test if file exists
 
+echo -------------------------------------------------------------------------
 echo ... linux tweaks are done.

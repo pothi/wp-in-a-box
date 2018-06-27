@@ -5,7 +5,7 @@ export DEBIAN_FRONTEND=noninteractive
 #--- Install pre-requisites ---#
 # landscape-common update-notifier-common \
 echo Installing prerequisites...
-echo -------------------------------------------------------------------------
+echo -----------------------------------------------------------------------------
 required_packages="acl \
     bash-completion \
     dnsutils \
