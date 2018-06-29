@@ -15,7 +15,9 @@ redis_sysctl_file='/etc/sysctl.d/60-redis-local.conf'
 
 restart_redis='no'
 
-redis_pass=$(grep -w '^requirepass' redis.conf | awk '{print $2}')
+if [ -f '/etc/redis/redis.conf' ]; then
+    redis_pass=$(grep -w '^requirepass' /etc/redis/redis.conf | awk '{print $2}')
+fi
 if [ -z "$redis_pass" ]; then
     redis_pass=$(pwgen -cns 20 1)
 
@@ -72,7 +74,9 @@ echo '... done tweaking redis cache.'
 
 # SESSION Handling
 echo 'Setting up PHP sessions to use redis... '
-[ ! grep '^session.save_handler = redis$' ] && sed -i -e '/^session.save_handler/ s/=.*/= redis/' $FPM_PHP_INI
+if [ ! $(grep '^session.save_handler = redis$' $FPM_PHP_INI) ] ; then
+    sed -i -e '/^session.save_handler/ s/=.*/= redis/' $FPM_PHP_INI
+fi
 sed -i -e '/^;session.save_path/ s/^;//' $FPM_PHP_INI
 sed -i -e '/^session.save_path/ s/.*/session.save_path = "tcp:\/\/127.0.0.1:6379?auth='$redis_pass'"/' $FPM_PHP_INI
 
