@@ -9,6 +9,8 @@ redis_sysctl_file='/etc/sysctl.d/60-redis-local.conf'
 redis_pass=$(pwgen -cns 20 1)
 # php_version from php-installation.php
 
+FPM_PHP_INI=/etc/php/${php_version}/fpm/php.ini
+
 echo -n 'Installing redis... '
 apt-get install -qq redis &> /dev/null
 echo 'done.'
