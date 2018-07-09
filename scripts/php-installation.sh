@@ -104,8 +104,7 @@ if [ "$php_version" = "7.2" ] ; then
     echo --------------
     echo mycrypt is removed in PHP 7.2
     echo Please check if any plugins or theme still use mcrypt by running...
-    echo cd ~/wproot/wp-content/
-    echo 'find ./ -type f -name '*.php' -print | xargs grep -inr mcrypt'
+    echo 'find ~/wproot/wp-content/ -type f -name "*.php" -exec grep -inr mcrypt {} \;'
     echo
 fi
 
