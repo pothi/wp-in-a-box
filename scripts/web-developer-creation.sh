@@ -1,19 +1,16 @@
 #!/bin/bash
 
 # Variables - you may send these as command line options
-BASE_NAME=web
-if ! grep -qw $BASE_NAME /root/.envrc ; then
-    echo "export BASE_NAME=$BASE_NAME" >> /root/.envrc
-fi
+# web_developer_username
 
 source /root/.envrc
 
-echo 'Setting up SFTP user...'
+echo 'Creating a "web developer" user...'
 
-if [ "$SFTP_USER" == "" ]; then
+if [ "$web_developer_username" == "" ]; then
     # create SFTP username automatically
-    SFTP_USER="sftp_$(pwgen -A 8 1)"
-    echo "export SFTP_USER=$SFTP_USER" >> /root/.envrc
+    web_developer_username="web_$(pwgen -A 8 1)"
+    echo "export web_developer_username=$web_developer_username" >> /root/.envrc
 fi
 
 #--- please do not edit below this file ---#
@@ -21,20 +18,20 @@ fi
 SSHD_CONFIG='/etc/ssh/sshd_config'
 
 if [ ! -d "/home/${BASE_NAME}" ]; then
-    useradd --shell=/bin/bash -m --home-dir /home/${BASE_NAME} $SFTP_USER
+    useradd --shell=/bin/bash -m --home-dir /home/${BASE_NAME} $web_developer_username
 
     groupadd ${BASE_NAME}
 
     # "web" is meant for SFTP only user/s
-    gpasswd -a $SFTP_USER ${BASE_NAME} &> /dev/null
+    gpasswd -a $web_developer_username ${BASE_NAME} &> /dev/null
 
     chown root:root /home/${BASE_NAME}
     chmod 755 /home/${BASE_NAME}
 
     #-- allow the user to login to the server --#
     # older way of doing things by appending it to AllowUsers directive
-    # if ! grep "$SFTP_USER" ${SSHD_CONFIG} &> /dev/null ; then
-      # sed -i '/AllowUsers/ s/$/ '$SFTP_USER'/' ${SSHD_CONFIG}
+    # if ! grep "$web_developer_username" ${SSHD_CONFIG} &> /dev/null ; then
+      # sed -i '/AllowUsers/ s/$/ '$web_developer_username'/' ${SSHD_CONFIG}
     # fi
     # latest way of doing things
     # ref: https://knowledgelayer.softlayer.com/learning/how-do-i-permit-specific-users-ssh-access
@@ -49,7 +46,7 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
     # fi
 
     # add new users into the 'sshusers' now
-    # usermod -a -G sshusers ${SFTP_USER}
+    # usermod -a -G sshusers ${web_developer_username}
 
     # if the text 'match group ${BASE_NAME}' isn't found, then
     # insert it only once
@@ -93,10 +90,10 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
         fi
     # fi # end of sshd -t check
 
-    WP_SFTP_PASS=$(pwgen -cns 12 1)
-    echo "export WP_SFTP_PASS=$WP_SFTP_PASS" >> /root/.envrc
+    web_developer_password=$(pwgen -cns 12 1)
+    echo "export web_developer_password=$web_developer_password" >> /root/.envrc
 
-    echo "$SFTP_USER:$WP_SFTP_PASS" | chpasswd
+    echo "$web_developer_username:$web_developer_password" | chpasswd
 else
     echo "the default directory /home/${BASE_NAME} already exists!"
     # exit 1

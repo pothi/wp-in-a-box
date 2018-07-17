@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# Version: 1.3
+# programming env: these switches turn some bugs into errors
+set -o errexit -o pipefail -o noclobber -o nounset
+
+# Version: 2
 
 # to be run as root, probably as a user-script just after a server is installed
 
@@ -27,6 +30,11 @@ check_result() {
         exit $1
     fi
 }
+
+BASE_NAME=web
+if ! grep -qw $BASE_NAME /root/.envrc ; then
+    echo "export BASE_NAME=$BASE_NAME" >> /root/.envrc
+fi
 
 echo First things first...
 echo ---------------------
@@ -110,7 +118,7 @@ source $local_wp_in_a_box_repo/scripts/nginx-installation.sh
 echo
 source $local_wp_in_a_box_repo/scripts/mysql-installation.sh
 echo
-source $local_wp_in_a_box_repo/scripts/sftp-user-creation.sh
+source $local_wp_in_a_box_repo/scripts/web-developer-user-creation.sh
 echo
 source $local_wp_in_a_box_repo/scripts/php-installation.sh
 echo
@@ -123,7 +131,7 @@ echo
 
 # the following can be executed at any order as they are mostly optional
 # source $local_wp_in_a_box_repo/scripts/install-firewall.sh
-source $local_wp_in_a_box_repo/scripts/ssh-user-creation.sh
+source $local_wp_in_a_box_repo/scripts/server-admin-user-creation.sh
 echo
 # source $local_wp_in_a_box_repo/scripts/optional.sh
 

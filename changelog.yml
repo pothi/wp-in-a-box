@@ -1,6 +1,15 @@
 ---
 
-latest_version: v1.3
+latest_version: v2.0
+
+v2.0:
+    date: 2018-07-17
+    changes:
+        - usernames are more intuitive than earlier.
+        - sftp_ is changed to web_developer_.
+        - ssh_ is changed to server_admin_.
+        - better coding
+        - overall cleanup
 
 v1.3:
     date: 2017-10-17

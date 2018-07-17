@@ -28,4 +28,4 @@ sudo -H -u $PMA_USER bash pma-user-creation.sh
 cd - &> /dev/null
 
 [ ! -d ${PMA_TMP} ] && mkdir ${PMA_TMP}
-chown ${SFTP_USER}:${SFTP_USER} ${PMA_TMP}
+chown ${web_developer_username}:${web_developer_username} ${PMA_TMP}
