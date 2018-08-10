@@ -31,10 +31,29 @@ check_result() {
     fi
 }
 
+[ ! -f /root/.envrc ] && touch /root/.envrc
+
+# some defaults / variables
 BASE_NAME=web
 if ! grep -qw $BASE_NAME /root/.envrc ; then
     echo "export BASE_NAME=$BASE_NAME" >> /root/.envrc
 fi
+
+EMAIL=user@example.com
+if ! grep -qw $EMAIL /root/.envrc ; then
+    echo "export EMAIL=$EMAIL" >> /root/.envrc
+fi
+NAME='Firstname Lastname'
+if ! grep -qw "$NAME" /root/.envrc ; then
+    echo "export NAME='$NAME'" >> /root/.envrc
+fi
+
+local_wp_in_a_box_repo=/root/git/wp-in-a-box
+if ! grep -qw $local_wp_in_a_box_repo /root/.envrc ; then
+    echo "export local_wp_in_a_box_repo=$local_wp_in_a_box_repo" >> /root/.envrc
+fi
+
+source ~/.envrc
 
 echo First things first...
 echo ---------------------
@@ -57,15 +76,7 @@ echo done.
 printf '%-72s' "Installing git..."
 apt-get -qq install git &> /dev/null
 echo done.
-source ~/.envrc &> /dev/null
-if [ -z "$EMAIL" ] ; then
-    export EMAIL=user@example.com
-fi
 git config --global --replace-all user.email "$EMAIL"
-
-if [ -z "$NAME" ] ; then
-    export NAME='Firstname Lastname'
-fi
 git config --global --replace-all user.name "$NAME"
 
 printf '%-72s' "Installing etckeeper..."
@@ -88,11 +99,6 @@ printf '%-72s' "Running apt-get autoremove..."
 apt-get -qq autoremove &> /dev/null
 echo done.
 echo
-
-if [ -z "$local_wp_in_a_box_repo" ] ; then
-    local_wp_in_a_box_repo=/root/git/wp-in-a-box
-    echo "export local_wp_in_a_box_repo=$local_wp_in_a_box_repo" >> /root/.envrc
-fi
 
 printf '%-72s' "Fetching wp-in-a-box repo..."
 if [ -d $local_wp_in_a_box_repo ] ; then

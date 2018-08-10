@@ -54,11 +54,12 @@ if [ $is_swap_enabled -eq 0 ]; then
     # swapon -s
 
     # fine-tune swap
-    # printf "# Ref: https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04\n\nvm.swappiness=10\nvm.vfs_cache_pressure = 50\n" > $swap_sysctl_file
-    echo '# Ref: https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04' > $swap_sysctl_file
-    echo >> $swap_sysctl_file
-    echo 'nvm.swappiness=10' >> $swap_sysctl_file
-    echo 'nvm.vfs_cache_pressure = 50' >> $swap_sysctl_file
+    if [ ! -f $swap_sysctl_file ]; then
+        echo '# Ref: https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04' > $swap_sysctl_file
+        echo >> $swap_sysctl_file
+        echo 'nvm.swappiness=10' >> $swap_sysctl_file
+        echo 'nvm.vfs_cache_pressure = 50' >> $swap_sysctl_file
+    fi
 
     # apply changes
     service procps restart
