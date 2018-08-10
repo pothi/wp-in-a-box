@@ -124,7 +124,7 @@ source $local_wp_in_a_box_repo/scripts/nginx-installation.sh
 echo
 source $local_wp_in_a_box_repo/scripts/mysql-installation.sh
 echo
-source $local_wp_in_a_box_repo/scripts/web-developer-user-creation.sh
+source $local_wp_in_a_box_repo/scripts/web-developer-creation.sh
 echo
 source $local_wp_in_a_box_repo/scripts/php-installation.sh
 echo
@@ -137,7 +137,7 @@ echo
 
 # the following can be executed at any order as they are mostly optional
 # source $local_wp_in_a_box_repo/scripts/install-firewall.sh
-source $local_wp_in_a_box_repo/scripts/server-admin-user-creation.sh
+source $local_wp_in_a_box_repo/scripts/server-admin-creation.sh
 echo
 # source $local_wp_in_a_box_repo/scripts/optional.sh
 
