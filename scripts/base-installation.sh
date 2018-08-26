@@ -8,7 +8,9 @@ echo Installing prerequisites...
 echo -----------------------------------------------------------------------------
 required_packages="acl \
     bash-completion \
+    bc \
     dnsutils \
+    language-pack-en \
     mlocate \
     unattended-upgrades apt-listchanges \
     zip unzip  \
@@ -16,7 +18,7 @@ required_packages="acl \
     pwgen \
     fail2ban \
     python-setuptools \
-    bc"
+    tzdata"
 
 for package in $required_packages
 do  
