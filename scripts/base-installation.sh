@@ -57,7 +57,9 @@ echo ... done installing prerequisites!
 echo
 
 if [ ! -s /var/spool/cron/crontabs/root ]; then
-    echo '# ┌───────────── minute (0 - 59)
+echo 'Setting up crontab for root!' &>> $log_file
+echo '
+# ┌───────────── minute (0 - 59)
 # │ ┌───────────── hour (0 - 23)
 # │ │ ┌───────────── day of month (1 - 31)
 # │ │ │ ┌───────────── month (1 - 12)
@@ -65,16 +67,21 @@ if [ ! -s /var/spool/cron/crontabs/root ]; then
 # │ │ │ │ │                                       7 is also Sunday on some systems)
 # │ │ │ │ │
 # │ │ │ │ │
-# * * * * *  command to execute' | crontab - &> /dev/null
+# * * * * *  command to execute' | crontab - &>> $log_file
 fi
 
 #--- setup timezone ---#
-printf '%-72s' "Setting up timezone..."
-ln -fs /usr/share/zoneinfo/UTC /etc/localtime
-dpkg-reconfigure -f noninteractive tzdata &> /dev/null
-# timedatectl set-timezone UTC
-check_result $? 'Error setting up timezone'
-echo done.
+current_time_zone=$(date +\%Z)
+if [ "$current_time_zone" != "UTC" ] ; then
+    printf '%-72s' "Setting up timezone..."
+    ln -fs /usr/share/zoneinfo/UTC /etc/localtime
+    dpkg-reconfigure -f noninteractive tzdata &>> $log_file
+    # timedatectl set-timezone UTC
+    check_result $? 'Error setting up timezone.'
+    systemctl restart cron
+    check_result $? 'Error restarting cron daemon.'
+    echo done.
+fi
 
 #--- Unattended Upgrades ---#
 echo 'APT::Periodic::Update-Package-Lists "1";' > /etc/apt/apt.conf.d/20auto-upgrades
