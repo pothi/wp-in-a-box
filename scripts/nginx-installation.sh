@@ -43,7 +43,7 @@ case "$codename" in
         nginx_repo_add
         ;;
     "bionic")
-        # not needed.
+        nginx_repo_add
         ;;
     *)
         echo "Distro: $codename"
