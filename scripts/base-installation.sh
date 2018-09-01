@@ -11,13 +11,10 @@ required_packages="acl \
     bc \
     dnsutils \
     language-pack-en \
-    mlocate \
     unattended-upgrades apt-listchanges \
     zip unzip  \
-    python-pip \
     pwgen \
     fail2ban \
-    python-setuptools \
     tzdata"
 
 for package in $required_packages
@@ -28,14 +25,14 @@ do
 done
 
 #----- install AWS cli -----#
-pip_cli=$(which pip)
+# pip_cli=$(which pip)
 
 # created an issue that's hard to troubleshoot - TODO
 # $pip_cli install --upgrade pip
 
-printf '%-72s' "Installing awscli..."
-$pip_cli install awscli &> /dev/null
-echo done.
+# printf '%-72s' "Installing awscli..."
+# $pip_cli install awscli &> /dev/null
+# echo done.
 
 # TODO - ask user consent for optional_packages
 optional_packages="apt-file \
@@ -43,6 +40,9 @@ optional_packages="apt-file \
     nodejs npm \
     direnv \
     duplicity \
+    python-pip \
+    python-setuptools \
+    mlocate \
     molly-guard"
 
 # for package in $optional_packages
