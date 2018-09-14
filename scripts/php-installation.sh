@@ -242,7 +242,7 @@ rm composer-setup.php &> /dev/null
 crontab -l | grep -qw composer
 if [ "$?" -ne "0" ]; then
     ( crontab -l; echo; echo "# auto-update composer - nightly" ) | crontab -
-    ( crontab -l; echo '4   4   *   *   *   /usr/local/bin/composer self-update &> /dev/null' ) | crontab -
+    ( crontab -l; echo '@daily /usr/local/bin/composer self-update &> /dev/null' ) | crontab -
 fi
 
 echo -------------------------------------------------------------------------

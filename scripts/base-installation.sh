@@ -150,7 +150,7 @@ fi
 crontab -l | grep -qw wp-cli
 if [ "$?" -ne "0" ]; then
     ( crontab -l; echo; echo "# auto-update wp-cli" ) | crontab -
-    ( crontab -l; echo '20  10  *   *   *   /usr/local/bin/wp cli update --allow-root --yes &> /dev/null' ) | crontab -
+    ( crontab -l; echo '@daily /usr/local/bin/wp cli update --allow-root --yes &> /dev/null' ) | crontab -
 fi
 
 #--- auto-renew SSL certs ---#
@@ -158,7 +158,7 @@ fi
 crontab -l | grep -qw certbot
 if [ $? -ne 0 ]; then
     ( crontab -l; echo; echo "# auto-renew SSL certs" ) | crontab -
-    ( crontab -l; echo '36   0,12   *   *   *   /usr/bin/certbot renew --post-hook "/usr/sbin/nginx -t && /usr/sbin/service nginx reload" &> /dev/null' ) | crontab -
+    ( crontab -l; echo '@daily /usr/bin/certbot renew --post-hook "/usr/sbin/nginx -t && /usr/sbin/service nginx reload" &> /dev/null' ) | crontab -
 fi
 
 
