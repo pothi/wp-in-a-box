@@ -8,7 +8,7 @@ codename=$(lsb_release -c -s)
 
 # function to add the official Nginx.org repo
 nginx_repo_add() {
-    distro=$(gawk -F= '/^ID=/{print $2}' /etc/os-release)
+    distro=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
     codename=$(lsb_release -c -s)
 
     [ -f nginx_signing.key ] && rm nginx_signing.key
