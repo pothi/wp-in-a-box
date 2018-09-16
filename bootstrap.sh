@@ -110,6 +110,7 @@ else
     git clone -q --recursive https://github.com/pothi/wp-in-a-box $local_wp_in_a_box_repo &> /dev/null
 fi
 echo done.
+echo
 
 # create swap at first
 source $local_wp_in_a_box_repo/scripts/swap.sh

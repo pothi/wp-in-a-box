@@ -22,7 +22,7 @@ for package in $required_packages
 do
     if dpkg-query -s $package &> /dev/null
     then
-        printf "$package is already installed"
+        echo "$package is already installed"
     else
         printf '%-72s' "Installing ${package}..."
         apt-get -qq install $package &> /dev/null
@@ -63,7 +63,7 @@ echo ... done installing prerequisites!
 echo
 
 if [ ! -s /var/spool/cron/crontabs/root ]; then
-echo 'Setting up crontab for root!' &>> $log_file
+echo 'Setting up crontab for root!'
 echo '
 # ┌───────────── minute (0 - 59)
 # │ ┌───────────── hour (0 - 23)
