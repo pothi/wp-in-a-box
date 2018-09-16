@@ -29,7 +29,7 @@ fi
 FPM_PHP_INI=/etc/php/${php_version}/fpm/php.ini
 
 echo -n 'Installing redis... '
-apt-get install -qq redis &> /dev/null
+apt-get install -qq redis-server &> /dev/null
 echo 'done.'
 
 if apt-cache show php-redis &> /dev/null ; then

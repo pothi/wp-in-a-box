@@ -7,6 +7,7 @@ export DEBIAN_FRONTEND=noninteractive
 echo Installing prerequisites...
 echo -----------------------------------------------------------------------------
 required_packages="acl \
+    apt-transport-https \
     bash-completion \
     bc \
     dnsutils \
@@ -18,10 +19,15 @@ required_packages="acl \
     tzdata"
 
 for package in $required_packages
-do  
-    printf '%-72s' "Installing ${package}..."
-    apt-get -qq install $package &> /dev/null
-    echo done.
+do
+    if dpkg-query -s $package &> /dev/null
+    then
+        printf "$package is already installed"
+    else
+        printf '%-72s' "Installing ${package}..."
+        apt-get -qq install $package &> /dev/null
+        echo done.
+    fi
 done
 
 #----- install AWS cli -----#
