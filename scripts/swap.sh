@@ -30,7 +30,7 @@ if [ $is_swap_enabled -eq 0 ]; then
     # enable swap upon boot
     fstab_entry="$swap_file none swap sw 0 0"
     if ! $(grep -q "^${fstab_entry}$" /etc/fstab &> /dev/null) ; then
-        echo $fstab_entry >> /etc/fstab &> /dev/null
+        echo $fstab_entry >> /etc/fstab
     else
         echo Note: /etc/fstab already has an entry for swap!
     fi
