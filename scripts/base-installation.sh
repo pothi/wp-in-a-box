@@ -16,6 +16,7 @@ required_packages="acl \
     zip unzip  \
     pwgen \
     fail2ban \
+    python3-pip \
     tzdata"
 
 for package in $required_packages
@@ -31,14 +32,14 @@ do
 done
 
 #----- install AWS cli -----#
-# pip_cli=$(which pip)
+pip_cli=$(which pip3)
 
 # created an issue that's hard to troubleshoot - TODO
 # $pip_cli install --upgrade pip
 
-# printf '%-72s' "Installing awscli..."
-# $pip_cli install awscli &> /dev/null
-# echo done.
+printf '%-72s' "Installing awscli..."
+$pip_cli install awscli &> /dev/null
+echo done.
 
 # TODO - ask user consent for optional_packages
 optional_packages="apt-file \
