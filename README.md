@@ -99,7 +99,7 @@ cat ~/.envrc
 ## Where to install WordPress & How to install it
 
 - PHP runs as SFTP user. So, please install WordPress **as** SFTP user at `/home/web/sites/example.com/public`.
-- Configure Nginx using pre-defined templates that can be found at the companion repo [https://github.com/pothi/wordpress-nginx](WordPress-Nginx). The repo is already installed. You just have to copy / paste one of [the templates](https://github.com/pothi/wordpress-nginx/tree/master/sites-available) to fit your domain name.
+- Configure Nginx using pre-defined templates that can be found at the companion repo [WordPress-Nginx](https://github.com/pothi/wordpress-nginx). That repo is already installed. You just have to copy / paste one of [the templates](https://github.com/pothi/wordpress-nginx/tree/master/sites-available) to fit your domain name.
 - If you wish to deploy SSL, a [Let's Encrypt](https://letsencrypt.org/) client is already installed. Just use the command `certbot certonly --webroot -w /home/web/sites/example.com/public -d example.com -d www.example.com`. The renewal script is already in place as a cron entry. So, you don't have to create a new entry. To know more about this client library and to know more about the available options, please visit https://certbot.eff.org/ .
 
 ## Known Limitations
