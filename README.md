@@ -78,19 +78,25 @@ nano ~/bootstrap.sh
 # or simply
 bash bootstrap.sh
 
+# wait for the installation to get over.
+# it can take approximately 5 minutes on a 2GB server
+# it depends on CPU power too
+
+# we no longer needs bootstrap.sh file
 rm bootstrap.sh
 
 # to see the credentials to log in to the server from now
+# this is the important step. you can't login as root from now on
 cat ~/.envrc
 
 ```
 
 ## What you get at the end of the installation
 
-- a SSH user with root privileges (use it only to manage the server such as to create a new MySQL database or to create a new vhost entry for Nginx)
-- a chrooted SFTP user at `/home/web` with common directories(such as ~/log, ~/sites, etc) created already. (you may give it to your developer to access the file)
+- a SSH user (prefixed with `sys_`) with root privileges (use it only to manage the server such as to create a new MySQL database or to create a new vhost entry for Nginx)
+- a chrooted SFTP user, prefixed with `web_`, with its home directory at `/home/web` along with some common directories(such as ~/log, ~/sites, etc) created already. (you may give it to your developer to access the file system such as to upload a new theme, etc)
 
-## Where to install WordPress and How to install
+## Where to install WordPress & How to install it
 
 - PHP runs as SFTP user. So, please install WordPress **as** SFTP user at `/home/web/sites/example.com/public`.
 - Configure Nginx using pre-defined templates that can be found at the companion repo https://github.com/pothi/wordpress-nginx[WordPress-Nginx]. The templates are already installed. You just have to copy / paste one of the templates to fit your domain name.
