@@ -1,6 +1,6 @@
 # WP In A Box
 
-Script/s to install LEMP in a linux box without much effort. This LEMP stack is fine-tuned towards WordPress installations. It may not work for other PHP based applications. For more details, please see the blog post at [https://www.tinywp.in/wp-in-a-box/](https://www.tinywp.in/wp-in-a-box/).
+Script/s to install LEMP in a linux box. This LEMP stack is fine-tuned towards WordPress installations. It may work for other PHP based applications, too. For more details, please see the blog post at [https://www.tinywp.in/wp-in-a-box/](https://www.tinywp.in/wp-in-a-box/).
 
 ## Supported Platforms
 
@@ -80,7 +80,25 @@ bash bootstrap.sh
 
 rm bootstrap.sh
 
+# to see the credentials to log in to the server from now
+cat ~/.envrc
+
 ```
+
+## What you get at the end of the installation
+
+- a SSH user with root privileges (use it only to manage the server such as to create a new MySQL database or to create a new vhost entry for Nginx)
+- a chrooted SFTP user at `/home/web` with common directories(such as ~/log, ~/sites, etc) created already. (you may give it to your developer to access the file)
+
+## Where to install WordPress and How to install
+
+- PHP runs as SFTP user. So, please install WordPress **as** SFTP user at `/home/web/sites/example.com/public`.
+- Configure Nginx using pre-defined templates that can be found at the companion repo https://github.com/pothi/wordpress-nginx[WordPress-Nginx]. The templates are already installed. You just have to copy / paste one of the templates to fit your domain name.
+- If you wish to deploy SSL, Let'sEncrypt client is already installed. Just use the command `certbot certonly --webroot -w /home/web/sites/example.com/public -d example.com -d www.example.com`. The renewal script is already in place as a cron entry. So, you don't to create a new entry.
+
+## Known Limitations
+
+- SFTP user can not create or upload new files and folders at `$HOME`, but can create or upload inside other existing directories. This is [a known limitation](https://wiki.archlinux.org/index.php/SFTP_chroot#Write_permissions) when we use SFTP capability of built-in OpenSSH server.
 
 ## Wiki
 
