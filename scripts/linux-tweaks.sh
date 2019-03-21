@@ -35,6 +35,8 @@ mkdir -p /etc/skel/backups/{files,databases} &> /dev/null
 mkdir -p /etc/skel/.config/bash &> /dev/null
 
 touch /etc/skel/{.bash_history,.npmrc,.yarnrc,mbox}
+echo 'prefix=~/.npm-global' > /etc/skel/.npmrc
+chmod 600 /etc/skel/mbox &> /dev/null
 chmod 600 /etc/skel/mbox &> /dev/null
 
 mkdir /etc/skel/.config &> /dev/null
