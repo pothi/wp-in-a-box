@@ -12,7 +12,7 @@ sleep_time_between_tasks=2
 is_swap_enabled=$(free | grep -iw swap | awk {'print $2'}) # 0 means no swap
 if [ $is_swap_enabled -eq 0 ]; then
     echo 'Creating and setting up Swap...'
-    echo '-------------------------------------------------------------------------'
+    echo -----------------------------------------------------------------------------
 
     # check for swap file
     if [ ! -f $swap_file ]; then
@@ -69,7 +69,7 @@ if [ $is_swap_enabled -eq 0 ]; then
         echo Error restarting procps!
     fi
 
-    echo -------------------------------------------------------------------------
+    echo -----------------------------------------------------------------------------
     echo ... done setting up swap!
 fi
 
