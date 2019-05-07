@@ -23,6 +23,8 @@ log_file=/root/log/wp-in-a-box.log
 exec > >(tee -a ${log_file} )
 exec 2> >(tee -a ${log_file} >&2)
 
+echo "Script started on (date & time): $(date +%c)"
+
 # Defining return code check function
 check_result() {
     if [ $1 -ne 0 ]; then
@@ -86,19 +88,19 @@ sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/
 echo done.
 
 # install dependencies
-echo
-echo Updating the server...
-echo ----------------------
-printf '%-72s' "Running apt-get upgrade..."
-apt-get -qq upgrade &> /dev/null
-echo done.
-printf '%-72s' "Running apt-get dist-upgrade..."
-apt-get -qq dist-upgrade &> /dev/null
-echo done.
-printf '%-72s' "Running apt-get autoremove..."
-apt-get -qq autoremove &> /dev/null
-echo done.
-echo
+# echo
+# echo Updating the server...
+# echo ----------------------
+# printf '%-72s' "Running apt-get upgrade..."
+# apt-get -qq upgrade &> /dev/null
+# echo done.
+# printf '%-72s' "Running apt-get dist-upgrade..."
+# apt-get -qq dist-upgrade &> /dev/null
+# echo done.
+# printf '%-72s' "Running apt-get autoremove..."
+# apt-get -qq autoremove &> /dev/null
+# echo done.
+# echo
 
 printf '%-72s' "Fetching wp-in-a-box repo..."
 if [ -d $local_wp_in_a_box_repo ] ; then
@@ -168,4 +170,7 @@ echo You may find the login credentials of SFTP/SSH user in /root/.envrc file.
 echo -------------------------------------------------------------------------
 
 echo 'You may reboot only once to apply certain updates (ex: kernel updates)!'
+echo
+
+echo "Script ended on (date & time): $(date +%c)"
 echo
