@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# logging everything
+log_file=/root/log/wp-in-a-box.log
+exec > >(tee -a ${log_file} )
+exec 2> >(tee -a ${log_file} >&2)
+
+echo "Optional script started on (date & time): $(date +%c)"
+
 export DEBIAN_FRONTEND=noninteractive
 
 echo
@@ -104,3 +111,4 @@ echo
 source $local_wp_in_a_box_repo/scripts/redis.sh
 echo
 
+echo "Optional script ended on (date & time): $(date +%c)"
