@@ -227,22 +227,24 @@ sed -i '/^\[Service\]/!b;:a;n;/./ba;iRestart=on-failure' /lib/systemd/system/php
 systemctl daemon-reload
 check_result $? "Could not update /lib/systemd/system/php${php_version}-fpm.service file!"
 
-echo 'Installing Composer for PHP...'
-EXPECTED_SIGNATURE=$(wget -q -O - https://composer.github.io/installer.sig)
-php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-ACTUAL_SIGNATURE=$(php -r "echo hash_file('SHA384', 'composer-setup.php');")
+if [ ! -f /usr/local/bin/composer ]; then
+    echo 'Installing Composer for PHP...'
+    EXPECTED_SIGNATURE=$(wget -q -O - https://composer.github.io/installer.sig)
+    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    ACTUAL_SIGNATURE=$(php -r "echo hash_file('SHA384', 'composer-setup.php');")
 
-if [ "$EXPECTED_SIGNATURE" == "$ACTUAL_SIGNATURE" ]
-then
-    php composer-setup.php --quiet --install-dir=/usr/local/bin --filename=composer
-fi
-rm composer-setup.php &> /dev/null
+    if [ "$EXPECTED_SIGNATURE" == "$ACTUAL_SIGNATURE" ]
+    then
+        php composer-setup.php --quiet --install-dir=/usr/local/bin --filename=composer
+    fi
+    rm composer-setup.php &> /dev/null
 
-# setup cron to self-update composer
-crontab -l | grep -qw composer
-if [ "$?" -ne "0" ]; then
-    ( crontab -l; echo; echo "# auto-update composer - nightly" ) | crontab -
-    ( crontab -l; echo '@daily /usr/local/bin/composer self-update &> /dev/null' ) | crontab -
+    # setup cron to self-update composer
+    crontab -l | grep -qw composer
+    if [ "$?" -ne "0" ]; then
+        ( crontab -l; echo; echo "# auto-update composer - nightly" ) | crontab -
+        ( crontab -l; echo '@daily /usr/local/bin/composer self-update &> /dev/null' ) | crontab -
+    fi
 fi
 
 echo -------------------------------------------------------------------------

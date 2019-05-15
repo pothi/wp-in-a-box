@@ -74,8 +74,10 @@ cp /etc/nginx/nginx-sample.conf /etc/nginx/nginx.conf
 ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf &> /dev/null
 
 # create dhparam
-$(which openssl) dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096
-sed -i 's:^# \(ssl_dhparam /etc/nginx/dhparam.pem;\)$:\1:' /etc/nginx/conf.d/ssl-common.conf
+if [ ! -f /etc/nginx/dhparam.pem ]; then
+    $(which openssl) dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096
+    sed -i 's:^# \(ssl_dhparam /etc/nginx/dhparam.pem;\)$:\1:' /etc/nginx/conf.d/ssl-common.conf
+fi
 
 nginx -t &> /dev/null && systemctl restart nginx &> /dev/null
 check_result $? 'Nginx: could not be restarted.'
