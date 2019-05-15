@@ -87,21 +87,6 @@ apt-get -qq install etckeeper &> /dev/null
 sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
 echo done.
 
-# install dependencies
-# echo
-# echo Updating the server...
-# echo ----------------------
-# printf '%-72s' "Running apt-get upgrade..."
-# apt-get -qq upgrade &> /dev/null
-# echo done.
-# printf '%-72s' "Running apt-get dist-upgrade..."
-# apt-get -qq dist-upgrade &> /dev/null
-# echo done.
-# printf '%-72s' "Running apt-get autoremove..."
-# apt-get -qq autoremove &> /dev/null
-# echo done.
-# echo
-
 printf '%-72s' "Fetching wp-in-a-box repo..."
 if [ -d $local_wp_in_a_box_repo ] ; then
     cd $local_wp_in_a_box_repo
@@ -115,11 +100,7 @@ echo done.
 echo
 
 # create swap at first
-source $local_wp_in_a_box_repo/scripts/swap.sh
-echo
 source $local_wp_in_a_box_repo/scripts/base-installation.sh
-echo
-source $local_wp_in_a_box_repo/scripts/email-mta-installation.sh
 echo
 source $local_wp_in_a_box_repo/scripts/linux-tweaks.sh
 echo
@@ -132,16 +113,11 @@ echo
 source $local_wp_in_a_box_repo/scripts/php-installation.sh
 echo
 
-# depends on mysql & php installation
-source $local_wp_in_a_box_repo/scripts/pma-installation.sh
-echo
-source $local_wp_in_a_box_repo/scripts/redis.sh
-echo
-
 # the following can be executed at any order as they are mostly optional
 # source $local_wp_in_a_box_repo/scripts/install-firewall.sh
 source $local_wp_in_a_box_repo/scripts/server-admin-creation.sh
 echo
+
 # source $local_wp_in_a_box_repo/scripts/optional.sh
 
 # post-install steps

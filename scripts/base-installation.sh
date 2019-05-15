@@ -9,14 +9,11 @@ echo ---------------------------------------------------------------------------
 required_packages="acl \
     apt-transport-https \
     bash-completion \
-    bc \
     dnsutils \
     language-pack-en \
     unattended-upgrades apt-listchanges \
-    zip unzip  \
     pwgen \
     fail2ban \
-    python3-pip \
     tzdata"
 
 for package in $required_packages
@@ -30,34 +27,6 @@ do
         echo done.
     fi
 done
-
-#----- install AWS cli -----#
-pip_cli=$(which pip3)
-
-# created an issue that's hard to troubleshoot - TODO
-# $pip_cli install --upgrade pip
-
-printf '%-72s' "Installing awscli..."
-$pip_cli install awscli &> /dev/null
-echo done.
-
-# TODO - ask user consent for optional_packages
-optional_packages="apt-file \
-    vim-scripts \
-    nodejs npm \
-    direnv \
-    duplicity \
-    python-pip \
-    python-setuptools \
-    mlocate \
-    molly-guard"
-
-# for package in $optional_packages
-# do  
-    # echo -n "Installing ${package}..."
-    # DEBIAN_FRONTEND=noninteractive apt-get install -y $package
-    # echo "done."
-# done
 
 echo -------------------------------------------------------------------------
 echo ... done installing prerequisites!
@@ -91,6 +60,7 @@ if [ "$current_time_zone" != "UTC" ] ; then
 fi
 
 #--- Unattended Upgrades ---#
+printf '%-72s' "Setting up timezone..."
 echo 'APT::Periodic::Update-Package-Lists "1";' > /etc/apt/apt.conf.d/20auto-upgrades
 echo 'APT::Periodic::Unattended-Upgrade "1";' > /etc/apt/apt.conf.d/20auto-upgrades
 
@@ -98,11 +68,7 @@ echo 'APT::Periodic::Unattended-Upgrade "1";' > /etc/apt/apt.conf.d/20auto-upgra
 # sed -i '/Unattended-Upgrade::MailOnlyOnError/ s:^//::' /etc/apt/apt.conf.d/50unattended-upgrades
 # if the following doesn't work, comment it and then uncomment the above two lines
 sed -i '/\/\/Unattended-Upgrade::Mail\(OnlyOnError\)\?/ s:^//::' /etc/apt/apt.conf.d/50unattended-upgrades
-
-#--- Setup direnv ---#
-# if ! grep 'direnv' /root/.bashrc ; then
-    # echo 'eval "$(direnv hook bash)"' >> /root/.bashrc
-# fi
+echo done.
 
 #--- setup permissions for .envrc file ---#
 if [ -f /root/.envrc ]; then
@@ -110,36 +76,6 @@ if [ -f /root/.envrc ]; then
     source /root/.envrc
     # direnv allow &> /dev/null
 fi
-
-#--- Download and setup some helper tools ---#
-if [ ! -s /root/ps_mem.py ]; then
-    printf '%-72s' "Downloading ps_mem.py script..."
-    script_url=http://www.pixelbeat.org/scripts/ps_mem.py
-    wget -q -O /root/ps_mem.py $script_url
-    check_result $? 'ps_mem.py: error downloading the script.'
-    chmod +x /root/ps_mem.py
-    echo done.
-fi
-
-if [ ! -s /root/scripts/mysqltuner.pl ]; then
-    printf '%-72s' "Downloading mysqlturner script..."
-    script_url=https://raw.github.com/major/MySQltuner-perl/master/mysqltuner.pl
-    wget -q -O /root/scripts/mysqltuner.pl $script_url
-    check_result $? 'mysqltuner: error downloading the script.'
-    chmod +x /root/scripts/mysqltuner.pl
-    echo done.
-fi
-
-if [ ! -s /root/scripts/tuning-primer.sh ]; then
-    printf '%-72s' "Downloading tuning-primer script..."
-    script_url=https://launchpad.net/mysql-tuning-primer/trunk/1.6-r1/+download/tuning-primer.sh
-    wget -q -O /root/scripts/tuning-primer.sh $script_url
-    check_result $? 'tuning-primer: error downloading the script.'
-    chmod +x /root/scripts/tuning-primer.sh
-    sed -i 's/\bjoin_buffer\b/&_size/' /root/scripts/tuning-primer.sh
-    echo done.
-fi
-
 
 #--- Setup wp cli ---#
 if [ ! -s /usr/local/bin/wp ]; then
