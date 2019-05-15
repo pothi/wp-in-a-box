@@ -9,7 +9,7 @@ echo 'Creating a "web developer" user...'
 
 if [ "$web_developer_username" == "" ]; then
     # create SFTP username automatically
-    web_developer_username="web_$(pwgen -A 8 1)"
+    web_developer_username="sftp_web_$(pwgen -A 8 1)"
     echo "export web_developer_username=$web_developer_username" >> /root/.envrc
 fi
 

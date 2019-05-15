@@ -3,7 +3,7 @@
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
 
-# Version: 2
+# Version: 2.1
 
 # to be run as root, probably as a user-script just after a server is installed
 
@@ -12,8 +12,6 @@
 # echo "This script must be run as root"
 # exit 1
 # fi
-
-# TODO - change the default repo, if needed - mostly not needed on most hosts
 
 # create some useful directories - create them on demand
 mkdir -p /root/{backups,git,log,scripts} &> /dev/null

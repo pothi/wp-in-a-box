@@ -9,7 +9,7 @@ echo "Creating a 'server admin' user..."
 
 if [ "$system_admin_username" == "" ]; then
     # create SSH username automatically
-    system_admin_username="sys_$(pwgen -A 8 1)"
+    system_admin_username="ssh_$(pwgen -A 8 1)"
     echo "export system_admin_username=$system_admin_username" >> /root/.envrc
 fi
 
