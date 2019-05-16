@@ -116,7 +116,8 @@ echo
 source $local_wp_in_a_box_repo/scripts/server-admin-creation.sh
 echo
 
-# source $local_wp_in_a_box_repo/scripts/optional.sh
+# optional software, utilities and packages
+# source $local_wp_in_a_box_repo/scripts/optional-installation.sh
 
 # post-install steps
 codename=`lsb_release -c -s`

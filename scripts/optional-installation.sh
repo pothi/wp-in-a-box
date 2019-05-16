@@ -5,6 +5,8 @@ log_file=/root/log/wp-in-a-box.log
 exec > >(tee -a ${log_file} )
 exec 2> >(tee -a ${log_file} >&2)
 
+source /root/.envrc
+
 echo "Optional script started on (date & time): $(date +%c)"
 
 export DEBIAN_FRONTEND=noninteractive
