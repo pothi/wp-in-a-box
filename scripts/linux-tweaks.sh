@@ -29,7 +29,7 @@ fi
 echo Setting up linux tweaks...
 echo -----------------------------------------------------------------------------
 
-mkdir -p /etc/skel/{.aws,.cache,.composer,.config,.gnupg,.gsutil,.nano,.npm,.npm-global,.nvm,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
+mkdir -p /etc/skel/{.aws,.cache,.composer,.config,.gitconfig,.gnupg,.gsutil,.nano,.npm,.npm-global,.nvm,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
 mkdir -p /etc/skel/{backups,log,scripts,sites,tmp} &> /dev/null
 mkdir -p /etc/skel/backups/{files,databases} &> /dev/null
 mkdir -p /etc/skel/.config/bash &> /dev/null
