@@ -52,6 +52,7 @@ fi
 
 if [ ! -f /home/${system_admin_username}/.ssh/authorized_keys ]; then
     cp /root/.ssh/authorized_keys /home/${system_admin_username}/.ssh/authorized_keys
+    chown $system_admin_username:$system_admin_username /root/.ssh/authorized_keys /home/${system_admin_username}/.ssh/authorized_keys
 fi
 
 echo ...done setting up SSH user!
