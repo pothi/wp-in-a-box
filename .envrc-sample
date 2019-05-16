@@ -19,7 +19,7 @@
 # - on /etc/gitconfig
 
 #export EMAIL=
-
+#export server_admin_email=
 
 # if the password contains '=' char, then it may not work as expected
 

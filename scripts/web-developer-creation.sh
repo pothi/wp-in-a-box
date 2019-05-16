@@ -99,4 +99,8 @@ else
     # exit 1
 fi # end of if ! -d "/home/${BASE_NAME}" - whoops
 
+cp $local_wp_in_a_box_repo/.envrc-user-sample /home/${BASE_NAME}/.envrc
+chown $web_developer_username:$web_developer_username /home/${BASE_NAME}/.envrc
+sudo -H -u $web_developer_username bash $local_wp_in_a_box_repo/scripts/nvm-nodejs.sh
+
 echo ...done setting up SFTP user!
