@@ -55,9 +55,6 @@ fi
 
 source ~/.envrc
 
-echo First things first...
-echo ---------------------
-
 # take a backup
 backup_dir="/root/backups/etc-before-wp-in-a-box-$(date +%F)"
 if [ ! -d "$backup_dir" ]; then
