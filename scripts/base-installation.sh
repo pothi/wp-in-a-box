@@ -14,6 +14,7 @@ required_packages="acl \
     unattended-upgrades apt-listchanges \
     pwgen \
     fail2ban \
+    sudo \
     tzdata"
 
 for package in $required_packages
