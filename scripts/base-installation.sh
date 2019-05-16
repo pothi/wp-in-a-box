@@ -2,6 +2,27 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
+function install_awscli {
+    #----- install AWS cli -----#
+    # TODO: Install it only on non-aws infrastructure
+    pip_cli=$(which pip3)
+
+    # created an issue that's hard to troubleshoot - TODO
+    # $pip_cli install --upgrade pip
+
+    printf '%-72s' "Installing awscli..."
+    # apt-get -qq install python3-pip &> /dev/null
+    # $pip_cli install awscli &> /dev/null
+
+    # using bundle installer
+    # ref: https://docs.aws.amazon.com/cli/latest/userguide/install-bundle.html
+    curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+    unzip awscli-bundle.zip
+    ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+    rm awscli-bundle.zip
+    echo done.
+}
+
 #--- Install pre-requisites ---#
 # landscape-common update-notifier-common \
 echo Installing prerequisites...
@@ -15,7 +36,8 @@ required_packages="acl \
     pwgen \
     fail2ban \
     sudo \
-    tzdata"
+    tzdata \
+    unzip"
 
 for package in $required_packages
 do
@@ -119,3 +141,5 @@ sed -i -e 's/^#cron.*/cron.*/' /etc/rsyslog.conf
 sed -i -e 's/^#EXTRA_OPTS=""$/EXTRA_OPTS=""/' -e 's/^EXTRA_OPTS=""$/EXTRA_OPTS="-L 0"/' /etc/default/cron
 systemctl restart syslog
 systemctl restart cron
+
+[ ! -f /usr/local/bin/aws ] && install_awscli

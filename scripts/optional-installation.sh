@@ -30,6 +30,8 @@ echo
 source $local_wp_in_a_box_repo/scripts/email-mta-installation.sh
 echo
 
+echo Installing optional packages...
+echo -----------------------------------------------------------------------------
 optional_packages="apt-file \
     apache2-utils \
     acl \
@@ -47,7 +49,7 @@ optional_packages="apt-file \
     tree \
     uptimed \
     vim-scripts \
-    zip unzip"
+    zip"
 
 for package in $optional_packages
 do
@@ -60,18 +62,9 @@ do
         echo done.
     fi
 done
-
-#----- install AWS cli -----#
-# TODO: Install it only on non-aws infrastructure
-pip_cli=$(which pip3)
-
-# created an issue that's hard to troubleshoot - TODO
-# $pip_cli install --upgrade pip
-
-printf '%-72s' "Installing awscli..."
-apt-get -qq install python3-pip &> /dev/null
-$pip_cli install awscli &> /dev/null
-echo done.
+echo -------------------------------------------------------------------------
+echo ... done installing prerequisites!
+echo
 
 #--- Setup direnv ---#
 # if ! grep 'direnv' /root/.bashrc ; then

@@ -29,13 +29,18 @@ fi
 echo Setting up linux tweaks...
 echo -----------------------------------------------------------------------------
 
-mkdir -p /etc/skel/{.aws,.cache,.composer,.config,.gitconfig,.gnupg,.gsutil,.nano,.npm,.npm-global,.nvm,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
+mkdir -p /etc/skel/{.aws,.cache,.composer,.config,.gnupg,.gsutil,.local,.nano,.npm,.npm-global,.nvm,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
 mkdir -p /etc/skel/{backups,log,scripts,sites,tmp} &> /dev/null
 mkdir -p /etc/skel/backups/{files,databases} &> /dev/null
 mkdir -p /etc/skel/.config/bash &> /dev/null
 
-touch /etc/skel/{.bash_history,.npmrc,.yarnrc,mbox}
-echo 'prefix=~/.npm-global' > /etc/skel/.npmrc
+touch /etc/skel/{.bash_history,.gitconfig,.npmrc,.yarnrc,mbox}
+
+# the following creates an issue with nodejs installation using nvm
+# but works fine when installed through nodesource.
+# for now, let's use nvm based nodejs installation that can be installed on a per-user basis
+# echo 'prefix=~/.npm-global' > /etc/skel/.npmrc
+
 chmod 600 /etc/skel/mbox &> /dev/null
 chmod 600 /etc/skel/mbox &> /dev/null
 
