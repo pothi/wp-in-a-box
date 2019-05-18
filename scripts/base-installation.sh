@@ -142,4 +142,4 @@ sed -i -e 's/^#EXTRA_OPTS=""$/EXTRA_OPTS=""/' -e 's/^EXTRA_OPTS=""$/EXTRA_OPTS="
 systemctl restart syslog
 systemctl restart cron
 
-[ ! -f /usr/local/bin/aws ] && install_awscli
+which aws || install_awscli
