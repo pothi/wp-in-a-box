@@ -129,7 +129,7 @@ sed -i -e '/^memory_limit/ s/=.*/= '$PHP_MEM_LIMIT'M/' $FPM_PHP_INI
 sed -i -e '/^post_max_size/ s/=.*/= 64M/'      -e '/^upload_max_filesize/ s/=.*/= 64M/' $FPM_PHP_INI
 
 # set max_input_vars to 5000 (from the default 1000)
-sed -i '/max_input_vars/ s/;\? \?\(max_input_vars \?= \?\)[[:digit:]]\+/\15000/p' $FPM_PHP_INI
+sed -i '/max_input_vars/ s/;\? \?\(max_input_vars \?= \?\)[[:digit:]]\+/\15000/' $FPM_PHP_INI
 
 # Disable user.ini
 sed -i -e '/^;user_ini.filename =$/ s/;//' $FPM_PHP_INI
