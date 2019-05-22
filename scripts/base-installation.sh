@@ -112,6 +112,11 @@ if [ ! -s /usr/local/bin/wp ]; then
     echo done.
 fi
 
+# wp cli bash completion
+if [ ! -s /etc/bash_completion.d/wp-completion.bash ]; then
+    curl -LSso /etc/bash_completion.d/wp-completion.bash https://github.com/wp-cli/wp-cli/raw/master/utils/wp-completion.bash
+fi
+
 #--- cron: auto-update wp-cli ---#
 crontab -l | grep -qw wp-cli
 if [ "$?" -ne "0" ]; then
