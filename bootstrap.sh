@@ -60,26 +60,30 @@ backup_dir="${HOME}/backups/etc-before-wp-in-a-box-$(date +%F)"
 if [ ! -d "$backup_dir" ]; then
     printf '%-72s' "Taking initial backup..."
     mkdir $backup_dir
-    cp -a /etc $backup_dir
+    sudo cp -a /etc $backup_dir
     echo done.
 fi
 
 printf '%-72s' "Updating apt repos..."
 export DEBIAN_FRONTEND=noninteractive
-apt-get -qq update
+sudo apt-get -qq update
 echo done.
 
 # git is prerequisite for etckeeper
 printf '%-72s' "Installing git..."
-apt-get -qq install git &> /dev/null
+sudo apt-get -qq install git &> /dev/null
 echo done.
 git config --global --replace-all user.email "$EMAIL"
 git config --global --replace-all user.name "$NAME"
 
 printf '%-72s' "Installing etckeeper..."
 # sending the output to /dev/null to reduce the noise
-apt-get -qq install etckeeper &> /dev/null
-sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
+sudo apt-get -qq install etckeeper &> /dev/null
+sudo sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
+cd /etc/
+sudo git config user.name "root"
+sudo git config user.email "root@localhost"
+cd - &> /dev/null
 echo done.
 
 printf '%-72s' "Fetching wp-in-a-box repo..."
@@ -94,7 +98,6 @@ fi
 echo done.
 echo
 
-# create swap at first
 source $local_wp_in_a_box_repo/scripts/base-installation.sh
 echo
 source $local_wp_in_a_box_repo/scripts/linux-tweaks.sh
