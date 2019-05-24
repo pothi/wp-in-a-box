@@ -1,7 +1,8 @@
 #!/bin/bash
 
 export DEBIAN_FRONTEND=noninteractive
-source /root/.envrc
+
+source ${HOME}/.envrc
 
 [ ! -d ~/.config/bash ] && mkdir -p ~/.config/bash
 
@@ -30,7 +31,7 @@ echo Setting up linux tweaks...
 echo -----------------------------------------------------------------------------
 
 mkdir -p /etc/skel/{.aws,.cache,.composer,.config,.gnupg,.gsutil,.local,.nano,.npm,.npm-global,.nvm,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
-mkdir -p /etc/skel/{backups,log,scripts,sites,tmp} &> /dev/null
+mkdir -p /etc/skel/{backups,log,scripts,sites,tmp,git} &> /dev/null
 mkdir -p /etc/skel/backups/{files,databases} &> /dev/null
 mkdir -p /etc/skel/.config/bash &> /dev/null
 
@@ -113,9 +114,12 @@ if ! grep -q '" Custom Code - PK' /etc/skel/.vimrc ; then
     echo "set viminfo+=n~/.vim/viminfo" >> /etc/skel/.vimrc
 fi
 
+[ ! -d ${HOME}/.vim ] && mkdir ${HOME}/.vim
+cp /etc/skel/.vimrc ${HOME}/
+
 # copy the skel info to root
-mkdir /root/.vim &> /dev/null
-cp /etc/skel/.vimrc /root/
+sudo mkdir /root/.vim &> /dev/null
+sudo cp /etc/skel/.vimrc /root/
 
 # Vim related configs
 VIM_VERSION=$(/usr/bin/vim --version | head -1 | awk {'print $5'} | tr -d .)
