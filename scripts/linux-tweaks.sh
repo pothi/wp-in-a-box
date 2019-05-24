@@ -31,7 +31,7 @@ echo Setting up linux tweaks...
 echo -----------------------------------------------------------------------------
 
 mkdir -p /etc/skel/{.aws,.cache,.composer,.config,.gnupg,.gsutil,.local,.nano,.npm,.npm-global,.nvm,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
-mkdir -p /etc/skel/{backups,log,scripts,sites,tmp,git} &> /dev/null
+mkdir -p /etc/skel/{backups,git,log,scripts,sites,tmp} &> /dev/null
 mkdir -p /etc/skel/backups/{files,databases} &> /dev/null
 mkdir -p /etc/skel/.config/bash &> /dev/null
 
@@ -42,8 +42,9 @@ touch /etc/skel/{.bash_history,.gitconfig,.npmrc,.yarnrc,mbox}
 # for now, let's use nvm based nodejs installation that can be installed on a per-user basis
 # echo 'prefix=~/.npm-global' > /etc/skel/.npmrc
 
-chmod 600 /etc/skel/mbox &> /dev/null
-chmod 600 /etc/skel/mbox &> /dev/null
+chmod 600 /etc/skel/mbox
+chmod 700 /etc/skel/.gnupg
+chmod 700 /etc/skel/.ssh
 
 mkdir /etc/skel/.config &> /dev/null
 cp $local_wp_in_a_box_repo/config/checks.sh /etc/skel/.config/
