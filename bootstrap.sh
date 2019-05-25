@@ -87,13 +87,11 @@ cd - &> /dev/null
 echo done.
 
 printf '%-72s' "Fetching wp-in-a-box repo..."
-if [ -d $local_wp_in_a_box_repo ] ; then
-    cd $local_wp_in_a_box_repo
-    git pull -q origin master &> /dev/null
-    git pull -q --recurse-submodules &> /dev/null
-    cd - &> /dev/null
-else
+if [ ! -d $local_wp_in_a_box_repo ] ; then
     git clone -q --recursive https://github.com/pothi/wp-in-a-box $local_wp_in_a_box_repo &> /dev/null
+else
+    git -C $local_wp_in_a_box_repo pull -q origin master &> /dev/null
+    git -C $local_wp_in_a_box_repo pull -q --recurse-submodules &> /dev/null
 fi
 echo done.
 echo
