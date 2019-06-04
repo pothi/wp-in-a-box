@@ -110,7 +110,7 @@ source $local_wp_in_a_box_repo/scripts/php-installation.sh
 echo
 
 # the following can be executed at any order as they are mostly optional
-# source $local_wp_in_a_box_repo/scripts/install-firewall.sh
+# source $local_wp_in_a_box_repo/scripts/firewall.sh
 source $local_wp_in_a_box_repo/scripts/server-admin-creation.sh
 echo
 

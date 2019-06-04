@@ -4,7 +4,15 @@ export DEBIAN_FRONTEND=noninteractive
 
 echo 'Setting up ufw...'
 
-apt-get install -q -y ufw
+package="ufw"
+if dpkg-query -s $package &> /dev/null
+then
+    echo "$package is already installed"
+else
+    printf '%-72s' "Installing ${package}..."
+    apt-get -qq install $package &> /dev/null
+    echo done.
+fi
 
 # UFW
 ufw default deny incoming
