@@ -69,6 +69,20 @@ echo '
 # * * * * *  command to execute' | crontab - &>> $log_file
 fi
 
+if [ ! -s /var/spool/cron/crontabs/$web_developer_username ]; then
+echo "Setting up crontab for $web_developer_username!"
+echo '
+# ┌───────────── minute (0 - 59)
+# │ ┌───────────── hour (0 - 23)
+# │ │ ┌───────────── day of month (1 - 31)
+# │ │ │ ┌───────────── month (1 - 12)
+# │ │ │ │ ┌───────────── day of week (0 - 6) (Sunday to Saturday;
+# │ │ │ │ │                                       7 is also Sunday on some systems)
+# │ │ │ │ │
+# │ │ │ │ │
+# * * * * *  command to execute' | crontab -u $web_developer_username - &>> $log_file
+fi
+
 #--- setup timezone ---#
 current_time_zone=$(date +\%Z)
 if [ "$current_time_zone" != "UTC" ] ; then

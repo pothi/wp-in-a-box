@@ -5,7 +5,7 @@
 
 source /root/.envrc
 
-echo 'Creating a "web developer" user...'
+echo 'Creating a "web developer" user to login via SFTP...'
 
 if [ "$web_developer_username" == "" ]; then
     # create SFTP username automatically
@@ -102,8 +102,18 @@ fi # end of if ! -d "/home/${BASE_NAME}" - whoops
 cp $local_wp_in_a_box_repo/.envrc-user-sample /home/${BASE_NAME}/.envrc
 chown $web_developer_username:$web_developer_username /home/${BASE_NAME}/.envrc
 
-cd $local_wp_in_a_box_repo/scripts/ &> /dev/null
-sudo -H -u $web_developer_username bash nvm-nodejs.sh
-cd - &> /dev/null
+cp $local_wp_in_a_box_repo/etc/disk-usage-alert.sh /home/${BASE_NAME}/scripts
+chown $web_developer_username:$web_developer_username /home/${BASE_NAME}/scripts/disk-usage-alert.sh
+chmod +x /home/${BASE_NAME}/scripts/disk-usage-alert.sh
 
-echo ...done setting up SFTP user!
+#--- cron: auto-update wp-cli ---#
+crontab -l | grep -qw disk-usage-alert
+if [ "$?" -ne "0" ]; then
+    ( crontab -l; echo '@daily ~/scripts/disk-usage-alert.sh &> /dev/null' ) | crontab -
+fi
+
+# cd $local_wp_in_a_box_repo/scripts/ &> /dev/null
+# sudo -H -u $web_developer_username bash nvm-nodejs.sh
+# cd - &> /dev/null
+
+echo ...done setting up SFTP username for Web Developer!
