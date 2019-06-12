@@ -215,5 +215,12 @@ if ! $(grep -q "^${entry}$" "$rootbashrc") ; then
 fi # test if the entry is found in file
 fi # test if file exists
 
+# ref: https://github.com/guard/listen/wiki/Increasing-the-amount-of-inotify-watchers#the-technical-details
+# to fix "Error: ENOSPC: System limit for number of file watchers reached" - when running "watch" with gulp, grunt, etc.
+file_watchers_limit_sysctl_file='/etc/sysctl.d/60-file-watchers-limit-local.conf'
+# create / overwrite and append our custom values in it
+printf "fs.inotify.max_user_watches = 524288\n" > $file_watchers_limit_sysctl_file &> /dev/null
+sysctl -p $file_watchers_limit_sysctl_file
+
 echo -------------------------------------------------------------------------
 echo ... linux tweaks are done.
