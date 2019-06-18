@@ -98,8 +98,11 @@ cat ~/.envrc
 
 ## What you get at the end of the installation
 
-- a SSH user (prefixed with `ssh_`) with root privileges (use it only to manage the server such as to create a new MySQL database or to create a new vhost entry for Nginx)
-- a chrooted SFTP user, prefixed with `sftp_web_`, with its home directory at `/home/web` along with some common directories(such as ~/log, ~/sites, etc) created already. (you may give it to your developer to access the file system such as to upload a new theme, etc)
+You may find the following details at `~/.envrc` file...
+
+- a SSH user (prefixed with `ssh_`) with sudo privileges (use it only to manage the server such as to create a new MySQL database or to create a new vhost entry for Nginx)
+- a chrooted SFTP user, prefixed with `sftp_web_`, with its home directory at `/home/web` along with some common directories(such as `~/log`, `~/sites`, etc) created already. (you may give it to your developer to access the file system such as to upload a new theme, etc)
+- a dedicated MySQL username (and password) with all the privileges as `root` user. This can be used to access MySQL via PhpMyAdmin, as `root` user can only access MySQL via cli.
 
 ## Where to install WordPress & How to install it
 
