@@ -137,6 +137,8 @@ sed -i -e '/^;user_ini.filename =$/ s/;//' $FPM_PHP_INI
 # Setup timezone
 sed -i -e 's/^;date\.timezone =$/date.timezone = "UTC"/' $FPM_PHP_INI
 
+# Turn off warning messages when running wp-cli
+sed -i -e '/^log_errors/ s/=.*/= Off/' $CLI_PHP_INI
 
 ### ---------- pool-file modifications ---------- ###
 
