@@ -57,6 +57,9 @@ fi
 
 codename=`lsb_release -c -s`
 case "$codename" in
+    "stretch")
+        php_version=7.3
+        ;;
     "bionic")
         php_version=7.2
         ;;

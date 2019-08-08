@@ -85,6 +85,11 @@ check_result $? 'Nginx: could not be restarted.'
 # unattended-upgrades
 unattended_file=/etc/apt/apt.conf.d/50unattended-upgrades
 case "$codename" in
+    "buster")
+        if ! grep -q '"origin=nginx,codename=${distro_codename}";' $unattended_file ; then
+            sed -i -e '/^Unattended-Upgrade::Origins-Pattern/ a "origin=nginx,codename=${distro_codename}";' $unattended_file
+        fi
+        ;;
     "stretch")
         if ! grep -q '"origin=nginx,codename=${distro_codename}";' $unattended_file ; then
             sed -i -e '/^Unattended-Upgrade::Origins-Pattern/ a "origin=nginx,codename=${distro_codename}";' $unattended_file
