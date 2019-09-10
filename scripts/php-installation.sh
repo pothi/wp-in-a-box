@@ -90,7 +90,7 @@ POOL_FILE=/etc/php/${php_version}/fpm/pool.d/${web_developer_username}.conf
 
 ### Please do not edit below this line ###
 
-PHP_PACKAGES="php${php_version}-fpm php${php_version}-mysql php${php_version}-gd php${php_version}-cli php${php_version}-xml php${php_version}-mbstring php${php_version}-soap php-curl"
+PHP_PACKAGES="php${php_version}-fpm php${php_version}-mysql php${php_version}-gd php${php_version}-cli php${php_version}-xml php${php_version}-mbstring php${php_version}-soap php-curl php-zip"
 
 if [ "$php_version" = "7.0" ] ; then
     PHP_PACKAGES="$PHP_PACKAGES php${php_version}-mcrypt"
