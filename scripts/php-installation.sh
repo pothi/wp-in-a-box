@@ -90,22 +90,19 @@ POOL_FILE=/etc/php/${php_version}/fpm/pool.d/${web_developer_username}.conf
 
 ### Please do not edit below this line ###
 
-PHP_PACKAGES="php${php_version}-fpm php${php_version}-mysql php${php_version}-gd php${php_version}-cli php${php_version}-xml php${php_version}-mbstring php${php_version}-soap php-curl php-zip"
+PHP_PACKAGES="php${php_version}-fpm php${php_version}-mysql php${php_version}-gd php${php_version}-cli php${php_version}-xml php${php_version}-mbstring php${php_version}-soap php-curl php${php_version}-zip php-zip"
 
 if [ "$php_version" = "7.0" ] ; then
     PHP_PACKAGES="$PHP_PACKAGES php${php_version}-mcrypt"
-fi
-
-if [ "$php_version" = "7.1" ] ; then
+elif [ "$php_version" = "7.1" ] ; then
     PHP_PACKAGES="$PHP_PACKAGES php${php_version}-mcrypt"
-fi
-
-if [ "$php_version" = "7.2" ] ; then
+# if [ "$php_version" = "7.2" ] ; then
+else
     # todo: https://stackoverflow.com/questions/48275494/issue-in-installing-php7-2-mcrypt
     echo
     echo Note on mcrypt
     echo --------------
-    echo mycrypt is removed in PHP 7.2
+    echo mycrypt is removed since PHP 7.2
     echo Please check if any plugins or theme still use mcrypt by running...
     echo 'find ~/wproot/wp-content/ -type f -name "*.php" -exec grep -inr mcrypt {} \;'
     echo
