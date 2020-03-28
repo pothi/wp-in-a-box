@@ -13,6 +13,11 @@
 # exit 1
 # fi
 
+# ref: https://packages.sury.org/php/README.txt
+if [ "$(whoami)" != "root" ]; then
+    SUDO=sudo
+fi
+
 # create some useful directories - create them on demand
 mkdir -p ${HOME}/{backups,git,log,scripts} &> /dev/null
 
