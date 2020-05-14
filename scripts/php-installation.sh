@@ -60,6 +60,9 @@ case "$codename" in
     "buster")
         php_version=7.3
         ;;
+    "focal")
+        php_version=7.4
+        ;;
     "bionic")
         php_version=7.2
         ;;
