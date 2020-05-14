@@ -2,21 +2,24 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-echo 'Installing MySQL / MariaDB Server'
+# echo 'Installing MySQL / MariaDB Server'
+echo 'Installing MySQL Server'
 # lets check if mariadb-server exists
-sql_server=mariadb-server
-if ! apt-cache show mariadb-server &> /dev/null ; then sql_server=mysql-server ; fi
+# sql_server=mariadb-server
+# if ! apt-cache show mariadb-server &> /dev/null ; then sql_server=mysql-server ; fi
+
+sql_server=mysql-server
 
 apt-get install ${sql_server} -qq &> /dev/null
 
 systemctl stop mysql
 # enable slow log and other tweaks
-cp $local_wp_in_a_box_repo/config/mariadb.conf.d/*.cnf /etc/mysql/mariadb.conf.d/
+cp $local_wp_in_a_box_repo/config/mysql.conf.d/*.cnf /etc/mysql/mysql.conf.d/
 systemctl start mysql
 
 source /root/.envrc
 
-echo 'Setting up MySQL user...'
+echo 'Setting up MySQL admin user...'
 
 if [ "$MYSQL_ADMIN_USER" == "" ]; then
     # create MYSQL username automatically
