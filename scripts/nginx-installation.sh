@@ -39,10 +39,13 @@ case "$codename" in
     "stretch")
         nginx_repo_add
         ;;
-    "xenial")
+    "focal")
         nginx_repo_add
         ;;
     "bionic")
+        nginx_repo_add
+        ;;
+    "xenial")
         nginx_repo_add
         ;;
     *)
