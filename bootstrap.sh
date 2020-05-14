@@ -125,6 +125,9 @@ echo
 # post-install steps
 codename=`lsb_release -c -s`
 case "$codename" in
+    "focal")
+        source $local_wp_in_a_box_repo/scripts/post-install-focal.sh
+        ;;
     "bionic")
         source $local_wp_in_a_box_repo/scripts/post-install-bionic.sh
         ;;
