@@ -39,6 +39,10 @@ postconf -e 'smtp_tls_loglevel = 1'
 postconf -e 'smtp_tls_CApath = /etc/ssl/certs'
 postconf -e 'smtpd_tls_CApath = /etc/ssl/certs'
 
+# limit outgoing rate
+postconf -e 'smtp_destination_concurrency_limit = 2'
+postconf -e 'smtp_destination_rate_delay = 60s'
+
 /usr/sbin/postfix check && systemctl restart $mta
 
 check_result $? "Warning: Something went wrong while restarting MTA ($mta). Continuing..."
