@@ -58,6 +58,9 @@ apt-get install -qq nginx &> /dev/null
 check_result $? 'Nginx: could not be installed.'
 
 backup_dir="/root/backups/etc-nginx-$(date +%F)"
+
+[ ! -d /root/backups ] && mkdir /root/backups
+
 if [ ! -d "$backup_dir" ]; then
     cp -a /etc $backup_dir
 fi
