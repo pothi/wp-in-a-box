@@ -2,9 +2,10 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-echo Ubuntu Focal Fossa (2020.04) specific changes:
+echo 'Ubuntu Focal Fossa (2020.04) specific changes:'
 echo ----------------------------------------------
 echo Installing certbot...
+
 apt-get install -qq software-properties-common &> /dev/null
 add-apt-repository universe
 apt-get update
