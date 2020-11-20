@@ -101,6 +101,27 @@ fi
 echo done.
 echo
 
+# pre-install steps
+codename=`lsb_release -c -s`
+case "$codename" in
+    "focal")
+        source $local_wp_in_a_box_repo/scripts/pre-install-focal.sh
+        ;;
+    "bionic")
+        # source $local_wp_in_a_box_repo/scripts/pre-install-bionic.sh
+        ;;
+    "stretch")
+        # source $local_wp_in_a_box_repo/scripts/pre-install-stretch.sh
+        ;;
+    "xenial")
+        # source $local_wp_in_a_box_repo/scripts/pre-install-xenial.sh
+        ;;
+    *)
+        echo "Distro: $codename"
+        echo 'Warning: Could not figure out the distribution codename. Skipping pre-install steps!'
+        ;;
+esac
+
 source $local_wp_in_a_box_repo/scripts/base-installation.sh
 echo
 source $local_wp_in_a_box_repo/scripts/linux-tweaks.sh
