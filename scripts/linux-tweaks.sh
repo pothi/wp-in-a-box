@@ -155,7 +155,7 @@ sed -i '0,/PasswordAuthentication/I s/yes/no/' $sshd_config_file
     printf '%-72s' "Restarting SSH daemon..."
     systemctl restart sshd &> /dev/null
     if [ $? -ne 0 ]; then
-        echo 'Something went wrong while creating SFTP user! See below...'; echo; echo;
+        echo 'Something went wrong while restarting SSH! See below...'; echo; echo;
         systemctl status sshd
     else
         # echo '... SSH daemon restarted!'
