@@ -27,8 +27,10 @@ if [ "$MYSQL_ADMIN_USER" == "" ]; then
     MYSQL_ADMIN_PASS=$(pwgen -cnsv 20 1)
     echo "export MYSQL_ADMIN_USER=$MYSQL_ADMIN_USER" >> /root/.envrc
     echo "export MYSQL_ADMIN_PASS=$MYSQL_ADMIN_PASS" >> /root/.envrc
-    mysql -e "CREATE USER ${MYSQL_ADMIN_USER}@localhost IDENTIFIED BY '${MYSQL_ADMIN_PASS}';"
-    mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${MYSQL_ADMIN_USER}@localhost WITH GRANT OPTION"
+    # mysql -e "CREATE USER ${MYSQL_ADMIN_USER}@localhost IDENTIFIED BY '${MYSQL_ADMIN_PASS}';"
+    # mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${MYSQL_ADMIN_USER}@localhost WITH GRANT OPTION"
+    mysql -e "CREATE USER ${MYSQL_ADMIN_USER} IDENTIFIED BY '${MYSQL_ADMIN_PASS}';"
+    mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${MYSQL_ADMIN_USER} WITH GRANT OPTION"
 fi
 echo ... done setting up MySQL user.
 
