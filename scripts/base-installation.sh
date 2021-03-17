@@ -4,22 +4,22 @@ export DEBIAN_FRONTEND=noninteractive
 
 function install_awscli {
     #----- install AWS cli -----#
-    # TODO: Install it only on non-aws infrastructure
-    pip_cli=$(which pip3)
-
-    # created an issue that's hard to troubleshoot - TODO
-    # $pip_cli install --upgrade pip
-
     printf '%-72s' "Installing awscli..."
-    # apt-get -qq install python3-pip &> /dev/null
-    # $pip_cli install awscli &> /dev/null
+
+	# for version #1
+	# TODO: Update this function to install version #2
+	# see - https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html
+    # remove the previous version of aws cli
+    [ -d /usr/local/aws ] && sudo rm -rf /usr/local/aws
+    [ -f /usr/local/bin/aws ] && sudo rm /usr/local/bin/aws
 
     # using bundle installer
     # ref: https://docs.aws.amazon.com/cli/latest/userguide/install-bundle.html
-    curl --silent "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
-    unzip -qq awscli-bundle.zip
-    ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws &> /dev/null
-    rm awscli-bundle.zip
+    curl --silent "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "/tmp/awscli-bundle.zip"
+    unzip -qq -d /tmp/ /tmp/awscli-bundle.zip
+    sudo /tmp/awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws &> /dev/null
+    rm /tmp/awscli-bundle.zip
+    rm -rf /tmp/awscli-bundle
     echo done.
 }
 
