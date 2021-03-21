@@ -6,6 +6,7 @@ There are a number of similar scripts available on the internet. The unique feat
 
 ## Supported Platforms
 
++ Ubuntu Focal Fossa (20.04.x)
 + Ubuntu Bionic Beaver (18.04.x)
 + Debian Stretch (9.x)
 + Ubuntu Xenial Xerus (16.04.x)
