@@ -12,7 +12,6 @@ cp $local_wp_in_a_box_repo/config/common-aliases.sh ~/.config/bash/
 cp $local_wp_in_a_box_repo/config/common-exports.sh ~/.config/bash/
 source ~/.config/checks.sh
 source ~/.config/bash/common-aliases.sh
-source ~/.config/bash/common-exports.sh
 
 if ! grep -qw checks.sh ~/.bashrc ; then
 printf "[[ -f ~/.config/checks.sh ]] && source ~/.config/checks.sh\n" >> ~/.bashrc
@@ -30,10 +29,8 @@ fi
 echo Setting up linux tweaks...
 echo -----------------------------------------------------------------------------
 
-mkdir -p /etc/skel/{.aws,.cache,.composer,.config,.gnupg,.gsutil,.local,.nano,.npm,.npm-global,.nvm,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
-mkdir -p /etc/skel/{backups,git,log,scripts,sites,tmp} &> /dev/null
-mkdir -p /etc/skel/backups/{files,databases} &> /dev/null
-mkdir -p /etc/skel/.config/bash &> /dev/null
+mkdir -p /etc/skel/{.aws,.cache,.composer,.config/bash,.gnupg,.gsutil,.local/bin,.nano,.npm,.npm-global,.nvm,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
+mkdir -p /etc/skel/{backups/{full-backups,db-backups},git,log,scripts,sites,tmp} &> /dev/null
 
 touch /etc/skel/{.bash_history,.gitconfig,.npmrc,.yarnrc,mbox}
 
