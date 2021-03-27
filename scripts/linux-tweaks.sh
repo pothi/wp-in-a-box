@@ -17,9 +17,10 @@ if ! grep -qw checks.sh ~/.bashrc ; then
 printf "[[ -f ~/.config/checks.sh ]] && source ~/.config/checks.sh\n" >> ~/.bashrc
 fi
 
-if ! grep -qw common-exports.sh ~/.bashrc ; then
-printf "[[ -f ~/.config/bash/common-exports.sh ]] && source ~/.config/bash/common-exports.sh\n" >> ~/.bashrc
-fi
+# not needed for root
+# if ! grep -qw common-exports.sh ~/.bashrc ; then
+# printf "[[ -f ~/.config/bash/common-exports.sh ]] && source ~/.config/bash/common-exports.sh\n" >> ~/.bashrc
+# fi
 
 if ! grep -qw common-aliases.sh ~/.bashrc ; then
 printf "[[ -f ~/.config/bash/common-aliases.sh ]] && source ~/.config/bash/common-aliases.sh\n" >> ~/.bashrc
@@ -43,7 +44,6 @@ chmod 600 /etc/skel/mbox
 chmod 700 /etc/skel/.gnupg
 chmod 700 /etc/skel/.ssh
 
-mkdir /etc/skel/.config &> /dev/null
 cp $local_wp_in_a_box_repo/config/checks.sh /etc/skel/.config/
 cp $local_wp_in_a_box_repo/config/common-aliases.sh /etc/skel/.config/bash/
 cp $local_wp_in_a_box_repo/config/common-exports.sh /etc/skel/.config/bash/
@@ -81,6 +81,7 @@ fi
 
 if ! grep -qw checks.sh /etc/skel/.bashrc ; then
 printf "
+# check for environments
 if [ -f ~/.config/checks.sh ]; then
     source ~/.config/checks.sh
 fi
@@ -89,6 +90,7 @@ fi
 
 if ! grep -qw common-aliases.sh /etc/skel/.bashrc ; then
 printf "
+# include aliases for dig, curl, etc.
 if [ -f ~/.config/bash/common-aliases.sh ]; then
     source ~/.config/bash/common-aliases.sh
 fi
@@ -97,6 +99,7 @@ fi
 
 if ! grep -qw common-exports.sh /etc/skel/.bashrc ; then
 printf "
+# configure PATHs
 if [ -f ~/.config/bash/common-exports.sh ]; then
     source ~/.config/bash/common-exports.sh
 fi
@@ -112,18 +115,21 @@ if ! grep -q '" Custom Code - PK' /etc/skel/.vimrc ; then
     echo "set viminfo+=n~/.vim/viminfo" >> /etc/skel/.vimrc
 fi
 
-[ ! -d ${HOME}/.vim ] && mkdir ${HOME}/.vim
-cp /etc/skel/.vimrc ${HOME}/
-
-# copy the skel info to root
-sudo mkdir /root/.vim &> /dev/null
-sudo cp /etc/skel/.vimrc /root/
-
 # Vim related configs
 VIM_VERSION=$(/usr/bin/vim --version | head -1 | awk {'print $5'} | tr -d .)
-cp $local_wp_in_a_box_repo/config/vimrc.local /etc/vim/
-cp -a $local_wp_in_a_box_repo/config/vim/* /usr/share/vim/vim${VIM_VERSION}/
-sed -i "s/VIM_VERSION/$VIM_VERSION/g" /etc/vim/vimrc.local
+sudo cp -a $local_wp_in_a_box_repo/config/vim/* /etc/skel/.vim/
+sudo cp "$local_wp_in_a_box_repo/config/vimrc.local" /etc/skel/.vimrc
+sudo sed -i "s/VIM_VERSION/$VIM_VERSION/g" /etc/skel/.vimrc
+
+[ ! -d ${HOME}/.vim ] && cp /etc/skel/.vim ${HOME}/
+cp /etc/skel/.vimrc ${HOME}/
+
+sudo cp /etc/skel/.vim /root/ &> /dev/null
+sudo cp /etc/skel/.vimrc /root/
+
+# cp $local_wp_in_a_box_repo/config/vimrc.local /etc/vim/
+# cp -a $local_wp_in_a_box_repo/config/vim/* /usr/share/vim/vim${VIM_VERSION}/
+# sed -i "s/VIM_VERSION/$VIM_VERSION/g" /etc/vim/vimrc.local
 
 # Clean up
 # rm -rf $local_wp_in_a_box_repo/
