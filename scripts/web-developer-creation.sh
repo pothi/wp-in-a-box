@@ -106,7 +106,7 @@ cp $local_wp_in_a_box_repo/etc/disk-usage-alert.sh /home/${BASE_NAME}/scripts
 chown $web_developer_username:$web_developer_username /home/${BASE_NAME}/scripts/disk-usage-alert.sh
 chmod +x /home/${BASE_NAME}/scripts/disk-usage-alert.sh
 
-#--- cron: auto-update wp-cli ---#
+#--- cron for disk-usage-alert ---#
 crontab -l | grep -qw disk-usage-alert
 if [ "$?" -ne "0" ]; then
     ( crontab -l; echo '@daily ~/scripts/disk-usage-alert.sh &> /dev/null' ) | crontab -
