@@ -107,25 +107,25 @@ fi
 fi
 # end of ~/.bashrc tweaks
 
-
-mkdir /etc/skel/.vim &> /dev/null
-touch /etc/skel/.vimrc
-if ! grep -q '" Custom Code - PK' /etc/skel/.vimrc ; then
-    echo '" Custom Code - PK' > /etc/skel/.vimrc
-    echo "set viminfo+=n~/.vim/viminfo" >> /etc/skel/.vimrc
+###--- VIM Tweaks ---###
+[ ! -d /etc/skel/.vim ] && mkdir /etc/skel/.vim
+[ ! -f /etc/skel/.vim/vimrc ] && touch /etc/skel/.vim/vimrc
+if ! grep -q '" Custom Code - PK' /etc/skel/.vim/vimrc ; then
+    echo '" Custom Code - PK' > /etc/skel/.vim/vimrc
+    echo "set viminfo+=n~/.vim/viminfo" >> /etc/skel/.vim/vimrc
 fi
 
 # Vim related configs
 VIM_VERSION=$(/usr/bin/vim --version | head -1 | awk {'print $5'} | tr -d .)
 sudo cp -a $local_wp_in_a_box_repo/config/vim/* /etc/skel/.vim/
-sudo cp "$local_wp_in_a_box_repo/config/vimrc.local" /etc/skel/.vimrc
-sudo sed -i "s/VIM_VERSION/$VIM_VERSION/g" /etc/skel/.vimrc
+sudo cat "$local_wp_in_a_box_repo/config/vimrc.local" >> /etc/skel/.vim/vimrc
+sudo sed -i "s/VIM_VERSION/$VIM_VERSION/g" /etc/skel/.vim/vimrc
 
-[ ! -d ${HOME}/.vim ] && cp /etc/skel/.vim ${HOME}/
-cp /etc/skel/.vimrc ${HOME}/
-
-sudo cp /etc/skel/.vim /root/ &> /dev/null
+sudo cp -a /etc/skel/.vim /root/ &> /dev/null
 sudo cp /etc/skel/.vimrc /root/
+
+[ ! -d ${HOME}/.vim ]       && cp -a /etc/skel/.vim ${HOME}/
+[ ! -f ${HOME}/.vim/vimrc ] && cp /etc/skel/.vim/vimrc ${HOME}/.vim
 
 # cp $local_wp_in_a_box_repo/config/vimrc.local /etc/vim/
 # cp -a $local_wp_in_a_box_repo/config/vim/* /usr/share/vim/vim${VIM_VERSION}/
