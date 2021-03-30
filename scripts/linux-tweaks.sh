@@ -141,6 +141,7 @@ sshd_config_file=/etc/ssh/sshd_config
 sed -i -E '/PasswordAuthentication (yes|no)/ s/^#//' $sshd_config_file
 # replace only the first occurrance of the text PasswordAuthentication
 sed -i '0,/PasswordAuthentication/I s/yes/no/' $sshd_config_file
+sed -i '0,/PubkeyAuthentication/I s/no/yes/' $sshd_config_file
 
 # echo 'Testing the modified SSH config'
 # the following didn't work
