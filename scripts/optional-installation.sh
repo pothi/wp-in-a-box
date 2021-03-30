@@ -25,8 +25,6 @@ apt-get -qq autoremove &> /dev/null
 echo done.
 echo
 
-source $local_wp_in_a_box_repo/scripts/swap.sh
-echo
 source $local_wp_in_a_box_repo/scripts/email-mta-installation.sh
 echo
 

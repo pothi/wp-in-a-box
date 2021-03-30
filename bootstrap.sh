@@ -122,6 +122,8 @@ case "$codename" in
         ;;
 esac
 
+source $local_wp_in_a_box_repo/scripts/swap.sh
+echo
 source $local_wp_in_a_box_repo/scripts/base-installation.sh
 echo
 source $local_wp_in_a_box_repo/scripts/linux-tweaks.sh
