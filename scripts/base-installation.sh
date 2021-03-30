@@ -40,8 +40,7 @@ function install_awscli {
 # landscape-common update-notifier-common \
 echo Installing prerequisites...
 echo -----------------------------------------------------------------------------
-required_packages="acl \
-    apt-transport-https \
+required_packages="apt-transport-https \
     bash-completion \
     dnsutils \
     language-pack-en \
