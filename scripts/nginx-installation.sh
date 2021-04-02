@@ -4,6 +4,10 @@ export DEBIAN_FRONTEND=noninteractive
 
 echo 'Installing Nginx Server...'
 
+# install prerequisites
+# ref: https://nginx.org/en/linux_packages.html#Ubuntu
+sudo apt install -qq curl gnupg2 ca-certificates lsb-release
+
 codename=$(lsb_release -c -s)
 
 # function to add the official Nginx.org repo
