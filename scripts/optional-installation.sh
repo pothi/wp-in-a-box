@@ -99,7 +99,7 @@ if [ ! -s /root/scripts/tuning-primer.sh ]; then
 fi
 
 # depends on mysql & php installation
-source $local_wp_in_a_box_repo/scripts/pma-installation.sh
+source $local_wp_in_a_box_repo/scripts/pma-user-creation.sh
 echo
 source $local_wp_in_a_box_repo/scripts/redis.sh
 echo
