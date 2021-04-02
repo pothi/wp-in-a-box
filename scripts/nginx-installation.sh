@@ -32,8 +32,8 @@ nginx_repo_add() {
         nginx_src_url="https://nginx.org/packages/${distro}/"
     fi
 
-    echo "deb ${nginx_src_url} ${codename} nginx" > /etc/apt/sources.list.d/nginx.list
-    echo "deb-src ${nginx_src_url} ${codename} nginx" >> /etc/apt/sources.list.d/nginx.list
+    echo "deb [arch=amd64] ${nginx_src_url} ${codename} nginx" > /etc/apt/sources.list.d/nginx.list
+    echo "deb-src [arch=amd64] ${nginx_src_url} ${codename} nginx" >> /etc/apt/sources.list.d/nginx.list
 
     # finally update the local apt cache
     apt-get update -qq
