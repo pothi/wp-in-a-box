@@ -6,10 +6,12 @@ echo 'Ubuntu Focal Fossa (2020.04) specific changes:'
 echo ----------------------------------------------
 echo Installing certbot...
 
-apt-get install -qq software-properties-common &> /dev/null
-add-apt-repository universe
-apt-get update
-apt-get install -qq certbot &> /dev/null
+sudo snap install core
+sudo snap refresh core
+sudo apt-get -qq remove certbot
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot
+
 echo done.
 
 #-- For Redis ---#
