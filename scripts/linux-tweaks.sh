@@ -122,10 +122,10 @@ sudo cat "$local_wp_in_a_box_repo/config/vimrc.local" >> /etc/skel/.vim/vimrc
 sudo sed -i "s/VIM_VERSION/$VIM_VERSION/g" /etc/skel/.vim/vimrc
 
 sudo cp -a /etc/skel/.vim /root/ &> /dev/null
-sudo cp /etc/skel/.vimrc /root/
+# sudo cp /etc/skel/.vim/vimrc /root/.vim/
 
 [ ! -d ${HOME}/.vim ]       && cp -a /etc/skel/.vim ${HOME}/
-[ ! -f ${HOME}/.vim/vimrc ] && cp /etc/skel/.vim/vimrc ${HOME}/.vim
+# [ ! -f ${HOME}/.vim/vimrc ] && cp /etc/skel/.vim/vimrc ${HOME}/.vim
 
 # cp $local_wp_in_a_box_repo/config/vimrc.local /etc/vim/
 # cp -a $local_wp_in_a_box_repo/config/vim/* /usr/share/vim/vim${VIM_VERSION}/
