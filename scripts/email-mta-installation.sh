@@ -50,6 +50,10 @@ postconf -e 'smtp_tls_note_starttls_offer = yes'
 postconf -e 'smtp_destination_concurrency_limit = 2'
 postconf -e 'smtp_destination_rate_delay = 60s'
 
+# look for spam
+postconf -e 'header_checks = regexp:/etc/postfix/header_checks'
+postconf -e 'smtp_header_checks = regexp:/etc/postfix/header_checks'
+
 /usr/sbin/postfix check && systemctl restart $mta
 
 check_result $? "Warning: Something went wrong while restarting MTA ($mta). Continuing..."
