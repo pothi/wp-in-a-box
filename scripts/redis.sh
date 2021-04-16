@@ -1,17 +1,24 @@
 #!/usr/bin/env bash
 
+# programming env: these switches turn some bugs into errors
+set -o errexit -o pipefail -o noclobber -o nounset
+
+export DEBIAN_FRONTEND=noninteractive
+
 # what's done here
 # 1. install redis, redis for PHP
 # 2. configure redis and restart it
 # 3. configure php and restart it
 # 4. tweak sysctl for redis
 
-source ~/.envrc
-
 # variables
 redis_maxmemory_policy='allkeys-lru'
 redis_conf_file='/etc/redis/redis.conf'
 redis_sysctl_file='/etc/sysctl.d/60-redis-local.conf'
+
+source /root/.envrc
+
+php_version=${PHP_VER:-7.4}
 
 restart_redis='no'
 

@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# programming env: these switches turn some bugs into errors
+set -o errexit -o pipefail -o noclobber -o nounset
+
+# what's done here
+
+# variables
+
 # Sets up hostname and FQDN, if they are not already set, such as in Linode
 # DigitalOcean sets it up correctly
 

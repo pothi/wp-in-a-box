@@ -1,6 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# programming env: these switches turn some bugs into errors
+set -o errexit -o pipefail -o noclobber -o nounset
 
 export DEBIAN_FRONTEND=noninteractive
+
+# what's done here.
+
+# variables
 
 echo "Setting up memcached..."
 

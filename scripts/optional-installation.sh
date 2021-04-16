@@ -1,4 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+# programming env: these switches turn some bugs into errors
+set -o errexit -o pipefail -o noclobber -o nounset
+
+# what's done here
+
+# variables
 
 # logging everything
 log_file=/root/log/wp-in-a-box.log
