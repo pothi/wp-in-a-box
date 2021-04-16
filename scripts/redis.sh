@@ -33,7 +33,7 @@ if [ -z "$redis_pass" ]; then
 fi
 
 # php_version from php-installation.php
-FPM_PHP_INI=/etc/php/${php_version}/fpm/php.ini
+fpm_ini_file=/etc/php/${php_version}/fpm/php.ini
 
 echo -n 'Installing redis... '
 apt-get install -qq redis-server &> /dev/null
@@ -81,11 +81,11 @@ echo '... done tweaking redis cache.'
 
 # SESSION Handling
 echo 'Setting up PHP sessions to use redis... '
-if [ ! $(grep '^session.save_handler = redis$' $FPM_PHP_INI) ] ; then
-    sed -i -e '/^session.save_handler/ s/=.*/= redis/' $FPM_PHP_INI
+if [ ! $(grep '^session.save_handler = redis$' $fpm_ini_file) ] ; then
+    sed -i -e '/^session.save_handler/ s/=.*/= redis/' $fpm_ini_file
 fi
-sed -i -e '/^;session.save_path/ s/^;//' $FPM_PHP_INI
-sed -i -e '/^session.save_path/ s/.*/session.save_path = "tcp:\/\/127.0.0.1:6379?auth='$redis_pass'"/' $FPM_PHP_INI
+sed -i -e '/^;session.save_path/ s/^;//' $fpm_ini_file
+sed -i -e '/^session.save_path/ s/.*/session.save_path = "tcp:\/\/127.0.0.1:6379?auth='$redis_pass'"/' $fpm_ini_file
 
 /usr/sbin/php-fpm${php_version} -t &> /dev/null && systemctl restart php${php_version}-fpm &> /dev/null
 if [ "$?" != 0 ]; then

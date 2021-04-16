@@ -1,7 +1,8 @@
 # instructions
 # ============
+
 # fill the values
-# rename it to .envrc
+# copy or rename it to .envrc
 # place it at $HOME of root, that is likely to be /root/
 
 # this user can be used to access the server via SSH
@@ -10,7 +11,8 @@
 
 # this user can be used to access the site via SFTP
 # if not provided, a random username will be created
-#export web_developer_username=
+export DEV_USER=
+export web_developer_username=$DEV_USER # for backwards compatibility
 
 # EMAIL is used in multiple places
 # - crontab
