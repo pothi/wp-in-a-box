@@ -46,7 +46,7 @@ function install_php_fpm {
         echo
     fi
 
-    # apt-get install -qq ${PACKAGES} &> /dev/null
+    apt-get install -qq ${PACKAGES} &> /dev/null
 }
 
 # Variable/s
@@ -168,7 +168,7 @@ pool_file=/etc/php/${php_version}/fpm/pool.d/${php_user}.conf
 
 ### Please do not edit below this line ###
 
-# install_php_fpm php_version
+install_php_fpm $php_version
 
 # let's take a backup of config before modifing them
 datestamp="$(date +%F)"
