@@ -4,13 +4,17 @@
 set -o errexit -o pipefail -o noclobber -o nounset
 
 # what's done here
+# - PMA auto update script is downloaded and executed.
+# - A cron tab entry is in place to update PMA using the auto update script.
 
 # variables
 
 
 mkdir ~/{phpmyadmin,log,scripts} &> /dev/null
+
 curl -sL https://github.com/pothi/linux-bootstrap-snippets/raw/master/pma-auto-update.sh -o ~/scripts/pma-auto-update.sh
 chmod +x ~/scripts/pma-auto-update.sh
+
 ~/scripts/pma-auto-update.sh
 
 # setup cron to self-update phpmyadmin

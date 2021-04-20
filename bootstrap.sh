@@ -19,10 +19,10 @@ if [ "$(whoami)" != "root" ]; then
 fi
 
 # create some useful directories - create them on demand
-mkdir -p ${HOME}/{backups,git,log,scripts} &> /dev/null
+mkdir -p /root/{backups,git,log,scripts} &> /dev/null
 
 # logging everything
-log_file=${HOME}/log/wp-in-a-box.log
+log_file=/root/log/wp-in-a-box.log
 exec > >(tee -a ${log_file} )
 exec 2> >(tee -a ${log_file} >&2)
 
@@ -36,32 +36,32 @@ check_result() {
     fi
 }
 
-[ ! -f ${HOME}/.envrc ] && touch ${HOME}/.envrc
+[ ! -f /root/.envrc ] && touch /root/.envrc
 
 # some defaults / variables
 BASE_NAME=web
-if ! grep -qw $BASE_NAME ${HOME}/.envrc ; then
-    echo "export BASE_NAME=$BASE_NAME" >> ${HOME}/.envrc
+if ! grep -qw $BASE_NAME /root/.envrc ; then
+    echo "export BASE_NAME=$BASE_NAME" >> /root/.envrc
 fi
 
 EMAIL=root@localhost
-if ! grep -qw $EMAIL ${HOME}/.envrc ; then
-    echo "export EMAIL=$EMAIL" >> ${HOME}/.envrc
+if ! grep -qw $EMAIL /root/.envrc ; then
+    echo "export EMAIL=$EMAIL" >> /root/.envrc
 fi
 NAME='root'
-if ! grep -qw "$NAME" ${HOME}/.envrc ; then
-    echo "export NAME='$NAME'" >> ${HOME}/.envrc
+if ! grep -qw "$NAME" /root/.envrc ; then
+    echo "export NAME='$NAME'" >> /root/.envrc
 fi
 
-local_wp_in_a_box_repo=${HOME}/git/wp-in-a-box
-if ! grep -qw $local_wp_in_a_box_repo ${HOME}/.envrc ; then
-    echo "export local_wp_in_a_box_repo=$local_wp_in_a_box_repo" >> ${HOME}/.envrc
+local_wp_in_a_box_repo=/root/git/wp-in-a-box
+if ! grep -qw $local_wp_in_a_box_repo /root/.envrc ; then
+    echo "export local_wp_in_a_box_repo=$local_wp_in_a_box_repo" >> /root/.envrc
 fi
 
-source ${HOME}/.envrc
+source /root/.envrc
 
 # take a backup
-backup_dir="${HOME}/backups/etc-before-wp-in-a-box-$(date +%F)"
+backup_dir="/root/backups/etc-before-wp-in-a-box-$(date +%F)"
 if [ ! -d "$backup_dir" ]; then
     printf '%-72s' "Taking initial backup..."
     mkdir $backup_dir
@@ -171,7 +171,7 @@ esac
 echo All done.
 
 echo -------------------------------------------------------------------------
-echo You may find the login credentials of SFTP/SSH user in ${HOME}/.envrc file.
+echo You may find the login credentials of SFTP/SSH user in /root/.envrc file.
 echo -------------------------------------------------------------------------
 
 echo 'You may reboot only once to apply certain updates (ex: kernel updates)!'
