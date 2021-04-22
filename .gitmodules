@@ -2,9 +2,8 @@
 # https://stackoverflow.com/q/5828324/1004587
 # git submodule update --init
 # git submodule update --remote
-# git add .
-# git commit -m 'update submodule to the latest version'
+# git commit -a -m 'update submodule to the latest version'
 # git push origin BRANCH
 [submodule "config"]
-	path = config
-	url = https://github.com/pothi/linux-tweaks-deb
+    path = config
+    url = https://github.com/pothi/linux-tweaks-deb
