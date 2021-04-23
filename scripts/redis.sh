@@ -39,10 +39,10 @@ echo -n 'Installing redis... '
 apt-get install -qq redis-server &> /dev/null
 echo 'done.'
 
-if apt-cache show php-redis &> /dev/null ; then
-    redis_php_package=php-redis
-else
+if apt-cache show php${php_version}-redis &> /dev/null ; then
     redis_php_package="php${php_version}-redis"
+else
+    redis_php_package=php-redis
 fi
 
 echo -n 'Installing redis for PHP... '
@@ -63,8 +63,10 @@ sed -i -e 's/^#\? \?\(maxmemory\-policy\).*$/\1 '$redis_maxmemory_policy'/' $red
 sed -i -e 's/^#\? \?\(requirepass\).*$/\1 '$redis_pass'/' $redis_conf_file
 
 # create / overwrite and append our custom values in it
-printf "vm.overcommit_memory = 1\n" > $redis_sysctl_file &> /dev/null
-printf "net.core.somaxconn = 1024\n" >> $redis_sysctl_file &> /dev/null
+# ref: https://www.victordodon.com/to-clobber-or-to-noclobber/
+# ref: https://superuser.com/a/1498407/142306
+printf "vm.overcommit_memory = 1\n" >| $redis_sysctl_file
+printf "net.core.somaxconn = 1024\n" >> $redis_sysctl_file
 
 # Load settings from the redis sysctl file
 sysctl -p $redis_sysctl_file
