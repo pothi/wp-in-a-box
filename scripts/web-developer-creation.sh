@@ -23,6 +23,18 @@ fi
 
 #--- please do not edit below this file ---#
 
+function configure_disk_usage_alert () {
+    [ ! -f /home/${BASE_NAME}/scripts/disk-usage-alert.sh ] && wget -O /home/${BASE_NAME}/scripts/disk-usage-alert.sh https://github.com/pothi/snippets/raw/master/disk-usage-alert.sh
+    chown $web_developer_username:$web_developer_username /home/${BASE_NAME}/scripts/disk-usage-alert.sh
+    chmod +x /home/${BASE_NAME}/scripts/disk-usage-alert.sh
+
+    #--- cron for disk-usage-alert ---#
+    crontab -l | grep -qw disk-usage-alert
+    if [ "$?" -ne "0" ]; then
+        ( crontab -l; echo '@daily ~/scripts/disk-usage-alert.sh &> /dev/null' ) | crontab -
+    fi
+}
+
 SSHD_CONFIG='/etc/ssh/sshd_config'
 
 if [ ! -d "/home/${BASE_NAME}" ]; then
@@ -110,15 +122,7 @@ fi # end of if ! -d "/home/${BASE_NAME}" - whoops
 cp $local_wp_in_a_box_repo/.envrc-user-sample /home/${BASE_NAME}/.envrc
 chown $web_developer_username:$web_developer_username /home/${BASE_NAME}/.envrc
 
-cp $local_wp_in_a_box_repo/etc/disk-usage-alert.sh /home/${BASE_NAME}/scripts
-chown $web_developer_username:$web_developer_username /home/${BASE_NAME}/scripts/disk-usage-alert.sh
-chmod +x /home/${BASE_NAME}/scripts/disk-usage-alert.sh
-
-#--- cron for disk-usage-alert ---#
-crontab -l | grep -qw disk-usage-alert
-if [ "$?" -ne "0" ]; then
-    ( crontab -l; echo '@daily ~/scripts/disk-usage-alert.sh &> /dev/null' ) | crontab -
-fi
+# configure_disk_usage_alert
 
 # cd $local_wp_in_a_box_repo/scripts/ &> /dev/null
 # sudo -H -u $web_developer_username bash nvm-nodejs.sh
