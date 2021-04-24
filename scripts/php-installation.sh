@@ -24,6 +24,7 @@ function install_php_fpm {
         php${version}-soap \
         php${version}-curl \
         php${version}-zip \
+        php${version}-bcmath \
         php${version}-imagick"
 
     modules="common \
