@@ -55,7 +55,7 @@ echo '
 fi
 
 web_dev=${DEV_USER:-""}
-if [ ! -z "$php_user" ]; then
+if [ ! -z "$web_user" ]; then
     # set up some defaults
     if [ ! -s /var/spool/cron/crontabs/$web_dev ]; then
         echo "Setting up crontab for $web_dev!"
