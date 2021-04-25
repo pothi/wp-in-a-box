@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # programming env: these switches turn some bugs into errors
-set -o errexit -o pipefail -o noclobber -o nounset
+# set -o errexit -o pipefail -o noclobber -o nounset
 
 [ -f ~/.envrc ] && source ~/.envrc
 

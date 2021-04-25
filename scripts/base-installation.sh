@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # programming env: these switches turn some bugs into errors
-set -o errexit -o pipefail -o noclobber -o nounset
+# set -o errexit -o pipefail -o noclobber -o nounset
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -121,7 +121,7 @@ if [ ! -s /etc/bash_completion.d/wp-completion.bash ]; then
 fi
 
 #--- cron: auto-update wp-cli ---#
-crontab -l | grep -qw wp-cli
+grep -qw wp-cli /var/spool/cron/crontabs/root
 if [ "$?" -ne "0" ]; then
     ( crontab -l; echo; echo "# auto-update wp-cli" ) | crontab -
     ( crontab -l; echo '@daily /usr/local/bin/wp cli update --allow-root --yes &> /dev/null' ) | crontab -
