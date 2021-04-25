@@ -85,16 +85,16 @@ if [ "$current_time_zone" != "UTC" ] ; then
     echo done.
 fi
 
+# printf '%-72s' "Setting up timezone..."
 #--- Unattended Upgrades ---#
-printf '%-72s' "Setting up timezone..."
-echo 'APT::Periodic::Update-Package-Lists "1";' > /etc/apt/apt.conf.d/20auto-upgrades
-echo 'APT::Periodic::Unattended-Upgrade "1";' > /etc/apt/apt.conf.d/20auto-upgrades
+echo 'APT::Periodic::Update-Package-Lists "1";' >| /etc/apt/apt.conf.d/20auto-upgrades
+echo 'APT::Periodic::Unattended-Upgrade "1";' >> /etc/apt/apt.conf.d/20auto-upgrades
 
 # sed -i '/Unattended\-Upgrade::Mail/ s:^//::' /etc/apt/apt.conf.d/50unattended-upgrades
 # sed -i '/Unattended-Upgrade::MailOnlyOnError/ s:^//::' /etc/apt/apt.conf.d/50unattended-upgrades
 # if the following doesn't work, comment it and then uncomment the above two lines
 sed -i '/\/\/Unattended-Upgrade::Mail\(OnlyOnError\)\?/ s:^//::' /etc/apt/apt.conf.d/50unattended-upgrades
-echo done.
+# echo done.
 
 #--- setup permissions for .envrc file ---#
 if [ -f /root/.envrc ]; then
