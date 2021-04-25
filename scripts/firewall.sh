@@ -24,6 +24,9 @@ ufw allow 22
 ufw allow 80
 ufw allow 443
 ufw limit ssh comment 'Rate limit for SSH server'
+ufw allow from 192.168.0.0/16
+ufw allow from 172.16.0.0/12
+ufw allow from 10.0.0.0/8
 
 ufw --force enable
 if [ $? != 0 ]; then
