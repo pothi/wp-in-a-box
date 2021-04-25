@@ -54,18 +54,22 @@ echo '
 # * * * * *  command to execute' | crontab - &>> $log_file
 fi
 
-if [ ! -s /var/spool/cron/crontabs/$web_developer_username ]; then
-echo "Setting up crontab for $web_developer_username!"
-echo '
-# ┌───────────── minute (0 - 59)
-# │ ┌───────────── hour (0 - 23)
-# │ │ ┌───────────── day of month (1 - 31)
-# │ │ │ ┌───────────── month (1 - 12)
-# │ │ │ │ ┌───────────── day of week (0 - 6) (Sunday to Saturday;
-# │ │ │ │ │                                       7 is also Sunday on some systems)
-# │ │ │ │ │
-# │ │ │ │ │
-# * * * * *  command to execute' | crontab -u $web_developer_username - &>> $log_file
+web_dev=${DEV_USER:-""}
+if [ ! -z "$php_user" ]; then
+    # set up some defaults
+    if [ ! -s /var/spool/cron/crontabs/$web_dev ]; then
+        echo "Setting up crontab for $web_dev!"
+        echo '
+        # ┌───────────── minute (0 - 59)
+        # │ ┌───────────── hour (0 - 23)
+        # │ │ ┌───────────── day of month (1 - 31)
+        # │ │ │ ┌───────────── month (1 - 12)
+        # │ │ │ │ ┌───────────── day of week (0 - 6) (Sunday to Saturday;
+        # │ │ │ │ │                                       7 is also Sunday on some systems)
+        # │ │ │ │ │
+        # │ │ │ │ │
+        # * * * * *  command to execute' | crontab -u $web_dev - &>> $log_file
+    fi
 fi
 
 #--- setup timezone ---#
