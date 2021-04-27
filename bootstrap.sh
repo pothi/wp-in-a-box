@@ -19,7 +19,7 @@ if [ "$(whoami)" != "root" ]; then
 fi
 
 # create some useful directories - create them on demand
-mkdir -p /root/{backups,git,log,scripts} &> /dev/null
+mkdir -p /root/{backups,git,log,scripts,tmp} &> /dev/null
 
 # logging everything
 log_file=/root/log/wp-in-a-box.log
@@ -70,25 +70,32 @@ if [ ! -d "$backup_dir" ]; then
 fi
 
 printf '%-72s' "Updating apt repos..."
-export DEBIAN_FRONTEND=noninteractive
-sudo apt-get -qq update
+    export DEBIAN_FRONTEND=noninteractive
+    # the following runs only once when apt-get is never run (just after the OS is installed!)
+    [ ! -f /var/lib/apt/periodic/update-success-stamp ] && sudo apt-get -qq update
+
+    # the following code runs only when apt cache is more than one day old.
+    apt_test_file=/root/tmp/dummy_file_for_apt_test.txt
+    touch -d"-1day" $apt_test_file
+    [ $apt_test_file -nt /var/lib/apt/periodic/update-success-stamp ] && sudo apt-get -qq update
+    # rm $apt_test_file
 echo done.
 
 # git is prerequisite for etckeeper
 printf '%-72s' "Installing git..."
-sudo apt-get -qq install git &> /dev/null
+    sudo apt-get -qq install git &> /dev/null
 echo done.
 git config --global --replace-all user.email "$EMAIL"
 git config --global --replace-all user.name "$NAME"
 
 printf '%-72s' "Installing etckeeper..."
-# sending the output to /dev/null to reduce the noise
-sudo apt-get -qq install etckeeper &> /dev/null
-sudo sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
-cd /etc/
-sudo git config user.name "root"
-sudo git config user.email "root@localhost"
-cd - &> /dev/null
+    # sending the output to /dev/null to reduce the noise
+    sudo apt-get -qq install etckeeper &> /dev/null
+    sudo sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
+    cd /etc/
+    sudo git config user.name "root"
+    sudo git config user.email "root@localhost"
+    cd - &> /dev/null
 echo done.
 
 printf '%-72s' "Fetching wp-in-a-box repo..."
