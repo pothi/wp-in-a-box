@@ -11,6 +11,7 @@
 # Variables - you may send these as command line options
 # web_dev
 
+local_wp_in_a_box_repo=/root/git/wp-in-a-box
 source /root/.envrc
 
 echo 'Creating a "web developer" user to login via SFTP...'
@@ -120,8 +121,8 @@ else
     # exit 1
 fi # end of if ! -d "/home/${BASE_NAME}" - whoops
 
-cp $local_wp_in_a_box_repo/.envrc-user-sample /home/${BASE_NAME}/.envrc
-chown $web_dev:$web_dev /home/${BASE_NAME}/.envrc
+# cp $local_wp_in_a_box_repo/.envrc-user-sample /home/${BASE_NAME}/.envrc
+# chown $web_dev:$web_dev /home/${BASE_NAME}/.envrc
 
 # configure_disk_usage_alert
 

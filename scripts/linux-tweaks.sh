@@ -2,6 +2,7 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
+local_wp_in_a_box_repo=/root/git/wp-in-a-box
 source ${HOME}/.envrc
 
 [ ! -d ~/.config/bash ] && mkdir -p ~/.config/bash

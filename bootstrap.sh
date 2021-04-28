@@ -14,9 +14,15 @@
 # fi
 
 # ref: https://packages.sury.org/php/README.txt
-if [ "$(whoami)" != "root" ]; then
-    SUDO=sudo
-fi
+# if [ "$(whoami)" != "root" ]; then
+    # SUDO=sudo
+# else
+    # SUDO=
+# fi
+
+is_user_root () { [ "${EUID:-$(id -u)}" -eq 0 ]; }
+
+[ "$is_user_root" ] || { echo 'You must be root or user with sudo privilege to run this script. Exiting now.'; exit 1; }
 
 # create some useful directories - create them on demand
 mkdir -p ${HOME}/{backups,git,log,scripts,tmp} &> /dev/null
@@ -36,7 +42,7 @@ check_result() {
     fi
 }
 
-[ ! -f /root/.envrc ] && ${SUDO} touch /root/.envrc
+[ ! -f "$HOME/.envrc" ] && touch ~/.envrc
 
 # some defaults / variables
 BASE_NAME=web
@@ -53,7 +59,7 @@ if ! grep -qw "$NAME" /root/.envrc ; then
     echo "export NAME='$NAME'" >> /root/.envrc
 fi
 
-local_wp_in_a_box_repo=${HOME}/git/wp-in-a-box
+local_wp_in_a_box_repo=/root/git/wp-in-a-box
 
 source /root/.envrc
 
@@ -62,36 +68,36 @@ backup_dir="/root/backups/etc-before-wp-in-a-box-$(date +%F)"
 if [ ! -d "$backup_dir" ]; then
     printf '%-72s' "Taking initial backup..."
     mkdir $backup_dir
-    ${SUDO} cp -a /etc $backup_dir
+    cp -a /etc $backup_dir
     echo done.
 fi
 
 printf '%-72s' "Updating apt repos..."
     export DEBIAN_FRONTEND=noninteractive
     # the following runs only once when apt-get is never run (just after the OS is installed!)
-    [ ! -f /var/lib/apt/periodic/update-success-stamp ] && ${SUDO} apt-get -qq update
+    [ ! -f /var/lib/apt/periodic/update-success-stamp ] && apt-get -qq update
 
     # the following code runs only when apt cache is more than one day old.
     apt_test_file=/root/tmp/dummy_file_for_apt_test.txt
     touch -d"-1day" $apt_test_file
-    [ $apt_test_file -nt /var/lib/apt/periodic/update-success-stamp ] && ${SUDO} apt-get -qq update
+    [ $apt_test_file -nt /var/lib/apt/periodic/update-success-stamp ] && apt-get -qq update
     # rm $apt_test_file
 echo done.
 
 # git is prerequisite for etckeeper
 printf '%-72s' "Installing git..."
-    ${SUDO} apt-get -qq install git &> /dev/null
+    apt-get -qq install git &> /dev/null
 echo done.
-${SUDO} git config --global --replace-all user.email "$EMAIL"
-${SUDO} git config --global --replace-all user.name "$NAME"
+git config --global --replace-all user.email "$EMAIL"
+git config --global --replace-all user.name "$NAME"
 
 printf '%-72s' "Installing etckeeper..."
     # sending the output to /dev/null to reduce the noise
-    ${SUDO} apt-get -qq install etckeeper &> /dev/null
-    ${SUDO} sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
+    apt-get -qq install etckeeper &> /dev/null
+    sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
     cd /etc/
-    ${SUDO} git config user.name "root"
-    ${SUDO} git config user.email "root@localhost"
+    git config user.name "root"
+    git config user.email "root@localhost"
     cd - &> /dev/null
 echo done.
 

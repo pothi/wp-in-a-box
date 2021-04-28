@@ -12,6 +12,7 @@ log_file=/root/log/wp-in-a-box.log
 exec > >(tee -a ${log_file} )
 exec 2> >(tee -a ${log_file} >&2)
 
+local_wp_in_a_box_repo=/root/git/wp-in-a-box
 source /root/.envrc
 
 echo "Optional script started on (date & time): $(date +%c)"

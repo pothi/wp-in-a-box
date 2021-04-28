@@ -20,6 +20,7 @@ systemctl stop mysql
 cp $local_wp_in_a_box_repo/config/mysql.conf.d/*.cnf /etc/mysql/mysql.conf.d/
 systemctl start mysql
 
+local_wp_in_a_box_repo=/root/git/wp-in-a-box
 source /root/.envrc
 
 echo 'Setting up MySQL admin user...'

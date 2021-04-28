@@ -10,6 +10,7 @@
 
 ###---------- Please do not edit below this line ----------###
 
+local_wp_in_a_box_repo=/root/git/wp-in-a-box
 [ -f /root/.envrc ] && source /root/.envrc
 
 php_user=${DEV_USER:-""}

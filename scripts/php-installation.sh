@@ -66,6 +66,7 @@ env_type=${WP_ENVIRONMENT_TYPE:-''}
 
 supplied_php_version=${PHP_VER:-""}
 
+local_wp_in_a_box_repo=/root/git/wp-in-a-box
 # get the variables
 [ -f /root/.envrc ] && source /root/.envrc
 
