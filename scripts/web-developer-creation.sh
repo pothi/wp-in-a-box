@@ -130,4 +130,17 @@ fi # end of if ! -d "/home/${BASE_NAME}" - whoops
 # sudo -H -u $web_dev bash nvm-nodejs.sh
 # cd - &> /dev/null
 
+# download scripts to backup wordpress
+echo 'Downloading backup scripts...'
+FULL_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/full-backup.sh
+DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/db-backup.sh
+FILES_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/files-backup-without-uploads.sh
+[ ! -s ~/scripts/full-backup.sh ] && wget -q -O ~/scripts/full-backup.sh $FULL_BACKUP_URL
+[ ! -s ~/scripts/db-backup.sh ] && wget -q -O ~/scripts/db-backup.sh $DB_BACKUP_URL
+[ ! -s ~/scripts/files-backup-without-uploads.sh ] && wget -q -O ~/scripts/files-backup-without-uploads.sh $FILES_BACKUP_URL
+echo '... done'
+
+# make scripts executable to all
+chmod +x ~/scripts/*.sh
+
 echo ...done setting up SFTP username for Web Developer!

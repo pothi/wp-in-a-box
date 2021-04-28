@@ -7,3 +7,6 @@
 [submodule "config"]
     path = config
     url = https://github.com/pothi/linux-tweaks-deb
+[submodule "snippets"]
+	path = snippets
+	url = https://github.com/pothi/snippets

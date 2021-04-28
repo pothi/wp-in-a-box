@@ -5,26 +5,12 @@ export DEBIAN_FRONTEND=noninteractive
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
 source ${HOME}/.envrc
 
-[ ! -d ~/.config/bash ] && mkdir -p ~/.config/bash
-
 # Common shell related configs for root user
-cp $local_wp_in_a_box_repo/config/checks.sh ~/.config/
-cp $local_wp_in_a_box_repo/config/common-aliases.sh ~/.config/bash/
-cp $local_wp_in_a_box_repo/config/common-exports.sh ~/.config/bash/
-source ~/.config/checks.sh
-source ~/.config/bash/common-aliases.sh
+cp $local_wp_in_a_box_repo/snippets/checks.sh ~/.config/
+source ~/.config/common-aliases-envvars
 
-if ! grep -qw checks.sh ~/.bashrc ; then
-printf "[[ -f ~/.config/checks.sh ]] && source ~/.config/checks.sh\n" >> ~/.bashrc
-fi
-
-# not needed for root
-# if ! grep -qw common-exports.sh ~/.bashrc ; then
-# printf "[[ -f ~/.config/bash/common-exports.sh ]] && source ~/.config/bash/common-exports.sh\n" >> ~/.bashrc
-# fi
-
-if ! grep -qw common-aliases.sh ~/.bashrc ; then
-printf "[[ -f ~/.config/bash/common-aliases.sh ]] && source ~/.config/bash/common-aliases.sh\n" >> ~/.bashrc
+if ! grep -qw common-aliases.envvars ~/.bashrc ; then
+printf "[[ -f ~/.config/common-aliases-envvars ]] && source ~/.config/common-aliases-envvars\n" >> ~/.bashrc
 fi
 
 #--- Common for all users ---#
@@ -45,87 +31,44 @@ chmod 600 /etc/skel/mbox
 chmod 700 /etc/skel/.gnupg
 chmod 700 /etc/skel/.ssh
 
-cp $local_wp_in_a_box_repo/config/checks.sh /etc/skel/.config/
-cp $local_wp_in_a_box_repo/config/common-aliases.sh /etc/skel/.config/bash/
-cp $local_wp_in_a_box_repo/config/common-exports.sh /etc/skel/.config/bash/
-
-# download scripts to backup wordpress
-if [ ! -s /etc/skel/scripts/full-backup.sh ]; then
-    printf '%-72s' "Downloading full-backup.sh"
-    DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/full-backup.sh
-    wget -q -O /etc/skel/scripts/full-backup.sh $DB_BACKUP_URL
-    echo done.
-fi
-
-if [ ! -s /etc/skel/scripts/db-backup.sh ]; then
-    printf '%-72s' "Downloading db-backup.sh"
-    DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/db-backup.sh
-    wget -q -O /etc/skel/scripts/db-backup.sh $DB_BACKUP_URL
-    echo done.
-fi
-
-if [ ! -s /etc/skel/scripts/files-backup-without-uploads.sh ]; then
-    printf '%-72s' "Downloading files-backup-without-uploads.sh"
-    DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/files-backup-without-uploads.sh
-    wget -q -O /etc/skel/scripts/files-backup-without-uploads.sh $DB_BACKUP_URL
-    echo done.
-fi
-
-# make scripts executable to all
-chmod +x /etc/skel/scripts/*.sh
+cp $local_wp_in_a_box_repo/snippets/common-aliases-envvars /etc/skel/.config/
 
 # ~/.bashrc tweaks
-touch /etc/skel/.bashrc
-if ! grep -q 'direnv' /etc/skel/.bashrc ; then
-    echo 'eval "$(direnv hook bash)"' >> /etc/skel/.bashrc &> /dev/null
+# touch /etc/skel/.bashrc
+# if ! grep -q 'direnv' /etc/skel/.bashrc ; then
+    # echo 'eval "$(direnv hook bash)"' >> /etc/skel/.bashrc &> /dev/null
+# fi
+
+if ! grep -qw common-aliases-envvars /etc/skel/.bashrc ; then
+printf " [ -f ~/.config/common-aliases-envvars ] && source ~/.config/common-aliases-envvars " >> /etc/skel/.bashrc
 fi
 
-if ! grep -qw checks.sh /etc/skel/.bashrc ; then
-printf "
-# check for environments
-if [ -f ~/.config/checks.sh ]; then
-    source ~/.config/checks.sh
-fi
-" >> /etc/skel/.bashrc
-fi
-
-if ! grep -qw common-aliases.sh /etc/skel/.bashrc ; then
-printf "
-# include aliases for dig, curl, etc.
-if [ -f ~/.config/bash/common-aliases.sh ]; then
-    source ~/.config/bash/common-aliases.sh
-fi
-" >> /etc/skel/.bashrc
-fi
-
-if ! grep -qw common-exports.sh /etc/skel/.bashrc ; then
-printf "
-# configure PATHs
-if [ -f ~/.config/bash/common-exports.sh ]; then
-    source ~/.config/bash/common-exports.sh
-fi
-" >> /etc/skel/.bashrc
-fi
 # end of ~/.bashrc tweaks
 
 ###--- VIM Tweaks ---###
+[ ! -d ~/.vim ] && mkdir ~/.vim
+cp -a $local_wp_in_a_box_repo/snippets/vim/* ~/.vim/
+
+# copy only vimrc to normal users
 [ ! -d /etc/skel/.vim ] && mkdir /etc/skel/.vim
-[ ! -f /etc/skel/.vim/vimrc ] && touch /etc/skel/.vim/vimrc
-if ! grep -q '" Custom Code - PK' /etc/skel/.vim/vimrc ; then
-    echo '" Custom Code - PK' > /etc/skel/.vim/vimrc
-    echo "set viminfo+=n~/.vim/viminfo" >> /etc/skel/.vim/vimrc
-fi
+cp $local_wp_in_a_box_repo/snippets/vim/vimrc ~/.vim/
+
+# [ ! -f /etc/skel/.vim/vimrc ] && touch /etc/skel/.vim/vimrc
+# if ! grep -q '" Custom Code - PK' /etc/skel/.vim/vimrc ; then
+    # echo '" Custom Code - PK' > /etc/skel/.vim/vimrc
+    # echo "set viminfo+=n~/.vim/viminfo" >> /etc/skel/.vim/vimrc
+# fi
 
 # Vim related configs
-VIM_VERSION=$(/usr/bin/vim --version | head -1 | awk {'print $5'} | tr -d .)
-sudo cp -a $local_wp_in_a_box_repo/config/vim/* /etc/skel/.vim/
-sudo cat "$local_wp_in_a_box_repo/config/vimrc.local" >> /etc/skel/.vim/vimrc
-sudo sed -i "s/VIM_VERSION/$VIM_VERSION/g" /etc/skel/.vim/vimrc
+# VIM_VERSION=$(/usr/bin/vim --version | head -1 | awk {'print $5'} | tr -d .)
+# sudo cp -a $local_wp_in_a_box_repo/config/vim/* /etc/skel/.vim/
+# sudo cat "$local_wp_in_a_box_repo/config/vimrc.local" >> /etc/skel/.vim/vimrc
+# sudo sed -i "s/VIM_VERSION/$VIM_VERSION/g" /etc/skel/.vim/vimrc
 
-sudo cp -a /etc/skel/.vim /root/ &> /dev/null
+# sudo cp -a /etc/skel/.vim /root/ &> /dev/null
 # sudo cp /etc/skel/.vim/vimrc /root/.vim/
 
-[ ! -d ${HOME}/.vim ]       && cp -a /etc/skel/.vim ${HOME}/
+# [ ! -d ${HOME}/.vim ]       && cp -a /etc/skel/.vim ${HOME}/
 # [ ! -f ${HOME}/.vim/vimrc ] && cp /etc/skel/.vim/vimrc ${HOME}/.vim
 
 # cp $local_wp_in_a_box_repo/config/vimrc.local /etc/vim/
@@ -190,20 +133,20 @@ if [ -f /etc/cron.daily/00logwatch ]; then
 fi # test for logwatch cron
 
 #--- Put /etc/ under version control ---#
-entry='vim/plugged'
-if [ -f /etc/.gitignore ] ; then
-if ! $(grep -q "^${entry}$" "/etc/.gitignore") ; then
-printf "
+# entry='vim/plugged'
+# if [ -f /etc/.gitignore ] ; then
+# if ! $(grep -q "^${entry}$" "/etc/.gitignore") ; then
+# printf "
 # ref: http://fallengamer.livejournal.com/93321.html
 # https://stackoverflow.com/q/1274057/1004587
 # basically two methods
 # https://stackoverflow.com/a/34511442/1004587
 # https://stackoverflow.com/a/44098435/1004587
 
-vim/plugged
-" >> /etc/.gitignore
-fi # test if entry is found in file
-fi # test if file exists
+# vim/plugged
+# " >> /etc/.gitignore
+# fi # test if entry is found in file
+# fi # test if file exists
 
 #--- Misc Tweaks ---#
 sed -i 's/^#\(startup_message off\)$/\1/' /etc/screenrc
