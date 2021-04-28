@@ -19,10 +19,10 @@ if [ "$(whoami)" != "root" ]; then
 fi
 
 # create some useful directories - create them on demand
-mkdir -p /root/{backups,git,log,scripts,tmp} &> /dev/null
+mkdir -p ${HOME}/{backups,git,log,scripts,tmp} &> /dev/null
 
 # logging everything
-log_file=/root/log/wp-in-a-box.log
+log_file=${HOME}/log/wp-in-a-box.log
 exec > >(tee -a ${log_file} )
 exec 2> >(tee -a ${log_file} >&2)
 
@@ -36,7 +36,7 @@ check_result() {
     fi
 }
 
-[ ! -f /root/.envrc ] && touch /root/.envrc
+[ ! -f /root/.envrc ] && ${SUDO} touch /root/.envrc
 
 # some defaults / variables
 BASE_NAME=web
@@ -53,10 +53,7 @@ if ! grep -qw "$NAME" /root/.envrc ; then
     echo "export NAME='$NAME'" >> /root/.envrc
 fi
 
-local_wp_in_a_box_repo=/root/git/wp-in-a-box
-if ! grep -qw $local_wp_in_a_box_repo /root/.envrc ; then
-    echo "export local_wp_in_a_box_repo=$local_wp_in_a_box_repo" >> /root/.envrc
-fi
+local_wp_in_a_box_repo=${HOME}/git/wp-in-a-box
 
 source /root/.envrc
 
@@ -65,36 +62,36 @@ backup_dir="/root/backups/etc-before-wp-in-a-box-$(date +%F)"
 if [ ! -d "$backup_dir" ]; then
     printf '%-72s' "Taking initial backup..."
     mkdir $backup_dir
-    sudo cp -a /etc $backup_dir
+    ${SUDO} cp -a /etc $backup_dir
     echo done.
 fi
 
 printf '%-72s' "Updating apt repos..."
     export DEBIAN_FRONTEND=noninteractive
     # the following runs only once when apt-get is never run (just after the OS is installed!)
-    [ ! -f /var/lib/apt/periodic/update-success-stamp ] && sudo apt-get -qq update
+    [ ! -f /var/lib/apt/periodic/update-success-stamp ] && ${SUDO} apt-get -qq update
 
     # the following code runs only when apt cache is more than one day old.
     apt_test_file=/root/tmp/dummy_file_for_apt_test.txt
     touch -d"-1day" $apt_test_file
-    [ $apt_test_file -nt /var/lib/apt/periodic/update-success-stamp ] && sudo apt-get -qq update
+    [ $apt_test_file -nt /var/lib/apt/periodic/update-success-stamp ] && ${SUDO} apt-get -qq update
     # rm $apt_test_file
 echo done.
 
 # git is prerequisite for etckeeper
 printf '%-72s' "Installing git..."
-    sudo apt-get -qq install git &> /dev/null
+    ${SUDO} apt-get -qq install git &> /dev/null
 echo done.
-git config --global --replace-all user.email "$EMAIL"
-git config --global --replace-all user.name "$NAME"
+${SUDO} git config --global --replace-all user.email "$EMAIL"
+${SUDO} git config --global --replace-all user.name "$NAME"
 
 printf '%-72s' "Installing etckeeper..."
     # sending the output to /dev/null to reduce the noise
-    sudo apt-get -qq install etckeeper &> /dev/null
-    sudo sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
+    ${SUDO} apt-get -qq install etckeeper &> /dev/null
+    ${SUDO} sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
     cd /etc/
-    sudo git config user.name "root"
-    sudo git config user.email "root@localhost"
+    ${SUDO} git config user.name "root"
+    ${SUDO} git config user.email "root@localhost"
     cd - &> /dev/null
 echo done.
 
