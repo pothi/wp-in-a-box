@@ -88,7 +88,7 @@ ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.c
 
 # create dhparam
 if [ ! -f /etc/nginx/dhparam.pem ]; then
-    $(which openssl) dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096
+    $(which openssl) dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096 > /dev/null
     sed -i 's:^# \(ssl_dhparam /etc/nginx/dhparam.pem;\)$:\1:' /etc/nginx/conf.d/ssl-common.conf
 fi
 
