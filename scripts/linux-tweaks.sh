@@ -33,7 +33,7 @@ chmod 600 /etc/skel/mbox
 chmod 700 /etc/skel/.gnupg
 chmod 700 /etc/skel/.ssh
 
-cp $local_wp_in_a_box_repo/snippets/common-aliases-envvars /etc/skel/.config/
+cp $local_wp_in_a_box_repo/snippets/linux/common-aliases-envvars /etc/skel/.config/
 
 # ~/.bashrc tweaks
 # touch /etc/skel/.bashrc
