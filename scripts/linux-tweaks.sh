@@ -6,7 +6,7 @@ local_wp_in_a_box_repo=/root/git/wp-in-a-box
 source ${HOME}/.envrc
 
 # Common shell related configs for root user
-cp $local_wp_in_a_box_repo/snippets/checks.sh ~/.config/
+cp $local_wp_in_a_box_repo/snippets/linux/common-aliases-envvars ~/.config/
 source ~/.config/common-aliases-envvars
 
 if ! grep -qw common-aliases.envvars ~/.bashrc ; then
