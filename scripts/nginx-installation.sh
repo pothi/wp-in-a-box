@@ -9,7 +9,7 @@ echo 'Installing Nginx Server...'
 
 # install prerequisites
 # ref: https://nginx.org/en/linux_packages.html#Ubuntu
-sudo apt-get -qq install curl gnupg2 ca-certificates lsb-release
+sudo apt-get -qq install curl gnupg2 ca-certificates lsb-release > /dev/null
 
 codename=$(lsb_release -c -s)
 
@@ -39,7 +39,7 @@ nginx_repo_add() {
     echo "deb-src [arch=amd64] ${nginx_src_url} ${codename} nginx" >> /etc/apt/sources.list.d/nginx.list
 
     # finally update the local apt cache
-    apt-get update -qq
+    apt-get update -qq > /dev/null
 }
 
 case "$codename" in

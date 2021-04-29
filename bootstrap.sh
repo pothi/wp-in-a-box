@@ -23,7 +23,7 @@
 # https://stackoverflow.com/a/52586842/1004587
 # also see https://stackoverflow.com/q/3522341/1004587
 is_user_root () { [ "${EUID:-$(id -u)}" -eq 0 ]; }
-[ "$is_user_root" ] || { echo 'You must be root or user with sudo privilege to run this script. Exiting now.'; exit 1; }
+[ is_user_root ] || { echo 'You must be root or user with sudo privilege to run this script. Exiting now.'; exit 1; }
 
 # create some useful directories - create them on demand
 mkdir -p ${HOME}/{backups,git,log,scripts,tmp} &> /dev/null
