@@ -17,7 +17,7 @@ fi
 
 #--- Common for all users ---#
 echo Setting up linux tweaks...
-echo -----------------------------------------------------------------------------
+# echo -----------------------------------------------------------------------------
 
 mkdir -p /etc/skel/{.aws,.cache,.composer,.config/bash,.gnupg,.gsutil,.local/bin,.nano,.npm,.npm-global,.nvm,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
 mkdir -p /etc/skel/{backups/{full-backups,db-backups},git,log,scripts,sites,tmp} &> /dev/null
@@ -102,14 +102,14 @@ sed -i '0,/PubkeyAuthentication/I s/no/yes/' $sshd_config_file
 # else
     # echo 'Cool. Things seem fine.'
     # echo "Restarting SSH daemon..."
-    printf '%-72s' "Restarting SSH daemon..."
+    # printf '%-72s' "Restarting SSH daemon..."
     systemctl restart sshd &> /dev/null
     if [ $? -ne 0 ]; then
         echo 'Something went wrong while restarting SSH! See below...'; echo; echo;
         systemctl status sshd
-    else
+    # else
         # echo '... SSH daemon restarted!'
-        echo done.
+        # echo done.
     fi
 # fi
 
@@ -172,5 +172,5 @@ file_watchers_limit_sysctl_file='/etc/sysctl.d/60-file-watchers-limit-local.conf
 printf "fs.inotify.max_user_watches = 524288\n" > $file_watchers_limit_sysctl_file &> /dev/null
 sysctl -p $file_watchers_limit_sysctl_file
 
-echo -------------------------------------------------------------------------
+# echo -------------------------------------------------------------------------
 echo ... linux tweaks are done.

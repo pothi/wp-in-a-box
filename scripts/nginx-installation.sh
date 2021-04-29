@@ -128,4 +128,4 @@ case "$codename" in
         ;;
 esac
 
-echo ... done setting up Nginx!
+echo ... done installing up Nginx!
