@@ -23,7 +23,7 @@ if [ "$web_dev" == "" ]; then
     echo "export DEV_USER=$web_dev" >> /root/.envrc
 fi
 
-home_basename=$(echo $web_user | awk -F _ '{print $1}')
+home_basename=$(echo $web_dev | awk -F _ '{print $1}')
 
 #--- please do not edit below this file ---#
 
