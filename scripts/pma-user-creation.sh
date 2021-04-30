@@ -45,7 +45,10 @@ mysql -e "CREATE USER $pma_db_user@localhost IDENTIFIED BY '$pma_db_pass'" &> /d
 mysql -e "GRANT ALL PRIVILEGES ON phpmyadmin.* TO $pma_db_user@localhost" &> /dev/null
 
 [ -z $local_wp_in_a_box_repo ] && local_wp_in_a_box_repo=/root/git/wp-in-a-box
-sudo -H -u $PMA_USER bash $local_wp_in_a_box_repo/scripts/pma-installation.sh
+# sudo -H -u $PMA_USER bash $local_wp_in_a_box_repo/scripts/pma-installation.sh
+cp $local_wp_in_a_box_repo/scripts/pma-installation.sh $PMA_HOME/
+chown $PMA_USER $PMA_HOME/pma-installation.sh
+runuser -u $PMA_USER bash ${PMA_HOME}/pma-installation.sh
 
 [ ! -d ${PMA_TMP} ] && mkdir ${PMA_TMP}
 # PMA_TMP must be owned by the user that runs PHP.
