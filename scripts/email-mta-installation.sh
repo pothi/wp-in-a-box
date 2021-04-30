@@ -5,6 +5,12 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
+check_result() {
+    if [ $1 -ne 0 ]; then
+        echo "Error: $2"
+        exit $1
+    fi
+}
 # TODO
 # what's done here
 
