@@ -20,6 +20,13 @@ sudo apt-get -qq remove certbot
 sudo snap install --classic certbot
 sudo ln -s /snap/bin/certbot /usr/bin/certbot
 
+local_wp_in_a_box_repo=/root/git/wp-in-a-box
+
+[ -f "${local_wp_in_a_box_repo}/snippets/ssl/nginx-restart.sh" ] && {
+    cp ${local_wp_in_a_box_repo}/snippets/ssl/nginx-restart.sh /etc/letsencrypt/renewal-hooks/deploy/
+    chmod +x /etc/letsencrypt/renewal-hooks/deploy/nginx-restart.sh
+}
+
 echo done.
 
 #-- For Redis ---#
