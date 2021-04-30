@@ -92,8 +92,6 @@ if [ -z "$php_user" ]; then
     echo 'Developer env variable is not found. Exiting prematurely!'; exit
 fi
 
-base_name=${BASE_NAME:-$php_user}
-
 max_children=${PHP_MAX_CHILDREN:-""}
 
 if [ -z "$max_children" ]; then
@@ -275,7 +273,8 @@ sed -i '/^;ping.path/ s/^;//' $pool_file
 sed -i '/^;ping.response/ s/^;//' $pool_file
 
 # slow log
-PHP_SLOW_LOG_PATH="\/home\/${base_name}\/log\/slow-php.log"
+home_basename=$(echo $php_user | awk -F _ '{print $1}')
+PHP_SLOW_LOG_PATH="\/home\/${home_basename}\/log\/slow-php.log"
 sed -i '/^;slowlog/ s/^;//' $pool_file
 sed -i '/^slowlog/ s/=.*$/ = '$PHP_SLOW_LOG_PATH'/' $pool_file
 sed -i '/^;request_slowlog_timeout/ s/^;//' $pool_file

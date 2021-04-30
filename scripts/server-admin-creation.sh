@@ -9,14 +9,14 @@
 # ssh_user
 
 source /root/.envrc
-ssh_user=${SSH_USER:-""}
+ssh_user=${ADMIN_USER:-""}
 
 echo "Creating a 'server admin' user..."
 
 if [ "$ssh_user" == "" ]; then
     # create SSH username automatically
-    ssh_user="ssh_$(pwgen -A 8 1)"
-    echo "export SSH_USER=$ssh_user" >> /root/.envrc
+    ssh_user="admin_$(pwgen -A 6 1)"
+    echo "export ADMIN_USER=$ssh_user" >> /root/.envrc
 fi
 
 SSHD_CONFIG='/etc/ssh/sshd_config'
@@ -45,10 +45,10 @@ if [ ! -d "/home/${ssh_user}" ]; then
     echo "${ssh_user} ALL=(ALL) NOPASSWD:ALL"> /etc/sudoers.d/$ssh_user
     chmod 400 /etc/sudoers.d/$ssh_user
 
-    system_admin_password=$(pwgen -cns 12 1)
+    admin_pass=$(pwgen -cns 12 1)
 
-    echo "$ssh_user:$system_admin_password" | chpasswd
-    echo "export system_admin_password=$system_admin_password" >> /root/.envrc
+    echo "$ssh_user:$admin_pass" | chpasswd
+    echo "export ADMIN_PASS=$admin_pass" >> /root/.envrc
 
     gpasswd -a $ssh_user ssh_users &> /dev/null
 else

@@ -45,12 +45,6 @@ check_result() {
 
 [ ! -f "$HOME/.envrc" ] && touch ~/.envrc
 
-# some defaults / variables
-BASE_NAME=web
-if ! grep -qw $BASE_NAME /root/.envrc ; then
-    echo "export BASE_NAME=$BASE_NAME" >> /root/.envrc
-fi
-
 EMAIL=root@localhost
 if ! grep -qw $EMAIL /root/.envrc ; then
     echo "export EMAIL=$EMAIL" >> /root/.envrc

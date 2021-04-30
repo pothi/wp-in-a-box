@@ -14,21 +14,23 @@
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
 source /root/.envrc
 
+home_basename=${BASE_NAME:-""}
+
 echo 'Creating a "web developer" user to login via SFTP...'
 
 web_dev=${DEV_USER:-""}
 if [ "$web_dev" == "" ]; then
     # create SFTP username automatically
-    web_dev="web_$(pwgen -A0v 8 1)"
+    web_dev="web_dev_$(pwgen -A0v 4 1)"
     echo "export DEV_USER=$web_dev" >> /root/.envrc
 fi
 
 #--- please do not edit below this file ---#
 
 function configure_disk_usage_alert () {
-    [ ! -f /home/${BASE_NAME}/scripts/disk-usage-alert.sh ] && wget -O /home/${BASE_NAME}/scripts/disk-usage-alert.sh https://github.com/pothi/snippets/raw/master/disk-usage-alert.sh
-    chown $web_dev:$web_dev /home/${BASE_NAME}/scripts/disk-usage-alert.sh
-    chmod +x /home/${BASE_NAME}/scripts/disk-usage-alert.sh
+    [ ! -f /home/${home_basename}/scripts/disk-usage-alert.sh ] && wget -O /home/${home_basename}/scripts/disk-usage-alert.sh https://github.com/pothi/snippets/raw/master/disk-usage-alert.sh
+    chown $web_dev:$web_dev /home/${home_basename}/scripts/disk-usage-alert.sh
+    chmod +x /home/${home_basename}/scripts/disk-usage-alert.sh
 
     #--- cron for disk-usage-alert ---#
     crontab -l | grep -qw disk-usage-alert
@@ -39,16 +41,16 @@ function configure_disk_usage_alert () {
 
 SSHD_CONFIG='/etc/ssh/sshd_config'
 
-if [ ! -d "/home/${BASE_NAME}" ]; then
-    useradd --shell=/bin/bash -m --home-dir /home/${BASE_NAME} $web_dev
+if [ ! -d "/home/${home_basename}" ]; then
+    useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $web_dev
 
-    groupadd ${BASE_NAME}
+    groupadd ${home_basename}
 
     # "web" is meant for SFTP only user/s
-    gpasswd -a $web_dev ${BASE_NAME} &> /dev/null
+    gpasswd -a $web_dev ${home_basename} &> /dev/null
 
-    chown root:root /home/${BASE_NAME}
-    chmod 755 /home/${BASE_NAME}
+    chown root:root /home/${home_basename}
+    chmod 755 /home/${home_basename}
 
     #-- allow the user to login to the server --#
     # older way of doing things by appending it to AllowUsers directive
@@ -70,9 +72,9 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
     # add new users into the 'sshusers' now
     # usermod -a -G sshusers ${web_dev}
 
-    # if the text 'match group ${BASE_NAME}' isn't found, then
+    # if the text 'match group ${home_basename}' isn't found, then
     # insert it only once
-    if ! grep -q "Match group ${BASE_NAME}" "${SSHD_CONFIG}" &> /dev/null ; then
+    if ! grep -q "Match group ${home_basename}" "${SSHD_CONFIG}" &> /dev/null ; then
         # remove the existing subsystem
         sed -i 's/^Subsystem/### &/' ${SSHD_CONFIG}
 
@@ -80,7 +82,7 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
     echo "
         # setup internal SFTP
         Subsystem sftp internal-sftp
-            Match group ${BASE_NAME}
+            Match group ${home_basename}
             ChrootDirectory %h
             PasswordAuthentication yes
             X11Forwarding no
@@ -88,7 +90,7 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
             ForceCommand internal-sftp
         " >> ${SSHD_CONFIG}
 
-    fi # /Match group ${BASE_NAME}
+    fi # /Match group ${home_basename}
 
     # echo 'Testing the modified SSH config'
     # the following didn't work
@@ -112,17 +114,17 @@ if [ ! -d "/home/${BASE_NAME}" ]; then
         fi
     # fi # end of sshd -t check
 
-    web_developer_password=$(pwgen -cns 12 1)
-    echo "export web_developer_password=$web_developer_password" >> /root/.envrc
+    dev_pass=$(pwgen -cns 12 1)
+    echo "export DEV_PASS=$dev_pass" >> /root/.envrc
 
-    echo "$web_dev:$web_developer_password" | chpasswd
+    echo "$web_dev:$dev_pass" | chpasswd
 else
-    echo "the default directory /home/${BASE_NAME} already exists!"
+    echo "the default directory /home/${home_basename} already exists!"
     # exit 1
-fi # end of if ! -d "/home/${BASE_NAME}" - whoops
+fi # end of if ! -d "/home/${home_basename}" - whoops
 
-# cp $local_wp_in_a_box_repo/.envrc-user-sample /home/${BASE_NAME}/.envrc
-# chown $web_dev:$web_dev /home/${BASE_NAME}/.envrc
+# cp $local_wp_in_a_box_repo/.envrc-user-sample /home/${home_basename}/.envrc
+# chown $web_dev:$web_dev /home/${home_basename}/.envrc
 
 # configure_disk_usage_alert
 
