@@ -25,16 +25,14 @@ source /root/.envrc
 
 echo 'Setting up MySQL admin user...'
 
-if [ "$MYSQL_ADMIN_USER" == "" ]; then
+if [ "$ADMIN_USER" == "" ]; then
     # create MYSQL username automatically
-    MYSQL_ADMIN_USER="sqladmin_$(pwgen -A 8 1)"
-    MYSQL_ADMIN_PASS=$(pwgen -cnsv 20 1)
-    echo "export MYSQL_ADMIN_USER=$MYSQL_ADMIN_USER" >> /root/.envrc
-    echo "export MYSQL_ADMIN_PASS=$MYSQL_ADMIN_PASS" >> /root/.envrc
-    # mysql -e "CREATE USER ${MYSQL_ADMIN_USER}@localhost IDENTIFIED BY '${MYSQL_ADMIN_PASS}';"
-    # mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${MYSQL_ADMIN_USER}@localhost WITH GRANT OPTION"
-    mysql -e "CREATE USER ${MYSQL_ADMIN_USER} IDENTIFIED BY '${MYSQL_ADMIN_PASS}';"
-    mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${MYSQL_ADMIN_USER} WITH GRANT OPTION"
+    ADMIN_USER="admin_$(pwgen -Av 6 1)"
+    ADMIN_PASS=$(pwgen -cnsv 20 1)
+    echo "export ADMIN_USER=$ADMIN_USER" >> /root/.envrc
+    echo "export ADMIN_PASS=$ADMIN_PASS" >> /root/.envrc
+    mysql -e "CREATE USER ${ADMIN_USER} IDENTIFIED BY '${ADMIN_PASS}';"
+    mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${ADMIN_USER} WITH GRANT OPTION"
 fi
 echo ... done setting up MySQL user.
 

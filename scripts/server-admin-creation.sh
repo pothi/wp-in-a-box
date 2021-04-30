@@ -15,11 +15,11 @@ echo "Creating a 'server admin' user..."
 
 if [ "$ssh_user" == "" ]; then
     # create SSH username automatically
-    ssh_user="admin_$(pwgen -A 6 1)"
+    ssh_user="admin_$(pwgen -Av 6 1)"
     echo "export ADMIN_USER=$ssh_user" >> /root/.envrc
 fi
 
-home_basename=$(echo $ssh_user | awk -F _ '{print $1}')
+admin_basename=$(echo $ssh_user | awk -F _ '{print $1}')
 
 SSHD_CONFIG='/etc/ssh/sshd_config'
 
@@ -44,27 +44,32 @@ fi
 if [ ! -d "/home/${ssh_user}" ]; then
     # useradd -m $ssh_user
 
-    useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $ssh_dev
+    useradd --shell=/bin/bash -m $ssh_user
 
-    # groupadd ${home_basename}
+    # groupadd ${admin_basename}
 
     echo "${ssh_user} ALL=(ALL) NOPASSWD:ALL"> /etc/sudoers.d/$ssh_user
     chmod 400 /etc/sudoers.d/$ssh_user
 
-    admin_pass=$(pwgen -cns 12 1)
-
-    echo "$ssh_user:$admin_pass" | chpasswd
-    echo "export ADMIN_PASS=$admin_pass" >> /root/.envrc
-
     gpasswd -a $ssh_user ssh_users &> /dev/null
 else
-    echo "Note: The default directory /home/${ssh_user} already exists!"
+    echo "Note: The default directory /home/${admin_basename} already exists!"
     echo "Note: The user '${ssh_user}' already exists"
 fi
 
-if [ ! -f /home/${ssh_user}/.ssh/authorized_keys ]; then
-    cp /root/.ssh/authorized_keys /home/${ssh_user}/.ssh/authorized_keys
-    chown $ssh_user:$ssh_user /root/.ssh/authorized_keys /home/${ssh_user}/.ssh/authorized_keys
+ssh_pass=${ADMIN_PASS:-""}
+if [ "$ssh_pass" == "" ]; then
+    ssh_pass=$(pwgen -cns 12 1)
+
+    echo "$ssh_user:$ssh_pass" | chpasswd
+    echo "export ADMIN_PASS=$ssh_pass" >> /root/.envrc
+fi
+
+
+if [ ! -f /home/${admin_basename}/.ssh/authorized_keys ]; then
+    [ ! -d /home/${admin_basename}/.ssh ] && { mkdir /home/${admin_basename}/.ssh && chmod 700 /home/${admin_basename}/.ssh }
+    [ -f /root/.ssh/authorized_keys ] && cp /root/.ssh/authorized_keys /home/${admin_basename}/.ssh/authorized_keys
+    chown -R $ssh_user:$ssh_user /home/${admin_basename}/.ssh
 fi
 
 echo ...done setting up SSH user!
