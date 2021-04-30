@@ -14,8 +14,6 @@
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
 source /root/.envrc
 
-home_basename=${BASE_NAME:-""}
-
 echo 'Creating a "web developer" user to login via SFTP...'
 
 web_dev=${DEV_USER:-""}
@@ -24,6 +22,8 @@ if [ "$web_dev" == "" ]; then
     web_dev="web_dev_$(pwgen -A0v 4 1)"
     echo "export DEV_USER=$web_dev" >> /root/.envrc
 fi
+
+home_basename=$(echo $web_user | awk -F _ '{print $1}')
 
 #--- please do not edit below this file ---#
 
@@ -44,7 +44,7 @@ SSHD_CONFIG='/etc/ssh/sshd_config'
 if [ ! -d "/home/${home_basename}" ]; then
     useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $web_dev
 
-    groupadd ${home_basename}
+    # groupadd ${home_basename}
 
     # "web" is meant for SFTP only user/s
     gpasswd -a $web_dev ${home_basename} &> /dev/null

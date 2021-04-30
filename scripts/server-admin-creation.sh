@@ -19,6 +19,8 @@ if [ "$ssh_user" == "" ]; then
     echo "export ADMIN_USER=$ssh_user" >> /root/.envrc
 fi
 
+home_basename=$(echo $ssh_user | awk -F _ '{print $1}')
+
 SSHD_CONFIG='/etc/ssh/sshd_config'
 
 if ! grep -qw ssh_users $SSHD_CONFIG ; then
@@ -40,7 +42,11 @@ if ! grep -qw ssh_users $SSHD_CONFIG ; then
 fi
 
 if [ ! -d "/home/${ssh_user}" ]; then
-    useradd -m $ssh_user
+    # useradd -m $ssh_user
+
+    useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $ssh_dev
+
+    # groupadd ${home_basename}
 
     echo "${ssh_user} ALL=(ALL) NOPASSWD:ALL"> /etc/sudoers.d/$ssh_user
     chmod 400 /etc/sudoers.d/$ssh_user
