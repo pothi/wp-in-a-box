@@ -19,7 +19,7 @@ echo 'Creating a "test" user to login via SFTP...'
 test_user=${TEST_USER:-""}
 if [ "$test_user" == "" ]; then
     # create SFTP username automatically
-    test_user="test_user_$(pwgen -Av 4 1)"
+    test_user="test_$(pwgen -Av 7 1)"
     echo "export TEST_USER=$test_user" >> /root/.envrc
 fi
 
