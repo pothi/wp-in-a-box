@@ -44,7 +44,7 @@ fi
 if [ ! -d "/home/${ssh_user}" ]; then
     # useradd -m $ssh_user
 
-    useradd --shell=/bin/bash -m $ssh_user
+    useradd --shell=/bin/bash -m --home-dir /home/${admin_basename} $ssh_user
 
     # groupadd ${admin_basename}
 
@@ -67,7 +67,7 @@ fi
 
 
 if [ ! -f /home/${admin_basename}/.ssh/authorized_keys ]; then
-    [ ! -d /home/${admin_basename}/.ssh ] && { mkdir /home/${admin_basename}/.ssh && chmod 700 /home/${admin_basename}/.ssh }
+    [ ! -d /home/${admin_basename}/.ssh ] && mkdir /home/${admin_basename}/.ssh && chmod 700 /home/${admin_basename}/.ssh
     [ -f /root/.ssh/authorized_keys ] && cp /root/.ssh/authorized_keys /home/${admin_basename}/.ssh/authorized_keys
     chown -R $ssh_user:$ssh_user /home/${admin_basename}/.ssh
 fi
