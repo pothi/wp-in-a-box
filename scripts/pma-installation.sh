@@ -12,7 +12,7 @@
 
 mkdir ~/{phpmyadmin,log,scripts} &> /dev/null
 
-curl -sL https://github.com/pothi/linux-bootstrap-snippets/raw/master/pma-auto-update.sh -o ~/scripts/pma-auto-update.sh
+curl -sL https://github.com/pothi/snippets/raw/master/pma-auto-update.sh -o ~/scripts/pma-auto-update.sh
 chmod +x ~/scripts/pma-auto-update.sh
 
 ~/scripts/pma-auto-update.sh
