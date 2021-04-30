@@ -86,16 +86,6 @@ echo done.
 git config --global --replace-all user.email "$EMAIL"
 git config --global --replace-all user.name "$NAME"
 
-printf '%-72s' "Installing etckeeper..."
-    # sending the output to /dev/null to reduce the noise
-    apt-get -qq install etckeeper &> /dev/null
-    sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
-    cd /etc/
-    git config user.name "root"
-    git config user.email "root@localhost"
-    cd - &> /dev/null
-echo done.
-
 printf '%-72s' "Fetching wp-in-a-box repo..."
 if [ ! -d $local_wp_in_a_box_repo ] ; then
     git clone -q --recursive https://github.com/pothi/wp-in-a-box $local_wp_in_a_box_repo &> /dev/null
@@ -171,6 +161,16 @@ case "$codename" in
         echo 'Warning: Could not figure out the distribution codename. Skipping post-install steps!'
         ;;
 esac
+
+printf '%-72s' "Installing etckeeper..."
+    # sending the output to /dev/null to reduce the noise
+    apt-get -qq install etckeeper &> /dev/null
+    sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
+    cd /etc/
+    git config user.name "root"
+    git config user.email "root@localhost"
+    cd - &> /dev/null
+echo done.
 
 # logout and then login to see the changes
 echo All done.
