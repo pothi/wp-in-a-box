@@ -9,27 +9,27 @@
 
 
 # Variables - you may send these as command line options
-# web_dev
+# dev_user
 
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
 source /root/.envrc
 
 echo 'Creating a "web developer" user to login via SFTP...'
 
-web_dev=${DEV_USER:-""}
-if [ "$web_dev" == "" ]; then
+dev_user=${DEV_USER:-""}
+if [ "$dev_user" == "" ]; then
     # create SFTP username automatically
-    web_dev="web_dev_$(pwgen -Av 4 1)"
-    echo "export DEV_USER=$web_dev" >> /root/.envrc
+    dev_user="dev_user_$(pwgen -Av 4 1)"
+    echo "export DEV_USER=$dev_user" >> /root/.envrc
 fi
 
-home_basename=$(echo $web_dev | awk -F _ '{print $1}')
+home_basename=$(echo $dev_user | awk -F _ '{print $1}')
 
 #--- please do not edit below this file ---#
 
 function configure_disk_usage_alert () {
     [ ! -f /home/${home_basename}/scripts/disk-usage-alert.sh ] && wget -O /home/${home_basename}/scripts/disk-usage-alert.sh https://github.com/pothi/snippets/raw/master/disk-usage-alert.sh
-    chown $web_dev:$web_dev /home/${home_basename}/scripts/disk-usage-alert.sh
+    chown $dev_user:$dev_user /home/${home_basename}/scripts/disk-usage-alert.sh
     chmod +x /home/${home_basename}/scripts/disk-usage-alert.sh
 
     #--- cron for disk-usage-alert ---#
@@ -42,20 +42,20 @@ function configure_disk_usage_alert () {
 SSHD_CONFIG='/etc/ssh/sshd_config'
 
 if [ ! -d "/home/${home_basename}" ]; then
-    useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $web_dev
+    useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $dev_user
 
     # groupadd ${home_basename}
 
     # "web" is meant for SFTP only user/s
-    gpasswd -a $web_dev ${home_basename} &> /dev/null
+    gpasswd -a $dev_user ${home_basename} &> /dev/null
 
     chown root:root /home/${home_basename}
     chmod 755 /home/${home_basename}
 
     #-- allow the user to login to the server --#
     # older way of doing things by appending it to AllowUsers directive
-    # if ! grep "$web_dev" ${SSHD_CONFIG} &> /dev/null ; then
-      # sed -i '/AllowUsers/ s/$/ '$web_dev'/' ${SSHD_CONFIG}
+    # if ! grep "$dev_user" ${SSHD_CONFIG} &> /dev/null ; then
+      # sed -i '/AllowUsers/ s/$/ '$dev_user'/' ${SSHD_CONFIG}
     # fi
     # latest way of doing things
     # ref: https://knowledgelayer.softlayer.com/learning/how-do-i-permit-specific-users-ssh-access
@@ -70,7 +70,7 @@ if [ ! -d "/home/${home_basename}" ]; then
     # fi
 
     # add new users into the 'sshusers' now
-    # usermod -a -G sshusers ${web_dev}
+    # usermod -a -G sshusers ${dev_user}
 
     # if the text 'match group ${home_basename}' isn't found, then
     # insert it only once
@@ -114,22 +114,26 @@ if [ ! -d "/home/${home_basename}" ]; then
         fi
     # fi # end of sshd -t check
 
-    dev_pass=$(pwgen -cns 12 1)
-    echo "export DEV_PASS=$dev_pass" >> /root/.envrc
-
-    echo "$web_dev:$dev_pass" | chpasswd
 else
     echo "the default directory /home/${home_basename} already exists!"
     # exit 1
 fi # end of if ! -d "/home/${home_basename}" - whoops
 
+dev_pass=${DEV_PASS:-""}
+if [ "$dev_pass" == "" ]; then
+    dev_pass=$(pwgen -cns 12 1)
+    echo "export DEV_PASS=$dev_pass" >> /root/.envrc
+
+    echo "$dev_user:$dev_pass" | chpasswd
+fi
+
 # cp $local_wp_in_a_box_repo/.envrc-user-sample /home/${home_basename}/.envrc
-# chown $web_dev:$web_dev /home/${home_basename}/.envrc
+# chown $dev_user:$dev_user /home/${home_basename}/.envrc
 
 # configure_disk_usage_alert
 
 # cd $local_wp_in_a_box_repo/scripts/ &> /dev/null
-# sudo -H -u $web_dev bash nvm-nodejs.sh
+# sudo -H -u $dev_user bash nvm-nodejs.sh
 # cd - &> /dev/null
 
 # download scripts to backup wordpress
