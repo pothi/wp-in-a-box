@@ -79,9 +79,8 @@ printf '%-72s' "Updating apt repos..."
     # rm $apt_test_file
 echo done.
 
-# git is prerequisite for etckeeper
 printf '%-72s' "Installing git..."
-    apt-get -qq install git &> /dev/null
+    if ! dpkg-query -W -f='${Status}' git  | grep -q "ok installed"; then apt-get -qq install git; fi
 echo done.
 git config --global --replace-all user.email "$EMAIL"
 git config --global --replace-all user.name "$NAME"
@@ -163,8 +162,7 @@ case "$codename" in
 esac
 
 printf '%-72s' "Installing etckeeper..."
-    # sending the output to /dev/null to reduce the noise
-    apt-get -qq install etckeeper &> /dev/null
+    if ! dpkg-query -W -f='${Status}' etckeeper  | grep -q "ok installed"; then apt-get -qq install etckeeper; fi
     sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
     cd /etc/
     git config user.name "root"

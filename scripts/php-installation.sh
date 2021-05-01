@@ -47,7 +47,19 @@ function install_php_fpm {
         echo
     fi
 
-    apt-get install -qq ${PACKAGES} &> /dev/null
+    # apt-get install -qq ${PACKAGES} &> /dev/null
+    for package in ${PACKAGES}
+    do
+        # if dpkg-query -s $package &> /dev/null
+        if dpkg-query -W -f='${Status}' $package  | grep -q "ok installed"; then
+        then
+            echo "$package is already installed"
+        else
+            printf '%-72s' "Installing ${package}..."
+            apt-get -qq install $package &> /dev/null
+            echo done.
+        fi
+    done
 }
 
 # Variable/s
