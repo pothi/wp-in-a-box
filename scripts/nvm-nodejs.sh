@@ -3,7 +3,7 @@
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
 
-[ -f ~/.envrc ] && source ~/.envrc
+[ -f ~/.envrc ] && . ~/.envrc
 
 printf '%-72s' "Installing nodejs/npm..."
 if [ ! -s ~/scripts/nvm-install-script.sh ]; then

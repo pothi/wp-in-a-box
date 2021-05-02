@@ -13,7 +13,7 @@ exec > >(tee -a ${log_file} )
 exec 2> >(tee -a ${log_file} >&2)
 
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
-source /root/.envrc
+. /root/.envrc
 
 echo "Optional script started on (date & time): $(date +%c)"
 
@@ -33,7 +33,7 @@ apt-get -qq autoremove &> /dev/null
 echo done.
 echo
 
-source $local_wp_in_a_box_repo/scripts/email-mta-installation.sh
+. $local_wp_in_a_box_repo/scripts/email-mta-installation.sh
 echo
 
 echo Installing optional packages...
@@ -107,9 +107,9 @@ if [ ! -s /root/scripts/tuning-primer.sh ]; then
 fi
 
 # depends on mysql & php installation
-source $local_wp_in_a_box_repo/scripts/pma-user-creation.sh
+. $local_wp_in_a_box_repo/scripts/pma-user-creation.sh
 echo
-source $local_wp_in_a_box_repo/scripts/redis.sh
+. $local_wp_in_a_box_repo/scripts/redis.sh
 echo
 
 echo "Optional script ended on (date & time): $(date +%c)"

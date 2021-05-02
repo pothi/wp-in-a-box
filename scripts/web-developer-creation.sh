@@ -12,7 +12,7 @@
 # dev_user
 
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
-source /root/.envrc
+. /root/.envrc
 
 echo 'Creating a "web developer" user to login via SFTP...'
 

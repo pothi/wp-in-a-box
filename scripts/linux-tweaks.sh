@@ -3,16 +3,16 @@
 export DEBIAN_FRONTEND=noninteractive
 
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
-source ${HOME}/.envrc
+. ${HOME}/.envrc
 
 [ ! -d ~/.config ] && mkdir ~/.config
 
 # Common shell related configs for root user
 cp $local_wp_in_a_box_repo/snippets/linux/common-aliases-envvars ~/.config/
-source ~/.config/common-aliases-envvars
+. ~/.config/common-aliases-envvars
 
 if ! grep -qw common-aliases.envvars ~/.bashrc ; then
-printf "[[ -f ~/.config/common-aliases-envvars ]] && source ~/.config/common-aliases-envvars\n" >> ~/.bashrc
+printf "[[ -f ~/.config/common-aliases-envvars ]] && . ~/.config/common-aliases-envvars\n" >> ~/.bashrc
 fi
 
 #--- Common for all users ---#
@@ -25,7 +25,7 @@ mkdir -p /etc/skel/{backups/{full-backups,db-backups},git,log,scripts,sites,tmp}
 touch /etc/skel/{.bash_history,.gitconfig,.npmrc,.yarnrc,mbox}
 
 # the following creates an issue with nodejs installation using nvm
-# but works fine when installed through nodesource.
+# but works fine when installed through nodesource
 # for now, let's use nvm based nodejs installation that can be installed on a per-user basis
 # echo 'prefix=~/.npm-global' > /etc/skel/.npmrc
 
@@ -42,7 +42,7 @@ cp $local_wp_in_a_box_repo/snippets/linux/common-aliases-envvars /etc/skel/.conf
 # fi
 
 if ! grep -qw common-aliases-envvars /etc/skel/.bashrc ; then
-printf " [ -f ~/.config/common-aliases-envvars ] && source ~/.config/common-aliases-envvars " >> /etc/skel/.bashrc
+printf " [ -f ~/.config/common-aliases-envvars ] && . ~/.config/common-aliases-envvars " >> /etc/skel/.bashrc
 fi
 
 # end of ~/.bashrc tweaks
@@ -161,7 +161,7 @@ if ! $(grep -q "^${entry}$" "$rootbashrc") ; then
     printf "\n${entry}\n" >> $rootbashrc
     echo 'PS1="\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u\[\033[01;33m\]@\[\033[01;36m\]\h \[\033[01;33m\]\w \[\033[01;35m\]\$ \[\033[00m\]"' >> $rootbashrc
     printf '\n' >> $rootbashrc
-    source $rootbashrc
+    . $rootbashrc
 fi # test if the entry is found in file
 fi # test if file exists
 

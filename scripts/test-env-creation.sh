@@ -12,7 +12,7 @@
 # TEST_USER
 # TEST_PASS
 
-source /root/.envrc
+. /root/.envrc
 
 echo 'Creating a "test" user to login via SFTP...'
 

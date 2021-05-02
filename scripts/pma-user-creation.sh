@@ -11,7 +11,7 @@
 ###---------- Please do not edit below this line ----------###
 
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
-[ -f /root/.envrc ] && source /root/.envrc
+[ -f /root/.envrc ] && . /root/.envrc
 
 php_user=${DEV_USER:-""}
 if [ -z "$php_user" ]; then
@@ -37,7 +37,7 @@ if [ ! -f "${PMA_ENV}" ]; then
     echo "export pma_db_pass=$dbpass" >> ${PMA_ENV}
     chmod 600 ${PMA_ENV}
     chown $PMA_USER ${PMA_ENV}
-    source ${PMA_ENV}
+    . ${PMA_ENV}
 fi
 
 mysql -e "CREATE DATABASE phpmyadmin" &> /dev/null

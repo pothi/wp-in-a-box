@@ -56,7 +56,7 @@ fi
 
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
 
-source /root/.envrc
+. /root/.envrc
 
 # take a backup
 backup_dir="/root/backups/etc-before-wp-in-a-box-$(date +%F)"
@@ -99,16 +99,16 @@ echo
 codename=`lsb_release -c -s`
 case "$codename" in
     "focal")
-        source $local_wp_in_a_box_repo/scripts/pre-install-focal.sh
+        . $local_wp_in_a_box_repo/scripts/pre-install-focal.sh
         ;;
     "bionic")
-        # source $local_wp_in_a_box_repo/scripts/pre-install-bionic.sh
+        # . $local_wp_in_a_box_repo/scripts/pre-install-bionic.sh
         ;;
     "stretch")
-        # source $local_wp_in_a_box_repo/scripts/pre-install-stretch.sh
+        # . $local_wp_in_a_box_repo/scripts/pre-install-stretch.sh
         ;;
     "xenial")
-        # source $local_wp_in_a_box_repo/scripts/pre-install-xenial.sh
+        # . $local_wp_in_a_box_repo/scripts/pre-install-xenial.sh
         ;;
     *)
         echo "Distro: $codename"
@@ -116,44 +116,44 @@ case "$codename" in
         ;;
 esac
 
-source $local_wp_in_a_box_repo/scripts/swap.sh
+. $local_wp_in_a_box_repo/scripts/swap.sh
 echo
-source $local_wp_in_a_box_repo/scripts/base-installation.sh
+. $local_wp_in_a_box_repo/scripts/base-installation.sh
 echo
-source $local_wp_in_a_box_repo/scripts/linux-tweaks.sh
+. $local_wp_in_a_box_repo/scripts/linux-tweaks.sh
 echo
-source $local_wp_in_a_box_repo/scripts/nginx-installation.sh
+. $local_wp_in_a_box_repo/scripts/nginx-installation.sh
 echo
-source $local_wp_in_a_box_repo/scripts/mysql-installation.sh
+. $local_wp_in_a_box_repo/scripts/mysql-installation.sh
 echo
-source $local_wp_in_a_box_repo/scripts/web-developer-creation.sh
+. $local_wp_in_a_box_repo/scripts/web-developer-creation.sh
 echo
-source $local_wp_in_a_box_repo/scripts/php-installation.sh
+. $local_wp_in_a_box_repo/scripts/php-installation.sh
 echo
-source $local_wp_in_a_box_repo/scripts/server-admin-creation.sh
+. $local_wp_in_a_box_repo/scripts/server-admin-creation.sh
 echo
 
 # the following can be executed at any order as they are mostly optional
-# source $local_wp_in_a_box_repo/scripts/firewall.sh
+# . $local_wp_in_a_box_repo/scripts/firewall.sh
 echo
 
 # optional software, utilities and packages
-# source $local_wp_in_a_box_repo/scripts/optional-installation.sh
+# . $local_wp_in_a_box_repo/scripts/optional-installation.sh
 
 # post-install steps
 codename=`lsb_release -c -s`
 case "$codename" in
     "focal")
-        source $local_wp_in_a_box_repo/scripts/post-install-focal.sh
+        . $local_wp_in_a_box_repo/scripts/post-install-focal.sh
         ;;
     "bionic")
-        source $local_wp_in_a_box_repo/scripts/post-install-bionic.sh
+        . $local_wp_in_a_box_repo/scripts/post-install-bionic.sh
         ;;
     "stretch")
-        source $local_wp_in_a_box_repo/scripts/post-install-stretch.sh
+        . $local_wp_in_a_box_repo/scripts/post-install-stretch.sh
         ;;
     "xenial")
-        source $local_wp_in_a_box_repo/scripts/post-install-xenial.sh
+        . $local_wp_in_a_box_repo/scripts/post-install-xenial.sh
         ;;
     *)
         echo "Distro: $codename"

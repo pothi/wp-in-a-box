@@ -100,7 +100,7 @@ sed -i '/\/\/Unattended-Upgrade::Mail\(OnlyOnError\)\?/ s:^//::' /etc/apt/apt.co
 #--- setup permissions for .envrc file ---#
 if [ -f /root/.envrc ]; then
     chmod 600 /root/.envrc
-    source /root/.envrc
+    . /root/.envrc
     # direnv allow &> /dev/null
 fi
 

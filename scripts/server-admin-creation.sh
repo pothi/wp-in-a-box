@@ -8,7 +8,7 @@
 # Variables - you may set the following in envrc file
 # ssh_user
 
-source /root/.envrc
+. /root/.envrc
 ssh_user=${ADMIN_USER:-""}
 
 echo "Creating a 'server admin' user..."

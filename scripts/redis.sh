@@ -16,7 +16,7 @@ redis_maxmemory_policy='allkeys-lru'
 redis_conf_file='/etc/redis/redis.conf'
 redis_sysctl_file='/etc/sysctl.d/60-redis-local.conf'
 
-source /root/.envrc
+. /root/.envrc
 
 php_version=${PHP_VER:-7.4}
 
