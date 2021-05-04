@@ -67,6 +67,9 @@ if [ ! -d "$backup_dir" ]; then
     echo done.
 fi
 
+# Ref: https://wiki.debian.org/Multiarch/HOWTO
+[ ! $(dpkg -l | grep -q i386) ] && dpkg --remove-architecture i386
+
 printf '%-72s' "Updating apt repos..."
     export DEBIAN_FRONTEND=noninteractive
     # the following runs only once when apt-get is never run (just after the OS is installed!)
