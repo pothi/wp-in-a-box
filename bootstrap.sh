@@ -86,16 +86,10 @@ fi
 # https://askubuntu.com/a/1336013/65814
 [ ! $(dpkg --get-selections | grep -q i386) ] && dpkg --remove-architecture i386 2>/dev/null
 
+export DEBIAN_FRONTEND=noninteractive
+# the following runs when apt cache is older than an hour
 printf '%-72s' "Updating apt repos..."
-    export DEBIAN_FRONTEND=noninteractive
-    # the following runs only once when apt-get is never run (just after the OS is installed!)
-    [ ! -f /var/lib/apt/periodic/update-success-stamp ] && apt-get -qq update
-
-    # the following code runs only when apt cache is more than one day old.
-    apt_test_file=/root/tmp/dummy_file_for_apt_test.txt
-    touch -d"-1day" $apt_test_file
-    [ $apt_test_file -nt /var/lib/apt/periodic/update-success-stamp ] && apt-get -qq update
-    # rm $apt_test_file
+    [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -60 2> /dev/null)" ] && apt-get -qq update
 echo done.
 
 # Redirection explanation: https://unix.stackexchange.com/a/563563/20241

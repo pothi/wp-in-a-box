@@ -11,7 +11,7 @@ echo 'Installing MySQL Server'
 # sql_server=mariadb-server
 # if ! apt-cache show mariadb-server &> /dev/null ; then sql_server=mysql-server ; fi
 
-sql_server=mysql-server
+sql_server=default-mysql-server
 
 apt-get install ${sql_server} -qq &> /dev/null
 
