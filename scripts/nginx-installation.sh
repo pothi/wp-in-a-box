@@ -11,12 +11,40 @@ echo 'Installing Nginx Server...'
 # ref: https://nginx.org/en/linux_packages.html#Ubuntu
 sudo apt-get -qq install curl gnupg2 ca-certificates lsb-release > /dev/null
 
-codename=$(lsb_release -c -s)
+if ! $(type 'codename' 2>/dev/null | grep -q 'function')
+then
+    codename() {
+        lsb_release_cli=$(which lsb_release)
+        local codename=""
+        if [ ! -z $lsb_release_cli ]; then
+            codename=$($lsb_release_cli -cs)
+        else
+            codename=$(cat /etc/os-release | awk -F = '/VERSION_CODENAME/{print $2}')
+        fi
+        echo "$codename"
+    }
+    codename=$(codename)
+fi
 
 # function to add the official Nginx.org repo
 nginx_repo_add() {
     distro=$(awk -F= '/^ID=/{print $2}' /etc/os-release)
-    codename=$(lsb_release -c -s)
+
+    if ! $(type 'codename' 2>/dev/null | grep -q 'function')
+    then
+        codename() {
+            lsb_release_cli=$(which lsb_release)
+            local codename=""
+            if [ ! -z $lsb_release_cli ]; then
+                codename=$($lsb_release_cli -cs)
+            else
+                codename=$(cat /etc/os-release | awk -F = '/VERSION_CODENAME/{print $2}')
+            fi
+            echo "$codename"
+        }
+        codename=$(codename)
+    fi
+    # codename=$(lsb_release -c -s)
 
     [ -f nginx_signing.key ] && rm nginx_signing.key
     curl -LSsO http://nginx.org/keys/nginx_signing.key
