@@ -17,7 +17,7 @@ apt-get install ${sql_server} -qq &> /dev/null
 
 systemctl stop mysql
 # enable slow log and other tweaks
-cp $local_wp_in_a_box_repo/config/mysql.conf.d/*.cnf /etc/mysql/mysql.conf.d/
+cp $local_wp_in_a_box_repo/config/mysql.conf.d/*.cnf /etc/mysql/conf.d/
 systemctl start mysql
 
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
