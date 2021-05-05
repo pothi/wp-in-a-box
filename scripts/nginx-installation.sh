@@ -44,7 +44,6 @@ nginx_repo_add() {
         }
         codename=$(codename)
     fi
-    # codename=$(lsb_release -c -s)
 
     [ -f nginx_signing.key ] && rm nginx_signing.key
     curl -LSsO http://nginx.org/keys/nginx_signing.key
