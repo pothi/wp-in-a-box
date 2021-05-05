@@ -29,9 +29,9 @@ do
     # if dpkg-query -s $package &> /dev/null
     if dpkg-query -W -f='${Status}' $package | grep -q "ok installed"
     then
-        echo "$package is already installed"
+        echo "'$package' is already installed"
     else
-        printf '%-72s' "Installing ${package}..."
+        printf '%-72s' "Installing '${package}' ..."
         apt-get -qq install $package &> /dev/null
         echo done.
     fi
@@ -49,7 +49,7 @@ echo '
 # │ │ ┌───────────── day of month (1 - 31)
 # │ │ │ ┌───────────── month (1 - 12)
 # │ │ │ │ ┌───────────── day of week (0 - 6) (Sunday to Saturday;
-# │ │ │ │ │                                       7 is also Sunday on some systems)
+# │ │ │ │ │                                   7 is also Sunday on some systems)
 # │ │ │ │ │
 # │ │ │ │ │
 # * * * * *  command to execute' | crontab - &>> $log_file
@@ -66,7 +66,7 @@ if [ ! -z "$web_dev" ]; then
         # │ │ ┌───────────── day of month (1 - 31)
         # │ │ │ ┌───────────── month (1 - 12)
         # │ │ │ │ ┌───────────── day of week (0 - 6) (Sunday to Saturday;
-        # │ │ │ │ │                                       7 is also Sunday on some systems)
+        # │ │ │ │ │                                   7 is also Sunday on some systems)
         # │ │ │ │ │
         # │ │ │ │ │
         # * * * * *  command to execute' | crontab -u $web_dev - &>> $log_file
