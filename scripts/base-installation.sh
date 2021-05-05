@@ -15,6 +15,7 @@ echo Installing prerequisites...
 echo -----------------------------------------------------------------------------
 required_packages="apt-transport-https \
     bash-completion \
+    curl \
     dnsutils \
     language-pack-en \
     unattended-upgrades apt-listchanges \
@@ -22,7 +23,8 @@ required_packages="apt-transport-https \
     fail2ban \
     sudo \
     tzdata \
-    unzip"
+    unzip \
+    wget"
 
 for package in $required_packages
 do

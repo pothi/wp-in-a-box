@@ -51,7 +51,7 @@ function install_php_fpm {
     for package in ${PACKAGES}
     do
         # if dpkg-query -s $package &> /dev/null
-        if dpkg-query -W -f='${Status}' $package  | grep -q "ok installed"; then
+        if dpkg-query -W -f='${Status}' $package  | grep -q "ok installed";
         then
             echo "$package is already installed"
         else

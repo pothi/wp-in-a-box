@@ -98,8 +98,9 @@ printf '%-72s' "Updating apt repos..."
     # rm $apt_test_file
 echo done.
 
+# Redirection explanation: https://unix.stackexchange.com/a/563563/20241
 printf '%-72s' "Installing git..."
-    if ! dpkg-query -W -f='${Status}' git 2>/dev/null | grep -q "ok installed"; then apt-get -qq install git; fi
+    if ! dpkg-query -W -f='${Status}' git 2>/dev/null | grep -q "ok installed"; then apt-get -qq install git 1>/dev/null ; fi
 echo done.
 git config --global --replace-all user.email "$EMAIL"
 git config --global --replace-all user.name "$NAME"
@@ -184,7 +185,7 @@ case "$codename" in
 esac
 
 printf '%-72s' "Installing etckeeper..."
-    if ! dpkg-query -W -f='${Status}' etckeeper  | grep -q "ok installed"; then apt-get -qq install etckeeper &> /dev/null; fi
+    if ! dpkg-query -W -f='${Status}' etckeeper 2> /dev/null | grep -q "ok installed"; then apt-get -qq install etckeeper &> /dev/null; fi
     sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
     cd /etc/
     git config user.name "root"
