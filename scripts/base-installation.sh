@@ -27,7 +27,7 @@ required_packages="apt-transport-https \
 for package in $required_packages
 do
     # if dpkg-query -s $package &> /dev/null
-    if dpkg-query -W -f='${Status}' $package | grep -q "ok installed"
+    if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
     then
         echo "'$package' is already installed"
     else

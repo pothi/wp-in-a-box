@@ -84,7 +84,7 @@ fi
 
 # Ref: https://wiki.debian.org/Multiarch/HOWTO
 # https://askubuntu.com/a/1336013/65814
-[ ! $(dpkg --get-selections | grep -q i386) ] && dpkg --remove-architecture i386
+[ ! $(dpkg --get-selections | grep -q i386) ] && dpkg --remove-architecture i386 2>/dev/null
 
 printf '%-72s' "Updating apt repos..."
     export DEBIAN_FRONTEND=noninteractive
@@ -99,7 +99,7 @@ printf '%-72s' "Updating apt repos..."
 echo done.
 
 printf '%-72s' "Installing git..."
-    if ! dpkg-query -W -f='${Status}' git  | grep -q "ok installed"; then apt-get -qq install git; fi
+    if ! dpkg-query -W -f='${Status}' git 2>/dev/null | grep -q "ok installed"; then apt-get -qq install git; fi
 echo done.
 git config --global --replace-all user.email "$EMAIL"
 git config --global --replace-all user.name "$NAME"
