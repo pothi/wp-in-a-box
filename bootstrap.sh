@@ -128,6 +128,8 @@ case "$codename" in
     "xenial")
         # . $local_wp_in_a_box_repo/scripts/pre-install-xenial.sh
         ;;
+    "buster")
+        ;;
     *)
         echo "Distro: $codename"
         echo 'Warning: Could not figure out the distribution codename. Skipping pre-install steps!'
