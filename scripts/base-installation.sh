@@ -21,6 +21,7 @@ required_packages="apt-transport-https \
     unattended-upgrades apt-listchanges \
     pwgen \
     fail2ban \
+    software-properties-common \
     sudo \
     tzdata \
     unzip \
