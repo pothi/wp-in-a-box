@@ -68,7 +68,8 @@ if [ ! -d "$backup_dir" ]; then
 fi
 
 # Ref: https://wiki.debian.org/Multiarch/HOWTO
-[ ! $(dpkg -l | grep -q i386) ] && dpkg --remove-architecture i386
+# https://askubuntu.com/a/1336013/65814
+[ ! $(dpkg --get-selections | grep -q i386) ] && dpkg --remove-architecture i386
 
 printf '%-72s' "Updating apt repos..."
     export DEBIAN_FRONTEND=noninteractive
