@@ -82,6 +82,9 @@ case "$codename" in
     "xenial")
         nginx_repo_add
         ;;
+    "buster")
+        nginx_repo_add
+        ;;
     *)
         echo "Distro: $codename"
         echo 'Warning: Could not figure out the distribution codename. Continuing to install Nginx from the OS.'

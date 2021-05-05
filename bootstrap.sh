@@ -174,6 +174,9 @@ case "$codename" in
     "xenial")
         . $local_wp_in_a_box_repo/scripts/post-install-xenial.sh
         ;;
+    "buster")
+        . $local_wp_in_a_box_repo/scripts/post-install-xenial.sh
+        ;;
     *)
         echo "Distro: $codename"
         echo 'Warning: Could not figure out the distribution codename. Skipping post-install steps!'
@@ -181,7 +184,7 @@ case "$codename" in
 esac
 
 printf '%-72s' "Installing etckeeper..."
-    if ! dpkg-query -W -f='${Status}' etckeeper  | grep -q "ok installed"; then apt-get -qq install etckeeper; fi
+    if ! dpkg-query -W -f='${Status}' etckeeper  | grep -q "ok installed"; then apt-get -qq install etckeeper &> /dev/null; fi
     sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
     cd /etc/
     git config user.name "root"
