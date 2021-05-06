@@ -170,7 +170,7 @@ case "$codename" in
         . $local_wp_in_a_box_repo/scripts/post-install-xenial.sh
         ;;
     "buster")
-        # . $local_wp_in_a_box_repo/scripts/post-install-buster.sh
+        . $local_wp_in_a_box_repo/scripts/post-install-buster.sh
         ;;
     *)
         echo "Distro: $codename"
