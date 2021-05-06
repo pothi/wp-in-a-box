@@ -19,7 +19,7 @@ echo 'Creating a "web developer" user to login via SFTP...'
 dev_user=${DEV_USER:-""}
 if [ "$dev_user" == "" ]; then
     # create SFTP username automatically
-    dev_user="dev_user_$(pwgen -Av 4 1)"
+    dev_user="web_dev_$(pwgen -Av 4 1)"
     echo "export DEV_USER=$dev_user" >> /root/.envrc
 fi
 
