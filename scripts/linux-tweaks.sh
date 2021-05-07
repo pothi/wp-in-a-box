@@ -153,18 +153,6 @@ fi # test for logwatch cron
 #--- Misc Tweaks ---#
 sed -i 's/^#\(startup_message off\)$/\1/' /etc/screenrc
 
-#--- setup color for root terminal ---#
-rootbashrc=/root/.bashrc
-entry='#red_color for root'
-if [ -f $rootbashrc ]; then
-if ! $(grep -q "^${entry}$" "$rootbashrc") ; then
-    printf "\n${entry}\n" >> $rootbashrc
-    echo 'PS1="\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;31m\]\u\[\033[01;33m\]@\[\033[01;36m\]\h \[\033[01;33m\]\w \[\033[01;35m\]\$ \[\033[00m\]"' >> $rootbashrc
-    printf '\n' >> $rootbashrc
-    . $rootbashrc
-fi # test if the entry is found in file
-fi # test if file exists
-
 # ref: https://github.com/guard/listen/wiki/Increasing-the-amount-of-inotify-watchers#the-technical-details
 # to fix "Error: ENOSPC: System limit for number of file watchers reached" - when running "watch" with gulp, grunt, etc.
 file_watchers_limit_sysctl_file='/etc/sysctl.d/60-file-watchers-limit-local.conf'
