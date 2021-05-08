@@ -1,45 +1,22 @@
 #!/bin/bash
 
-export DEBIAN_FRONTEND=noninteractive
-
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
 . ${HOME}/.envrc
-
-[ ! -d ~/.config ] && mkdir ~/.config
-
-# Common shell related configs for root user
-cp $local_wp_in_a_box_repo/snippets/linux/common-aliases-envvars ~/.config/
-. ~/.config/common-aliases-envvars
-
-if ! grep -qw common-aliases.envvars ~/.bashrc ; then
-printf "[[ -f ~/.config/common-aliases-envvars ]] && . ~/.config/common-aliases-envvars\n" >> ~/.bashrc
-fi
 
 #--- Common for all users ---#
 echo Setting up linux tweaks...
 # echo -----------------------------------------------------------------------------
 
-mkdir -p /etc/skel/{.aws,.cache,.composer,.config/bash,.gnupg,.gsutil,.local/bin,.nano,.npm,.npm-global,.nvm,.selected-editor,.ssh,.well-known,.wp-cli} &> /dev/null
-mkdir -p /etc/skel/{backups/{full-backups,db-backups},git,log,scripts,sites,tmp} &> /dev/null
+mkdir -p /etc/skel/{.aws,.cache,.composer,.config,.gnupg,.gsutil} &> /dev/null
+mkdir -p /etc/skel/{.local/bin,.nano,.npm,.nvm,.selected-editor,.ssh,.vim,.wp-cli} &> /dev/null
+mkdir -p /etc/skel/{git,log,scripts,sites,tmp} &> /dev/null
 
 touch /etc/skel/{.bash_history,.gitconfig,.npmrc,.yarnrc,mbox}
 
-# the following creates an issue with nodejs installation using nvm
-# but works fine when installed through nodesource
-# for now, let's use nvm based nodejs installation that can be installed on a per-user basis
-# echo 'prefix=~/.npm-global' > /etc/skel/.npmrc
-
 chmod 600 /etc/skel/mbox
-chmod 700 /etc/skel/.gnupg
-chmod 700 /etc/skel/.ssh
+chmod 700 /etc/skel/{.gnupg,.ssh}
 
 cp $local_wp_in_a_box_repo/snippets/linux/common-aliases-envvars /etc/skel/.config/
-
-# ~/.bashrc tweaks
-# touch /etc/skel/.bashrc
-# if ! grep -q 'direnv' /etc/skel/.bashrc ; then
-    # echo 'eval "$(direnv hook bash)"' >> /etc/skel/.bashrc &> /dev/null
-# fi
 
 if ! grep -qw common-aliases-envvars /etc/skel/.bashrc ; then
 printf " [ -f ~/.config/common-aliases-envvars ] && . ~/.config/common-aliases-envvars " >> /etc/skel/.bashrc
@@ -48,37 +25,9 @@ fi
 # end of ~/.bashrc tweaks
 
 ###--- VIM Tweaks ---###
-[ ! -d ~/.vim ] && mkdir ~/.vim
-cp -a $local_wp_in_a_box_repo/snippets/vim/* ~/.vim/
-
 # copy only vimrc to normal users
 [ ! -d /etc/skel/.vim ] && mkdir /etc/skel/.vim
 cp $local_wp_in_a_box_repo/snippets/vim/vimrc ~/.vim/
-
-# [ ! -f /etc/skel/.vim/vimrc ] && touch /etc/skel/.vim/vimrc
-# if ! grep -q '" Custom Code - PK' /etc/skel/.vim/vimrc ; then
-    # echo '" Custom Code - PK' > /etc/skel/.vim/vimrc
-    # echo "set viminfo+=n~/.vim/viminfo" >> /etc/skel/.vim/vimrc
-# fi
-
-# Vim related configs
-# VIM_VERSION=$(/usr/bin/vim --version | head -1 | awk {'print $5'} | tr -d .)
-# sudo cp -a $local_wp_in_a_box_repo/config/vim/* /etc/skel/.vim/
-# sudo cat "$local_wp_in_a_box_repo/config/vimrc.local" >> /etc/skel/.vim/vimrc
-# sudo sed -i "s/VIM_VERSION/$VIM_VERSION/g" /etc/skel/.vim/vimrc
-
-# sudo cp -a /etc/skel/.vim /root/ &> /dev/null
-# sudo cp /etc/skel/.vim/vimrc /root/.vim/
-
-# [ ! -d ${HOME}/.vim ]       && cp -a /etc/skel/.vim ${HOME}/
-# [ ! -f ${HOME}/.vim/vimrc ] && cp /etc/skel/.vim/vimrc ${HOME}/.vim
-
-# cp $local_wp_in_a_box_repo/config/vimrc.local /etc/vim/
-# cp -a $local_wp_in_a_box_repo/config/vim/* /usr/share/vim/vim${VIM_VERSION}/
-# sed -i "s/VIM_VERSION/$VIM_VERSION/g" /etc/vim/vimrc.local
-
-# Clean up
-# rm -rf $local_wp_in_a_box_repo/
 
 #--- Tweak SSH config ---#
 
