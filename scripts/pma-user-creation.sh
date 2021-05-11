@@ -25,9 +25,9 @@ export PMA_HOME=/var/www/pma
 export PMA_ENV=${PMA_HOME}/.envrc
 export PMA_TMP=${PMA_HOME}/phpmyadmin/tmp
 
-[ ! -d /var/www ] && mkdir -p /var/www
+[ ! -d /var/www/pma ] && mkdir -p /var/www/pma
 
-useradd --home-dir $PMA_HOME -m $PMA_USER &> /dev/null
+useradd --home-dir $PMA_HOME $PMA_USER &> /dev/null
 chown ${PMA_USER} $PMA_HOME
 
 if [ ! -f "${PMA_ENV}" ]; then
@@ -49,6 +49,7 @@ mysql -e "GRANT ALL PRIVILEGES ON phpmyadmin.* TO $pma_db_user@localhost" &> /de
 cp $local_wp_in_a_box_repo/scripts/pma-installation.sh $PMA_HOME/
 chown $PMA_USER $PMA_HOME/pma-installation.sh
 runuser -u $PMA_USER bash ${PMA_HOME}/pma-installation.sh
+rm ${PMA_HOME}/pma-installation.sh
 
 [ ! -d ${PMA_TMP} ] && mkdir ${PMA_TMP}
 # PMA_TMP must be owned by the user that runs PHP.
