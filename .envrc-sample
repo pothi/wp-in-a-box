@@ -6,16 +6,16 @@
 # place it at $HOME of root, that is /root/.envrc
 
 # this user can be used to access the server via SSH
-# if not provided, a random username will be created
-export SSH_USER=
-export system_admin_username=$SSH_USER # for backwards compatibility
+# if empty, a random username will be created
+export ADMIN_USERNAME=
+export system_admin_username=$ADMIN_USERNAME # for backward compatibility
 
-# this user can be used to access the site via SFTP
-# if not provided, a random username will be created
-export DEV_USER=
-export web_developer_username=$DEV_USER # for backwards compatibility
+# WP user is provided with SFTP access (at least)
+# if empty, a random username will be created
+export WP_USERNAME=
+export DEV_USER=$WP_USERNAME # for backward compatibility
+export web_developer_username=$DEV_USER # for backward compatibility
 
-# EMAIL is used in multiple places
-# - crontab, logwatch, git
-
+# These are used in multiple places such as crontab, logwatch, git
 #export EMAIL=
+#export NAME=

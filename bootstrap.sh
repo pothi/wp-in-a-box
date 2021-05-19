@@ -141,7 +141,7 @@ echo
 echo
 . $local_wp_in_a_box_repo/scripts/mysql-installation.sh
 echo
-. $local_wp_in_a_box_repo/scripts/web-developer-creation.sh
+. $local_wp_in_a_box_repo/scripts/wp-user-creation.sh
 echo
 . $local_wp_in_a_box_repo/scripts/php-installation.sh
 echo

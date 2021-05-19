@@ -29,6 +29,17 @@ if [ -f $rootbashrc ]; then
 fi # test if file exists
 
 ###------------------------------ VIM Tweaks ------------------------------###
+#TODO
 [ ! -d ~/.vim ] && mkdir ~/.vim
 cp -a $local_wp_in_a_box_repo/snippets/vim/* ~/.vim/
+
+echo 'Disabling root login...'
+echo "PermitRootLogin no" > /etc/ssh/sshd_config.d/disable-root.conf
+systemctl restart sshd &> /dev/null
+if [ "$?" != 0 ]; then
+    echo 'Something went wrong while creating SFTP user! See below...'; echo; echo;
+    systemctl status sshd
+else
+    echo "Disabled root login!"
+fi
 

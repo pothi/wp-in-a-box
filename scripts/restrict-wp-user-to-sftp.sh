@@ -9,53 +9,41 @@
 
 
 # Variables - you may send these as command line options
-# dev_user
+# wp_user
 
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
 . /root/.envrc
 
-echo 'Creating a "web developer" user to login via SFTP...'
+echo 'Creating a WP username to login via SFTP...'
 
-dev_user=${DEV_USER:-""}
-if [ "$dev_user" == "" ]; then
+wp_user=${WP_USERNAME:-""}
+if [ "$wp_user" == "" ]; then
     # create SFTP username automatically
-    dev_user="web_dev_$(pwgen -Av 4 1)"
-    echo "export DEV_USER=$dev_user" >> /root/.envrc
+    wp_user="wp_$(pwgen -Av 9 1)"
+    echo "export WP_USER=$wp_user" >> /root/.envrc
 fi
 
-home_basename=$(echo $dev_user | awk -F _ '{print $1}')
+home_basename=$(echo $wp_user | awk -F _ '{print $1}')
 
 #--- please do not edit below this file ---#
-
-function configure_disk_usage_alert () {
-    [ ! -f /home/${home_basename}/scripts/disk-usage-alert.sh ] && wget -O /home/${home_basename}/scripts/disk-usage-alert.sh https://github.com/pothi/snippets/raw/master/disk-usage-alert.sh
-    chown $dev_user:$dev_user /home/${home_basename}/scripts/disk-usage-alert.sh
-    chmod +x /home/${home_basename}/scripts/disk-usage-alert.sh
-
-    #--- cron for disk-usage-alert ---#
-    crontab -l | grep -qw disk-usage-alert
-    if [ "$?" -ne "0" ]; then
-        ( crontab -l; echo '@daily ~/scripts/disk-usage-alert.sh &> /dev/null' ) | crontab -
-    fi
-}
 
 SSHD_CONFIG='/etc/ssh/sshd_config'
 
 if [ ! -d "/home/${home_basename}" ]; then
-    useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $dev_user
+    useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $wp_user
 
-    # groupadd ${home_basename}
+    groupadd ${home_basename}
 
-    # "web" is meant for SFTP only user/s
-    gpasswd -a $dev_user ${home_basename} &> /dev/null
+    # "wp" is meant for SFTP only user/s
+    gpasswd -a $wp_user ${home_basename} &> /dev/null
 
     chown root:root /home/${home_basename}
     chmod 755 /home/${home_basename}
 
     #-- allow the user to login to the server --#
     # older way of doing things by appending it to AllowUsers directive
-    # if ! grep "$dev_user" ${SSHD_CONFIG} &> /dev/null ; then
-      # sed -i '/AllowUsers/ s/$/ '$dev_user'/' ${SSHD_CONFIG}
+    # if ! grep "$wp_user" ${SSHD_CONFIG} &> /dev/null ; then
+      # sed -i '/AllowUsers/ s/$/ '$wp_user'/' ${SSHD_CONFIG}
     # fi
     # latest way of doing things
     # ref: https://knowledgelayer.softlayer.com/learning/how-do-i-permit-specific-users-ssh-access
@@ -70,7 +58,7 @@ if [ ! -d "/home/${home_basename}" ]; then
     # fi
 
     # add new users into the 'sshusers' now
-    # usermod -a -G sshusers ${dev_user}
+    # usermod -a -G sshusers ${wp_user}
 
     # if the text 'match group ${home_basename}' isn't found, then
     # insert it only once
@@ -119,24 +107,16 @@ else
     # exit 1
 fi # end of if ! -d "/home/${home_basename}" - whoops
 
-dev_pass=${DEV_PASS:-""}
-if [ "$dev_pass" == "" ]; then
-    dev_pass=$(pwgen -cns 12 1)
-    echo "export DEV_PASS=$dev_pass" >> /root/.envrc
+wp_pass=${WP_PASSWORD:-""}
+if [ "$wp_pass" == "" ]; then
+    wp_pass=$(pwgen -cns 12 1)
+    echo "export WP_PASSWORD=$wp_pass" >> /root/.envrc
 
-    echo "$dev_user:$dev_pass" | chpasswd
+    echo "$wp_user:$wp_pass" | chpasswd
 fi
 
-# cp $local_wp_in_a_box_repo/.envrc-user-sample /home/${home_basename}/.envrc
-# chown $dev_user:$dev_user /home/${home_basename}/.envrc
-
-# configure_disk_usage_alert
-
 # cd $local_wp_in_a_box_repo/scripts/ &> /dev/null
-# sudo -H -u $dev_user bash nvm-nodejs.sh
+# sudo -H -u $wp_user bash nvm-nodejs.sh
 # cd - &> /dev/null
-
-# make scripts executable to all
-chmod +x ~/scripts/*.sh
 
 echo ...done setting up SFTP username for Web Developer!

@@ -9,14 +9,14 @@
 # ssh_user
 
 . /root/.envrc
-ssh_user=${ADMIN_USER:-""}
+ssh_user=${ADMIN_USERNAME:-""}
 
 echo "Creating a 'server admin' user..."
 
 if [ "$ssh_user" == "" ]; then
     # create SSH username automatically
     ssh_user="admin_$(pwgen -Av 6 1)"
-    echo "export ADMIN_USER=$ssh_user" >> /root/.envrc
+    echo "export ADMIN_USERNAME=$ssh_user" >> /root/.envrc
 fi
 
 admin_basename=$(echo $ssh_user | awk -F _ '{print $1}')
@@ -57,12 +57,12 @@ else
     echo "Note: The user '${ssh_user}' already exists"
 fi
 
-ssh_pass=${ADMIN_PASS:-""}
+ssh_pass=${ADMIN_PASSWORD:-""}
 if [ "$ssh_pass" == "" ]; then
     ssh_pass=$(pwgen -cns 12 1)
 
     echo "$ssh_user:$ssh_pass" | chpasswd
-    echo "export ADMIN_PASS=$ssh_pass" >> /root/.envrc
+    echo "export ADMIN_PASSWORD=$ssh_pass" >> /root/.envrc
 fi
 
 
