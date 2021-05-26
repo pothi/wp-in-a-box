@@ -32,14 +32,13 @@ git_username=${NAME:-root}
 [ ! $(dpkg --get-selections | grep -q i386) ] && dpkg --remove-architecture i386 2>/dev/null
 
 export DEBIAN_FRONTEND=noninteractive
-# the following runs when apt cache is older than an hour
-# printf '%-72s' "Updating apt repos..."
-echo 'Updating apt cache...'
-[ -z "$(find /var/cache/apt/pkgcache.bin -mmin -60 2> /dev/null)" ] && apt-get -qq update
-# echo done.
+# the following runs when apt cache is older than 6 hours
+if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -360 2> /dev/null)" ]; then
+        printf '%-72s' "Updating apt cache"
+        apt-get -qq update
+        echo done.
+fi
 
-
-echo Installing prerequisites...
 echo -----------------------------------------------------------------------------
 required_packages="apt-transport-https \
     curl \
@@ -57,17 +56,14 @@ for package in $required_packages
 do
     if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
     then
-        echo "'$package' is already installed"
+        # echo "'$package' is already installed"
+        :
     else
         printf '%-72s' "Installing '${package}' ..."
         apt-get -qq install $package &> /dev/null
         echo done.
     fi
 done
-
-echo -------------------------------------------------------------------------
-echo ... done installing prerequisites!
-echo
 
 #--- setup timezone ---#
 current_time_zone=$(date +\%Z)
@@ -82,10 +78,6 @@ if [ "$current_time_zone" != "UTC" ] ; then
     echo done.
 fi
 
-# . $local_wp_in_a_box_repo/scripts/linux-tweaks.sh # bootstrap-root.sh
-# . $local_wp_in_a_box_repo/scripts/nginx-installation.sh
-echo Installing LEMP...
-echo -----------------------------------------------------------------------------
 php_ver=7.4
 lemp_packages="nginx-extras \
     default-mysql-server \
@@ -105,20 +97,19 @@ for package in $lemp_packages
 do
     if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
     then
-        echo "'$package' is already installed"
+        # echo "'$package' is already installed"
+        :
     else
         printf '%-72s' "Installing '${package}' ..."
         apt-get -qq install $package &> /dev/null
         echo done.
     fi
 done
-echo -------------------------------------------------------------------------
-echo ... done installing LEMP!
-echo
-# . $local_wp_in_a_box_repo/scripts/mysql-installation.sh
-echo 'Creating a MySQL admin user...'
+echo -----------------------------------------------------------------------------
+echo "Please check ~/.envrc for all the credentials."
 
 if [ "$ADMIN_USER" == "" ]; then
+printf '%-72s' "Creating a MySQL Admin User..."
     # create MYSQL username automatically
     ADMIN_USER="admin_$(pwgen -Av 6 1)"
     ADMIN_PASS=$(pwgen -cnsv 20 1)
@@ -126,16 +117,16 @@ if [ "$ADMIN_USER" == "" ]; then
     echo "export ADMIN_PASS=$ADMIN_PASS" >> /root/.envrc
     mysql -e "CREATE USER ${ADMIN_USER} IDENTIFIED BY '${ADMIN_PASS}';"
     mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${ADMIN_USER} WITH GRANT OPTION"
-fi
-echo "... created a MySQL admin."
+echo done.
 echo "Please check ~/.envrc for credentials."
-# . $local_wp_in_a_box_repo/scripts/web-developer-creation.sh
-echo 'Creating a WP username...'
+fi
 
 wp_user=${WP_USERNAME:-""}
 if [ "$wp_user" == "" ]; then
+printf '%-72s' "Creating a WP User..."
     wp_user="wp_$(pwgen -Av 9 1)"
     echo "export WP_USERNAME=$wp_user" >> /root/.envrc
+echo done.
 fi
 
 # home_basename=wp
@@ -151,34 +142,31 @@ fi
 
 wp_pass=${WP_PASSWORD:-""}
 if [ "$wp_pass" == "" ]; then
+printf '%-72s' "Creating password for WP user..."
     wp_pass=$(pwgen -cns 12 1)
     echo "export WP_PASSWORD=$wp_pass" >> /root/.envrc
 
     echo "$wp_user:$wp_pass" | chpasswd
+echo done.
 fi
 
 # provide sudo access without passwd to WP Dev
-echo "${wp_user} ALL=(ALL) NOPASSWD:ALL"> /etc/sudoers.d/$wp_user
-chmod 400 /etc/sudoers.d/$wp_user
+if [ ! -f /etc/sudoers.d/$wp_user ]; then
+printf '%-72s' "Providing sudo privilege for WP user..."
+    echo "${wp_user} ALL=(ALL) NOPASSWD:ALL"> /etc/sudoers.d/$wp_user
+    chmod 400 /etc/sudoers.d/$wp_user
+echo done.
+fi
 
 cd /etc/ssh/sshd_config.d
 if [ ! -f enable-passwd-auth.conf ]; then
+printf '%-72s' "Enabling Password Authentication for WP user..."
     echo "PasswordAuthentication yes" > enable-passwd-auth.conf
     /usr/sbin/sshd -t && systemctl restart sshd
     check_result $? 'Error restarting SSH daemon while enabling passwd auth.'
-else
-    echo "Disabling root login"
-    if [ ! -f deny-root-login.conf ]; then
-        echo "PasswordAuthentication yes" > enable-passwd-auth.conf
-        /usr/sbin/sshd -t && systemctl restart sshd
-        check_result $? 'Error restarting SSH daemon while denying root login.'
-    fi
+echo done.
 fi
 cd - 1> /dev/null
-
-echo ...created a WP user.
-echo "Please check ~/.envrc for credentials."
-echo "Test the credentials. And if it works. Re-run this script to disable root login, thus to improve security of this server."
 
 # . $local_wp_in_a_box_repo/scripts/php-installation.sh
 php_user=$wp_user
@@ -283,17 +271,19 @@ sed -i '/^;process_control_timeout/ s/^;//' $FPMCONF
 sed -i '/^process_control_timeout/ s/=.*$/= 10s/' $FPMCONF
 
 
-echo 'Restarting PHP-FPM...'
-/usr/sbin/php-fpm${php_ver} -t 1>/dev/null && systemctl restart php${php_ver}-fpm 1>/dev/null
+printf '%-72s' "Restarting PHP-FPM..."
+/usr/sbin/php-fpm${php_ver} -t 2>/dev/null && systemctl restart php${php_ver}-fpm
+echo done.
 
-echo 'Restarting Nginx...'
-/usr/sbin/nginx -t 1>/dev/null && systemctl restart nginx 1>/dev/null
+printf '%-72s' "Restarting Nginx..."
+/usr/sbin/nginx -t 2>/dev/null && systemctl restart nginx
+echo done.
 
 echo All done.
 
-echo -------------------------------------------------------------------------
+echo -----------------------------------------------------------------------------
 echo You may find the login credentials of SFTP/SSH user in /root/.envrc file.
-echo -------------------------------------------------------------------------
+echo -----------------------------------------------------------------------------
 
 echo 'You may reboot only once to apply certain updates (ex: kernel updates)!'
 echo
