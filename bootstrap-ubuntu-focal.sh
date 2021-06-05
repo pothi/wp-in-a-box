@@ -39,7 +39,7 @@ if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -360 2> /dev/null)" ]; then
         echo done.
 fi
 
-echo -----------------------------------------------------------------------------
+echo -------------------------- Prerequisites ------------------------------------
 required_packages="apt-transport-https \
     curl \
     dnsutils \
@@ -86,6 +86,8 @@ if [ "$current_time_zone" != "UTC" ] ; then
     echo done.
 fi
 
+echo ---------------------------------- LEMP -------------------------------------
+
 php_ver=7.4
 lemp_packages="nginx-extras \
     default-mysql-server \
@@ -115,6 +117,7 @@ do
 done
 echo -----------------------------------------------------------------------------
 echo "Please check ~/.envrc for all the credentials."
+echo -----------------------------------------------------------------------------
 
 if [ "$ADMIN_USER" == "" ]; then
 printf '%-72s' "Creating a MySQL Admin User..."
@@ -137,9 +140,8 @@ printf '%-72s' "Creating a WP User..."
 echo done.
 fi
 
-# home_basename=wp
 home_basename=$(echo $wp_user | awk -F _ '{print $1}')
-# home_basename=web
+[ -z $home_basename ] && home_basename=web
 
 if [ ! -d "/home/${home_basename}" ]; then
     useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $wp_user
@@ -262,7 +264,8 @@ sed -i '/^;ping.path/ s/^;//' $pool_file
 sed -i '/^;ping.response/ s/^;//' $pool_file
 
 # home_basename=web
-home_basename=$(echo $wp_user | awk -F _ '{print $1}')
+# home_basename=$(echo $wp_user | awk -F _ '{print $1}')
+# [ -z $home_basename ] && home_basename=web
 [ ! -d /home/${home_basename}/log ] && mkdir /home/${home_basename}/log
 PHP_SLOW_LOG_PATH="\/home\/${home_basename}\/log\/slow-php.log"
 sed -i '/^;slowlog/ s/^;//' $pool_file
@@ -286,6 +289,20 @@ echo done.
 printf '%-72s' "Restarting Nginx..."
 /usr/sbin/nginx -t 2>/dev/null && systemctl restart nginx
 echo done.
+
+echo --------------------------- Certbot -----------------------------------------
+snap install core
+snap refresh core
+apt-get -qq remove certbot
+snap install --classic certbot
+ln -s /snap/bin/certbot /usr/bin/certbot
+
+restart_script=/etc/letsencrypt/renewal-hooks/deploy/nginx-restart.sh
+restart_script_url=https://github.com/pothi/snippets/raw/main/ssl/nginx-restart.sh
+[ -f "$restart_script" ] && {
+    wget -q -O $restart_script $restart_script_url
+    chmod +x $restart_script
+}
 
 echo All done.
 

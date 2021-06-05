@@ -29,7 +29,7 @@ fi
 cd - 1>/dev/null
 
 #--- cron: auto-update wp-cli ---#
-if ! grep -qw wp-cli /var/spool/cron/crontabs/root 2>/dev/null
+if ! grep -qF $wp_cli /var/spool/cron/crontabs/root 2>/dev/null
 then
     ( crontab -l 2>/dev/null; echo "@daily $wp_cli cli update --yes 1>/dev/null" ) | crontab -
 fi
