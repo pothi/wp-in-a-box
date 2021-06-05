@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
+# based on https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-18-04
+
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
+
+# references:
+# https://stackoverflow.com/q/257844/1004587
+# https://askubuntu.com/q/1017309/65814
 
 # what's done here
 
@@ -27,8 +33,6 @@ if [ $is_swap_enabled -eq 0 ]; then
         if [ $? -ne 0 ]; then
             echo Could not create swap file using fallocate.
         fi
-    else
-        echo Note: Existing swap file found!
     fi
 
     # only root should be able to read it
@@ -38,8 +42,6 @@ if [ $is_swap_enabled -eq 0 ]; then
     fstab_entry="$swap_file none swap sw 0 0"
     if ! $(grep -q "^${fstab_entry}$" /etc/fstab &> /dev/null) ; then
         echo $fstab_entry >> /etc/fstab
-    else
-        echo Note: /etc/fstab already has an entry for swap!
     fi
 
     mkswap $swap_file

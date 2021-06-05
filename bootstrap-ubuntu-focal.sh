@@ -15,9 +15,9 @@ echo "Script started on (date & time): $(date +%c)"
 
 # Defining return code check function
 check_result() {
-    if [ $1 -ne 0 ]; then
-        echo "Error: $2"
-        exit $1
+    if [ $? -ne 0 ]; then
+        echo; echo "Error: $1"; echo
+        exit 1
     fi
 }
 
@@ -61,6 +61,14 @@ do
     else
         printf '%-72s' "Installing '${package}' ..."
         apt-get -qq install $package &> /dev/null
+
+        # fix for apt refresh on first run.
+        if [ "$?" -ne 0 ]; then
+            apt-get update &> /dev/null
+            apt-get -qq install $package &> /dev/null
+            check_result "Couldn't install $package."
+        fi
+
         echo done.
     fi
 done
