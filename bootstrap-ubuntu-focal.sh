@@ -117,6 +117,20 @@ do
         echo done.
     fi
 done
+
+[ ! -d ~/git/wordpress-nginx ] && {
+    git clone -q https://github.com/pothi/wordpress-nginx ~/git/wordpress-nginx
+    cp -a ~/git/wordpress-nginx/{conf.d,errors,globals,sites-available} /etc/nginx/
+    [ ! -d /etc/nginx/sites-enabled ] && mkdir /etc/nginx/sites-enabled
+    ln -fs /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
+}
+
+# create dhparam
+if [ ! -f /etc/nginx/dhparam.pem ]; then
+    $(which openssl) dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096 &> /dev/null
+    sed -i 's:^# \(ssl_dhparam /etc/nginx/dhparam.pem;\)$:\1:' /etc/nginx/conf.d/ssl-common.conf
+fi
+
 echo -----------------------------------------------------------------------------
 echo "Please check ~/.envrc for all the credentials."
 echo -----------------------------------------------------------------------------
@@ -243,7 +257,7 @@ sed -i -e 's/^;date\.timezone =$/date.timezone = "'$user_timezone'"/' $fpm_ini_f
 sed -i -e 's/^\[www\]$/['$php_user']/' $pool_file
 sed -i -e 's/www-data/'$php_user'/' $pool_file
 sed -i -e '/^;listen.\(owner\|group\|mode\)/ s/^;//' $pool_file
-sed -i -e '/^listen.mode = / s/[0-9]\{4\}/0660/' $pool_file
+sed -i -e '/^listen.mode = / s/[0-9]\{4\}/0666/' $pool_file
 
 php_ver_short=$(echo $php_ver | sed 's/\.//')
 socket=/run/php/fpm-${php_ver_short}-${php_user}.sock
@@ -251,6 +265,8 @@ sed -i "/^listen =/ s:=.*:= $socket:" $pool_file
 [ -f /etc/nginx/conf.d/lb.conf ] && sed -i "s:/var/lock/php-fpm.*;:$socket;:" /etc/nginx/conf.d/lb.conf
 if [ ! -f /etc/nginx/conf.d/fpm${php_ver_short}.conf ]; then
     echo "upstream fpm${php_ver_short} { server unix:$socket; }" > /etc/nginx/conf.d/fpm${php_ver_short}.conf
+    echo "upstream fpm { server unix:$socket; }" > /etc/nginx/conf.d/fpm.conf
+    [ -f /etc/nginx/conf.d/lb.conf ] && rm /etc/nginx/conf.d/lb.conf
 fi
 
 sed -i -e 's/^pm = .*/pm = '$PM_METHOD'/' $pool_file
