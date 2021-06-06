@@ -11,10 +11,12 @@
 . ~/.config/common-aliases-envvars
 
 if ! grep -qw common-aliases.envvars ~/.bashrc ; then
-    printf "[[ -f ~/.config/common-aliases-envvars ]] && . ~/.config/common-aliases-envvars\n" >> ~/.bashrc
+    printf "[[ -f ~/.config/common-aliases-envvars ]] && source ~/.config/common-aliases-envvars\n" >> ~/.bashrc
 fi
 
-[ ! grep -q custom-aliases-envvars ~/.bashrc ] && echo "[[ -f ~/.config/custom-aliases-envvars ]] && . ~/.config/custom-aliases-envvars" >> ~/.bashrc
+if ! grep -qF custom-aliases-envvars-custom ~/.bashrc ; then
+    echo "[[ -f ~/.config/custom-aliases-envvars-custom ]] && . ~/.config/custom-aliases-envvars-custom" >> ~/.bashrc
+fi
 
 ###------------------------------ setup color for root terminal ------------------------------###
 rootbashrc=/root/.bashrc
@@ -31,15 +33,8 @@ fi # test if file exists
 ###------------------------------ VIM Tweaks ------------------------------###
 #TODO
 [ ! -d ~/.vim ] && mkdir ~/.vim
-cp -a $local_wp_in_a_box_repo/snippets/vim/* ~/.vim/
-
-echo 'Disabling root login...'
-echo "PermitRootLogin no" > /etc/ssh/sshd_config.d/disable-root.conf
-systemctl restart sshd &> /dev/null
-if [ "$?" != 0 ]; then
-    echo 'Something went wrong while creating SFTP user! See below...'; echo; echo;
-    systemctl status sshd
-else
-    echo "Disabled root login!"
-fi
+[ ! -d ~/git/snippets ] && {
+    git clone -q https://github.com/pothi/snippets ~/git/snippets
+    cp -a ~/git/snippets/vim/* ~/.vim/
+}
 

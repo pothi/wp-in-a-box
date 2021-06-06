@@ -25,8 +25,13 @@ echo '... done'
 [ ! -s ~/.config/common-aliases-envvars ] && wget -q -O ~/.config/common-aliases-envvars https://github.com/pothi/snippets/raw/master/linux/common-aliases-envvars
 . ~/.config/common-aliases-envvars
 
-[ ! grep -q common-aliases-envvars ~/.bashrc ] && echo '[[ -f ~/.config/common-aliases-envvars ]] && source ~/.config/common-aliases-envvars' >> ~/.bashrc
-[ ! grep -q custom-aliases-envvars ~/.bashrc ] && echo '[[ -f ~/.config/custom-aliases-envvars ]] && source ~/.config/custom-aliases-envvars' >> ~/.bashrc
+if ! grep -q common-aliases-envvars ~/.bashrc ; then
+    echo '[[ -f ~/.config/common-aliases-envvars ]] && source ~/.config/common-aliases-envvars' >> ~/.bashrc
+fi
+
+if ! grep -qF custom-aliases-envvars-custom ~/.bashrc ; then
+    echo "[[ -f ~/.config/custom-aliases-envvars-custom ]] && . ~/.config/custom-aliases-envvars-custom" >> ~/.bashrc
+fi
 
 function configure_disk_usage_alert () {
     [ ! -f /home/${home_basename}/scripts/disk-usage-alert.sh ] && wget -O /home/${home_basename}/scripts/disk-usage-alert.sh https://github.com/pothi/snippets/raw/master/disk-usage-alert.sh

@@ -266,10 +266,10 @@ sed -i '/^;ping.response/ s/^;//' $pool_file
 # home_basename=web
 # home_basename=$(echo $wp_user | awk -F _ '{print $1}')
 # [ -z $home_basename ] && home_basename=web
-[ ! -d /home/${home_basename}/log ] && mkdir /home/${home_basename}/log
-PHP_SLOW_LOG_PATH="\/home\/${home_basename}\/log\/slow-php.log"
+# [ ! -d /home/${home_basename}/log ] && mkdir /home/${home_basename}/log
+PHP_SLOW_LOG_PATH="/var/log/slow-php.log"
 sed -i '/^;slowlog/ s/^;//' $pool_file
-sed -i '/^slowlog/ s/=.*$/ = '$PHP_SLOW_LOG_PATH'/' $pool_file
+sed -i '/^slowlog/ s:=.*$: = '$PHP_SLOW_LOG_PATH':' $pool_file
 sed -i '/^;request_slowlog_timeout/ s/^;//' $pool_file
 sed -i '/^request_slowlog_timeout/ s/= .*$/= 60/' $pool_file
 
@@ -299,7 +299,7 @@ ln -s /snap/bin/certbot /usr/bin/certbot
 
 restart_script=/etc/letsencrypt/renewal-hooks/deploy/nginx-restart.sh
 restart_script_url=https://github.com/pothi/snippets/raw/main/ssl/nginx-restart.sh
-[ -f "$restart_script" ] && {
+[ ! -f "$restart_script" ] && {
     wget -q -O $restart_script $restart_script_url
     chmod +x $restart_script
 }
