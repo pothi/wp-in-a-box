@@ -297,7 +297,7 @@ snap install core
 snap refresh core
 apt-get -qq remove certbot
 snap install --classic certbot
-ln -s /snap/bin/certbot /usr/bin/certbot
+ln -fs /snap/bin/certbot /usr/bin/certbot
 
 restart_script=/etc/letsencrypt/renewal-hooks/deploy/nginx-restart.sh
 restart_script_url=https://github.com/pothi/snippets/raw/main/ssl/nginx-restart.sh

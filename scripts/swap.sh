@@ -16,7 +16,7 @@
 
 ###   variables   ###
 swap_file='/swapfile'
-swap_size='1G'
+swap_size=${SWAP_SIZE:-'1G'}
 swap_sysctl_file='/etc/sysctl.d/60-swap-local.conf'
 sleep_time_between_tasks=2
 
