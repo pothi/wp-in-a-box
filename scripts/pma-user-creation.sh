@@ -13,9 +13,9 @@
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
 [ -f /root/.envrc ] && . /root/.envrc
 
-php_user=${DEV_USER:-""}
+php_user=${WP_USERNAME:-""}
 if [ -z "$php_user" ]; then
-    echo 'DEV_USER environmental variable is not found.'
+    echo 'WP_USERNAME environmental variable is not found.'
     echo 'If you use a different variable name for your developer, please update the script or /root/.envrc file and re-run.'
     echo 'Developer env variable is not found. Exiting prematurely!'; exit
 fi
