@@ -46,6 +46,8 @@ required_packages="apt-transport-https \
     language-pack-en \
     pwgen \
     fail2ban \
+    python-is-python3 \
+    python3-venv \
     software-properties-common \
     sudo \
     tzdata \
