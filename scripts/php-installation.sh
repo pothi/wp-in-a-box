@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Usage as a standalone script: PHP_VER=8.0 bash php-installation.sh
+
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
 
@@ -27,30 +29,21 @@ function install_php_fpm {
         php${version}-bcmath \
         php${version}-imagick"
 
-    modules="common \
-        json \
-        opcache \
-        readline \
-        zip"
-
     if [ "$version" = "7.0" ] ; then
         apt-get -qq install "php${version}-mcrypt" &> /dev/null
     elif [ "$version" = "7.1" ] ; then
         apt-get -qq install "php${version}-mcrypt" &> /dev/null
-    else
-        echo
-        echo Note on mcrypt
-        echo --------------
-        echo mycrypt is removed since PHP 7.2
-        echo Please check if any plugins or theme still use mcrypt by running...
-        echo 'find ~/wproot/wp-content/ -type f -name "*.php" -exec grep -inr mcrypt {} \;'
-        echo
+        # echo
+        # echo Note on mcrypt
+        # echo --------------
+        # echo mycrypt is removed since PHP 7.2
+        # echo Please check if any plugins or theme still use mcrypt by running...
+        # echo 'find ~/wproot/wp-content/ -type f -name "*.php" -exec grep -inr mcrypt {} \;'
+        # echo
     fi
 
-    # apt-get install -qq ${PACKAGES} &> /dev/null
     for package in ${PACKAGES}
     do
-        # if dpkg-query -s $package &> /dev/null
         if dpkg-query -W -f='${Status}' $package  | grep -q "ok installed";
         then
             echo "$package is already installed"
@@ -237,13 +230,13 @@ echo "Turning off logging for cli to prevent warning messaging while running wp-
 sed -i -e '/^log_errors/ s/=.*/= Off/' $cli_ini_file
 
 # SESSION Handling
-redis_pass=
-[ -f /etc/redis/redis.conf ] && redis_pass=$(grep -w '^requirepass' /etc/redis/redis.conf | awk '{print $2}')
-if [ ! -z $redis_pass ] ; then
-    echo 'Setting up sessions with redis...';
-    sed -i -e '/^session.save_handler/ s/=.*/= redis/' $fpm_ini_file
-    sed -i -e '/^session.save_path/ s/.*/session.save_path = "tcp:\/\/127.0.0.1:6379?auth='$redis_pass'"/' $fpm_ini_file
-fi
+# redis_pass=
+# [ -f /etc/redis/redis.conf ] && redis_pass=$(grep -w '^requirepass' /etc/redis/redis.conf | awk '{print $2}')
+# if [ ! -z $redis_pass ] ; then
+    # echo 'Setting up sessions with redis...';
+    # sed -i -e '/^session.save_handler/ s/=.*/= redis/' $fpm_ini_file
+    # sed -i -e '/^session.save_path/ s/.*/session.save_path = "tcp:\/\/127.0.0.1:6379?auth='$redis_pass'"/' $fpm_ini_file
+# fi
 
 ### ---------- pool-file modifications ---------- ###
 
@@ -347,9 +340,9 @@ fi
 
 # restart php upon OOM or other failures
 # ref: https://stackoverflow.com/a/45107512/1004587
-sed -i '/^\[Service\]/!b;:a;n;/./ba;iRestart=on-failure' /lib/systemd/system/php${php_version}-fpm.service
-systemctl daemon-reload
-check_result $? "Could not update /lib/systemd/system/php${php_version}-fpm.service file!"
+# sed -i '/^\[Service\]/!b;:a;n;/./ba;iRestart=on-failure' /lib/systemd/system/php${php_version}-fpm.service
+# systemctl daemon-reload
+# check_result $? "Could not update /lib/systemd/system/php${php_version}-fpm.service file!"
 
 echo; echo -------------------------------------------------------------------------
 echo "All done with PHP $php_version!"
