@@ -305,9 +305,9 @@ sed -i '/^process_control_timeout/ s/=.*$/= 10s/' $FPMCONF
 # restart php upon OOM or other failures
 # ref: https://stackoverflow.com/a/45107512/1004587
 # TODO: Do the following only if "Restart=on-failure" is not found in that file.
-sed -i '/^\[Service\]/!b;:a;n;/./ba;iRestart=on-failure' /lib/systemd/system/php${php_version}-fpm.service
+sed -i '/^\[Service\]/!b;:a;n;/./ba;iRestart=on-failure' /lib/systemd/system/php${php_ver}-fpm.service
 systemctl daemon-reload
-check_result $? "Could not update /lib/systemd/system/php${php_version}-fpm.service file!"
+check_result $? "Could not update /lib/systemd/system/php${php_ver}-fpm.service file!"
 
 printf '%-72s' "Restarting PHP-FPM..."
 /usr/sbin/php-fpm${php_ver} -t 2>/dev/null && systemctl restart php${php_ver}-fpm
