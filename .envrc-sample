@@ -19,3 +19,7 @@ export web_developer_username=$DEV_USER # for backward compatibility
 # These are used in multiple places such as crontab, logwatch, git
 #export EMAIL=
 #export NAME=
+
+# To differentiate various environments... local, dev, staging.
+# Default: production.
+# ENV_TYPE=

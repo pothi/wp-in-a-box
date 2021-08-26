@@ -101,7 +101,7 @@ fi
 
 echo ---------------------------------- LEMP -------------------------------------
 
-php_ver=7.3
+php_ver=7.4
 lemp_packages="nginx-extras \
     default-mysql-server \
     php${php_ver}-fpm \
@@ -123,6 +123,7 @@ do
         # echo "'$package' is already installed"
         :
     else
+        # Remove ${php_ver} from package name to find if php-package is installed.
         package=$(printf '%s' "$package" | sed 's/[.0-9]*//g')
         if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
         then

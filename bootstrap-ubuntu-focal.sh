@@ -112,9 +112,18 @@ do
         # echo "'$package' is already installed"
         :
     else
-        printf '%-72s' "Installing '${package}' ..."
-        apt-get -qq install $package &> /dev/null
-        echo done.
+        # Remove ${php_ver} from package name to find if php-package is installed.
+        package=$(printf '%s' "$package" | sed 's/[.0-9]*//g')
+        if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
+        then
+            # echo "'$package' is already installed"
+            :
+        else
+            printf '%-72s' "Installing '${package}' ..."
+            apt-get -qq install $package &> /dev/null
+            check_result $? "Error installing ${package}."
+            echo done.
+        fi
     fi
 done
 
@@ -232,6 +241,7 @@ if [ -z "$max_children" ]; then
     fi
 fi
 
+env_type=${ENV_TYPE:-""}
 if [[ $env_type = "local" ]]; then
     PM_METHOD=ondemand
 fi
