@@ -171,7 +171,7 @@ fi
 wp_user=${WP_USERNAME:-""}
 if [ "$wp_user" == "" ]; then
 printf '%-72s' "Creating a WP User..."
-    wp_user="wp_$(pwgen -Av 9 1)"
+    wp_user="web_$(pwgen -Av 8 1)"
     echo "export WP_USERNAME=$wp_user" >> /root/.envrc
 echo done.
 fi
