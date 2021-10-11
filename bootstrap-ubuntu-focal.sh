@@ -165,8 +165,9 @@ printf '%-72s' "Creating a WP User..."
 echo done.
 fi
 
-home_basename=$(echo $wp_user | awk -F _ '{print $1}')
-[ -z $home_basename ] && home_basename=web
+# home_basename=$(echo $wp_user | awk -F _ '{print $1}')
+# [ -z $home_basename ] && home_basename=web
+home_basename=web
 
 if [ ! -d "/home/${home_basename}" ]; then
     useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $wp_user
