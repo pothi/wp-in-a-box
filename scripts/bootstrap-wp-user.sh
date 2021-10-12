@@ -5,6 +5,8 @@
 # Download wp-cli and install it locally.
 # Install AWS CLI if needed.
 # Install GCloud utils if needed.
+# Configure vim
+# Install node.
 
 [ ! -d ~/scripts ] && mkdir ~/scripts
 # Download backup scripts
