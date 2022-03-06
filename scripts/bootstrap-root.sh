@@ -7,7 +7,7 @@
 
 [ ! -d ~/.config ] && mkdir ~/.config
 
-[ ! -s ~/.config/common-aliases-envvars ] && wget -q -O ~/.config/common-aliases-envvars https://github.com/pothi/snippets/raw/master/linux/common-aliases-envvars
+[ ! -s ~/.config/common-aliases-envvars ] && wget -q -O ~/.config/common-aliases-envvars https://raw.githubusercontent.com/pothi/snippets/main/linux/common-aliases-envvars
 . ~/.config/common-aliases-envvars
 
 if ! grep -qw common-aliases.envvars ~/.bashrc ; then
