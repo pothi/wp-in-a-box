@@ -18,7 +18,7 @@ if ! grep -qF custom-aliases-envvars-custom ~/.bashrc ; then
 fi
 
 ###------------------------------ setup color for server-admin terminal ------------------------------###
-rootbashrc=/root/.bashrc
+rootbashrc="~/.bashrc"
 entry='#red_color for root'
 if [ -f $rootbashrc ]; then
     if ! $(grep -q "^${entry}$" "$rootbashrc") ; then
