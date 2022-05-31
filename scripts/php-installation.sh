@@ -72,6 +72,8 @@ env_type=${WP_ENVIRONMENT_TYPE:-''}
 supplied_php_version=${PHP_VER:-""}
 
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
+[ ! -d $local_wp_in_a_box_repo ] && git clone https://github.com/pothi/wp-in-a-box $local_wp_in_a_box_repo
+
 # get the variables
 [ -f /root/.envrc ] && . /root/.envrc
 
@@ -150,6 +152,9 @@ fi
 case "$codename" in
     "buster")
         system_php_version=7.3
+        ;;
+    "jammy")
+        system_php_version=8.1
         ;;
     "focal")
         system_php_version=7.4
@@ -310,7 +315,6 @@ sed -i '/^process_control_timeout/ s/=.*$/= 10s/' $FPMCONF
 
 # tweaking opcache
 # echo Tweaking opcache...
-local_wp_in_a_box_repo=/root/git/wp-in-a-box
 if [ -f $local_wp_in_a_box_repo/config/php/mods-available/custom-opcache.ini ]; then
     cp $local_wp_in_a_box_repo/config/php/mods-available/custom-opcache.ini /etc/php/${php_version}/mods-available
     ln -s /etc/php/${php_version}/mods-available/custom-opcache.ini /etc/php/${php_version}/fpm/conf.d/99-custom-opcache.ini &> /dev/null
