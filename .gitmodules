@@ -4,13 +4,13 @@
 # git submodule update --remote
 # git commit -am 'update submodule to the latest version'
 # git push origin BRANCH
-[submodule "config"]
-    path = config
-    url = https://github.com/pothi/linux-tweaks-deb
+# [submodule "config"]
+    # path = config
+    # url = https://github.com/pothi/linux-tweaks-deb
 
 # Get the submodule initially
 # git submodule add ssh://bla submodule_dir
 # git submodule init
-[submodule "snippets"]
-    path = snippets
-    url = https://github.com/pothi/snippets
+# [submodule "snippets"]
+    # path = snippets
+    # url = https://github.com/pothi/snippets
