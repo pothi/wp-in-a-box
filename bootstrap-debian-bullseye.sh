@@ -32,7 +32,7 @@ git_username=${NAME:-root}
 [ ! $(dpkg --get-selections | grep -q i386) ] && dpkg --remove-architecture i386 2>/dev/null
 
 # Fix apt ipv4/6 issue
-echo 'Acquire::ForceIPv4 "true";' >> /etc/apt/apt.conf.d/1000-force-ipv4-transport
+echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/1000-force-ipv4-transport
 
 export DEBIAN_FRONTEND=noninteractive
 # the following runs when apt cache is older than 6 hours
