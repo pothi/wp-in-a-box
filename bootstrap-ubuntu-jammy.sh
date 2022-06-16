@@ -31,6 +31,9 @@ git_username=${NAME:-root}
 # https://askubuntu.com/a/1336013/65814
 [ ! $(dpkg --get-selections | grep -q i386) ] && dpkg --remove-architecture i386 2>/dev/null
 
+# Fix apt ipv4/6 issue
+echo 'Acquire::ForceIPv4 "true";' >> /etc/apt/apt.conf.d/1000-force-ipv4-transport
+
 export DEBIAN_FRONTEND=noninteractive
 # the following runs when apt cache is older than 6 hours
 if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -360 2> /dev/null)" ]; then
