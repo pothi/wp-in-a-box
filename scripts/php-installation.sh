@@ -27,6 +27,7 @@ function install_php_fpm {
         php${version}-curl \
         php${version}-zip \
         php${version}-bcmath \
+        php${php_ver}-intl \
         php${version}-imagick"
 
     if [ "$version" = "7.0" ] ; then

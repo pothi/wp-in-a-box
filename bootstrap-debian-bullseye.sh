@@ -117,6 +117,7 @@ lemp_packages="nginx-extras \
     php${php_ver}-curl \
     php${php_ver}-zip \
     php${php_ver}-bcmath \
+    php${php_ver}-intl \
     php${php_ver}-imagick"
 
 for package in $lemp_packages
