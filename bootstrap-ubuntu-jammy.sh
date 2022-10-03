@@ -151,7 +151,7 @@ echo ---------------------------------------------------------------------------
 if [ "$ADMIN_USER" == "" ]; then
 printf '%-72s' "Creating a MySQL Admin User..."
     # create MYSQL username automatically
-    ADMIN_USER="admin_$(pwgen -Av 6 1)"
+    ADMIN_USER="sql_$(pwgen -Av 6 1)"
     ADMIN_PASS=$(pwgen -cnsv 20 1)
     echo "export ADMIN_USER=$ADMIN_USER" >> /root/.envrc
     echo "export ADMIN_PASS=$ADMIN_PASS" >> /root/.envrc
