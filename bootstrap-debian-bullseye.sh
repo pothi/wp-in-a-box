@@ -124,14 +124,14 @@ for package in $lemp_packages
 do
     if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
     then
-        # echo "'$package' is already installed"
+        echo "'$package' is already installed"
         :
     else
         # Remove ${php_ver} from package name to find if php-package is installed.
-        package=$(printf '%s' "$package" | sed 's/[.0-9]*//g')
-        if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
+        php_package=$(printf '%s' "$package" | sed 's/[.0-9]*//g')
+        if dpkg-query -W -f='${Status}' $php_package 2>/dev/null | grep -q "ok installed"
         then
-            # echo "'$package' is already installed"
+            echo "'$package' is already installed as $php_package"
             :
         else
             printf '%-72s' "Installing '${package}' ..."
