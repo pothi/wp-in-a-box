@@ -21,7 +21,7 @@ fi
 # wp cli bash completion
 cd /etc/bash_completion.d/
 if [ ! -s wp-completion.bash ]; then
-    curl -LSsO https://github.com/wp-cli/wp-cli/raw/master/utils/wp-completion.bash
+    curl -LSsO https://github.com/wp-cli/wp-cli/raw/main/utils/wp-completion.bash
     if [ "$?" -ne "0" ]; then
         echo 'wp-cli: error downloading bash completion script.'
     fi

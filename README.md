@@ -6,10 +6,18 @@ There are a number of similar scripts available on the internet. The unique feat
 
 ## Supported Platforms
 
+Ubuntu
+
++ Ubuntu Jammy Jellyfish (22.04.x)
 + Ubuntu Focal Fossa (20.04.x)
 + Ubuntu Bionic Beaver (18.04.x)
-+ Debian Stretch (9.x)
 + Ubuntu Xenial Xerus (16.04.x)
+
+Debian
+
++ Debian Bullseye (11.x)
++ Debian Buster (10.x)
++ Debian Stretch (9.x)
 
 ## Generic Goals
 
@@ -20,7 +28,7 @@ In sync with WordPress philosophy of “[decision, not options](https://wordpres
 - No added bloatware
 - Redis for object cache (available as an optional package)
 - Full page cache support (WP Super Cache, WP Rocket and WP Fastest Cache)
-- PHP 7.x
+- PHP 8 (or lower when necessary)
 - Nginx (no Apache, sorry)
 - Varnish (planned, but no ETA)
 - Swap

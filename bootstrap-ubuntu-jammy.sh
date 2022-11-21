@@ -175,6 +175,7 @@ home_basename=web
 
 if [ ! -d "/home/${home_basename}" ]; then
     useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $wp_user
+    chmod 755 /home/$home_basename
 
     groupadd ${home_basename}
     gpasswd -a $wp_user ${home_basename} &> /dev/null

@@ -7,11 +7,10 @@ local_wp_in_a_box_repo=/root/git/wp-in-a-box
 echo Setting up linux tweaks...
 # echo -----------------------------------------------------------------------------
 
-mkdir -p /etc/skel/{.aws,.cache,.composer,.config,.gnupg,.gsutil} &> /dev/null
-mkdir -p /etc/skel/{.local/bin,.nano,.npm,.nvm,.selected-editor,.ssh,.vim,.wp-cli} &> /dev/null
+mkdir -p /etc/skel/{.aws,.cache,.composer,.config,.gnupg,.gsutil,.local/bin,.npm,.ssh,.vim,.wp-cli} &> /dev/null
 mkdir -p /etc/skel/{git,log,scripts,sites,tmp} &> /dev/null
 
-touch /etc/skel/{.bash_history,.gitconfig,.npmrc,.yarnrc,mbox}
+touch /etc/skel/{.bash_history,.gitconfig,.npmrc,.yarnrc,mbox,.selected-editor,.viminfo}
 
 chmod 600 /etc/skel/mbox
 chmod 700 /etc/skel/{.gnupg,.ssh}
