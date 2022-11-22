@@ -138,6 +138,16 @@ done
     ln -fs /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
 }
 
+# Remove the default conf file supplied by OS
+[ -f /etc/nginx/sites-enabled/default ] && rm /etc/nginx/sites-enabled/default
+
+# Remove the default SSL conf to support latest SSL conf.
+# It should hide two lines starting with ssl_
+# ^ starting with...
+# \s* matches any number of space or tab elements before ssl_
+# when run more than once, it just doesn't do anything as the start of the line is '#' after the first execution.
+sed -i 's/^\s*ssl_/# &/' nginx.conf 
+
 # create dhparam
 if [ ! -f /etc/nginx/dhparam.pem ]; then
     $(which openssl) dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096 &> /dev/null
@@ -281,12 +291,10 @@ sed -i -e '/^listen.mode = / s/[0-9]\{4\}/0666/' $pool_file
 php_ver_short=$(echo $php_ver | sed 's/\.//')
 socket=/run/php/fpm-${php_ver_short}-${php_user}.sock
 sed -i "/^listen =/ s:=.*:= $socket:" $pool_file
-[ -f /etc/nginx/conf.d/lb.conf ] && sed -i "s:/var/lock/php-fpm.*;:$socket;:" /etc/nginx/conf.d/lb.conf
-if [ ! -f /etc/nginx/conf.d/fpm${php_ver_short}.conf ]; then
-    echo "upstream fpm${php_ver_short} { server unix:$socket; }" > /etc/nginx/conf.d/fpm${php_ver_short}.conf
-    echo "upstream fpm { server unix:$socket; }" > /etc/nginx/conf.d/fpm.conf
-    [ -f /etc/nginx/conf.d/lb.conf ] && rm /etc/nginx/conf.d/lb.conf
-fi
+# [ -f /etc/nginx/conf.d/lb.conf ] && sed -i "s:/var/lock/php-fpm.*;:$socket;:" /etc/nginx/conf.d/lb.conf
+[ -f /etc/nginx/conf.d/lb.conf ] && rm /etc/nginx/conf.d/lb.conf
+[ ! -f /etc/nginx/conf.d/fpm.conf ] && echo "upstream fpm { server unix:$socket; }" > /etc/nginx/conf.d/fpm.conf
+[ ! -f /etc/nginx/conf.d/fpm${php_ver_short}.conf ] && echo "upstream fpm${php_ver_short} { server unix:$socket; }" > /etc/nginx/conf.d/fpm${php_ver_short}.conf
 
 sed -i -e 's/^pm = .*/pm = '$PM_METHOD'/' $pool_file
 sed -i '/^pm.max_children/ s/=.*/= '$max_children'/' $pool_file
