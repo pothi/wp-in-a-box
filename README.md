@@ -8,15 +8,15 @@ There are a number of similar scripts available on the internet. The unique feat
 
 Ubuntu
 
-+ Ubuntu Jammy Jellyfish (22.04.x)
-+ Ubuntu Focal Fossa (20.04.x)
++ [Ubuntu Jammy Jellyfish (22.04.x)](https://github.com/pothi/wp-in-a-box/blob/main/bootstrap-ubuntu-jammy.sh)
++ [Ubuntu Focal Fossa (20.04.x)](https://github.com/pothi/wp-in-a-box/blob/main/bootstrap-ubuntu-focal.sh)
 + Ubuntu Bionic Beaver (18.04.x)
 + Ubuntu Xenial Xerus (16.04.x)
 
 Debian
 
-+ Debian Bullseye (11.x)
-+ Debian Buster (10.x)
++ [Debian Bullseye (11.x)](https://github.com/pothi/wp-in-a-box/blob/main/bootstrap-debian-bullseye.sh)
++ [Debian Buster (10.x)](https://github.com/pothi/wp-in-a-box/blob/main/bootstrap-debian-buster.sh)
 + Debian Stretch (9.x)
 
 ## Generic Goals
