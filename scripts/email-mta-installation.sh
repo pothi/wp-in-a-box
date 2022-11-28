@@ -60,6 +60,9 @@ postconf -e 'smtp_tls_security_level = encrypt'
 postconf -e 'smtp_destination_concurrency_limit = 2'
 postconf -e 'smtp_destination_rate_delay = 60s'
 
+# listen only to localhost (to avoid exposing SMTP port 25 to outside world)
+postconf -e 'inet_interfaces = 127.0.0.1'
+
 # look for spam
 # postconf -e 'header_checks = regexp:/etc/postfix/header_checks'
 # postconf -e 'smtp_header_checks = regexp:/etc/postfix/header_checks'
