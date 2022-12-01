@@ -1,3 +1,8 @@
+# how to update submodules
+# git submodule update --remote --merge
+# git commit -am 'update submodule to the latest version'
+# git push origin main
+#
 # how to initialize and update submodules
 # https://stackoverflow.com/q/5828324/1004587
 # git submodule update --init
@@ -9,8 +14,10 @@
 # git submodule add https://github.com/user/repo submodule_dir
 # git submodule init
 [submodule "snippets"]
-	path = snippets
-	url = https://github.com/pothi/snippets
+    path = snippets
+    url = https://github.com/pothi/snippets
+    branch = main
 [submodule "config"]
-	path = config
-	url = https://github.com/pothi/linux-tweaks-deb
+    path = config
+    url = https://github.com/pothi/linux-tweaks-deb
+    branch = main
