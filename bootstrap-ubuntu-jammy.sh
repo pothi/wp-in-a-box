@@ -352,6 +352,14 @@ apt-get -qq remove certbot
 snap install --classic certbot
 ln -fs /snap/bin/certbot /usr/bin/certbot
 
+# register certbot account if email is supplied
+if [ -n $CERTBOT_ADMIN_EMAIL ]; then
+    certbot show_account &> /dev/null
+    if [ "$?" != "0" ]; then
+        certbot -m $CERTBOT_ADMIN_EMAIL --agree-tos --no-eff-email register
+    fi
+fi
+
 [ ! -d /etc/letsencrypt/renewal-hooks/deploy/ ] && mkdir -p /etc/letsencrypt/renewal-hooks/deploy/
 restart_script=/etc/letsencrypt/renewal-hooks/deploy/nginx-restart.sh
 restart_script_url=https://github.com/pothi/snippets/raw/main/ssl/nginx-restart.sh

@@ -23,3 +23,7 @@ export web_developer_username=$DEV_USER # for backward compatibility
 # To differentiate various environments... local, dev, staging.
 # Default: production.
 # ENV_TYPE=
+
+export ADMIN_EMAIL=
+export CERTBOT_ADMIN_EMAIL=
+export CLIENT_EMAIL=
