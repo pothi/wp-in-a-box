@@ -44,8 +44,11 @@ fi
 
 echo -------------------------- Prerequisites ------------------------------------
 required_packages="apt-transport-https \
+    bash-completion \
+    cron \
     curl \
     dnsutils \
+    git \
     language-pack-en \
     pwgen \
     fail2ban \
@@ -55,6 +58,7 @@ required_packages="apt-transport-https \
     sudo \
     tzdata \
     unzip \
+    vim \
     wget"
 
 for package in $required_packages
@@ -146,7 +150,7 @@ done
 # ^ starting with...
 # \s* matches any number of space or tab elements before ssl_
 # when run more than once, it just doesn't do anything as the start of the line is '#' after the first execution.
-sed -i 's/^\s*ssl_/# &/' nginx.conf 
+sed -i 's/^\s*ssl_/# &/' /etc/nginx/nginx.conf 
 
 # create dhparam
 if [ ! -f /etc/nginx/dhparam.pem ]; then
