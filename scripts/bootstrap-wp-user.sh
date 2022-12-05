@@ -2,12 +2,16 @@
 
 # Download common-aliases-envvars and insert into ~/.bashrc
 # Download backup scripts.
-# Download wp-cli and install it locally.
-# Install AWS CLI if needed.
-# Install GCloud utils if needed.
 # Configure vim
-# Install node.
 
+# optional
+#   - Install node.
+#   - Download wp-cli and install it locally.
+#   - Install AWS CLI if needed.
+#   - Install GCloud utils if needed.
+
+
+#-------------------- Download backup scripts --------------------#
 [ ! -d ~/scripts ] && mkdir ~/scripts
 # Download backup scripts
 echo 'Downloading backup scripts...'
@@ -22,6 +26,7 @@ chmod +x *.sh
 cd - 1>/dev/null
 echo '... done'
 
+#-------------------- Configure common-aliases-envvars --------------------#
 [ ! -d ~/.config ] && mkdir ~/.config
 
 [ ! -s ~/.config/common-aliases-envvars ] && wget -q -O ~/.config/common-aliases-envvars https://raw.githubusercontent.com/pothi/snippets/main/linux/common-aliases-envvars
@@ -35,6 +40,14 @@ if ! grep -qF custom-aliases-envvars-custom ~/.bashrc ; then
     echo "[[ -f ~/.config/custom-aliases-envvars-custom ]] && . ~/.config/custom-aliases-envvars-custom" >> ~/.bashrc
 fi
 
+#-------------------- Configure VIM --------------------#
+[ ! -d ~/.vim ] && mkdir ~/.vim
+[ ! -d ~/git/snippets ] && {
+    git clone -q --depth 1 https://github.com/pothi/snippets ~/git/snippets
+    cp -a ~/git/snippets/vim/* ~/.vim/
+}
+
+#-------------------- Unused --------------------#
 function configure_disk_usage_alert () {
     [ ! -f /home/${home_basename}/scripts/disk-usage-alert.sh ] && wget -O /home/${home_basename}/scripts/disk-usage-alert.sh https://github.com/pothi/snippets/raw/master/disk-usage-alert.sh
     chown $wp_user:$wp_user /home/${home_basename}/scripts/disk-usage-alert.sh

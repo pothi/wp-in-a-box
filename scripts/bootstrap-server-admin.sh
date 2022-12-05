@@ -33,7 +33,7 @@ fi # test if file exists
 #TODO
 [ ! -d ~/.vim ] && mkdir ~/.vim
 [ ! -d ~/git/snippets ] && {
-    git clone -q https://github.com/pothi/snippets ~/git/snippets
+    git clone -q --depth 1 https://github.com/pothi/snippets ~/git/snippets
     cp -a ~/git/snippets/vim/* ~/.vim/
 }
 
