@@ -9,6 +9,8 @@ export DEBIAN_FRONTEND=noninteractive
 
 # variables
 
+# todo: update via cron
+
 function install_awscli {
     #----- install AWS cli -----#
     printf '%-72s' "Installing awscli..."
@@ -24,10 +26,12 @@ function install_awscli {
 
     # for version #2
     # ref: https://docs.aws.amazon.com/cli/latest/userguide/install-bundle.html
-    curl --silent "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
+    curl --silent "https://awscli.amazonaws.com/awscli-exe-linux-$(arch).zip" -o "/tmp/awscliv2.zip"
     unzip -qq -d /tmp/ /tmp/awscliv2.zip
     sudo /tmp/aws/install --install-dir /usr/local/aws-cli --bin-dir /usr/local/bin &> /dev/null # for installation
-    # sudo /tmp/aws/install --install-dir /usr/local/aws-cli --bin-dir /usr/local/bin --update &> /dev/null # for updates via cron
+    if [ "$?" != "0" ]; then
+        echo "Error installing aws cli!"
+    fi
 
     # cleanup
     rm /tmp/awscliv2.zip
@@ -49,7 +53,7 @@ function update_awscli {
 
     # for version #2
     # ref: https://docs.aws.amazon.com/cli/latest/userguide/install-bundle.html
-    curl --silent "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "/tmp/awscliv2.zip"
+    curl --silent "https://awscli.amazonaws.com/awscli-exe-linux-$(arch).zip" -o "/tmp/awscliv2.zip"
     unzip -qq -d /tmp/ /tmp/awscliv2.zip
     sudo /tmp/aws/install --install-dir /usr/local/aws-cli --bin-dir /usr/local/bin --update &> /dev/null
 
