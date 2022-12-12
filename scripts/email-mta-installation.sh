@@ -29,7 +29,7 @@ echo 'Installing / setting up MTA...'
 
 # dependencies
 # https://serverfault.com/a/325975/102173
-apt-get install -qq $mta libsasl2-modules mailutils &> /dev/null
+apt-get install -qq $mta libsasl2-modules mailutils pflogsumm &> /dev/null
 
 # setup mta to use only ipv4 to send emails
 #- why:
