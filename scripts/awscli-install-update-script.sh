@@ -1,15 +1,50 @@
 #!/usr/bin/env bash
 
 # programming env: these switches turn some bugs into errors
-# set -o errexit -o pipefail -o noclobber -o nounset
+set -o errexit -o pipefail -o noclobber -o nounset
 
-export DEBIAN_FRONTEND=noninteractive
+# set -x
+
+# to capture non-zero exit code in the pipeline
+set -o pipefail
 
 # what's done here
+# install aws cli depending on user (normal user or root)
+# if root, install aws cli in /usr/local/{aws-cli,bin}
+# if normal user, install it in ~/.local/{aws-cli,bin}
 
 # variables
+# none
 
-# todo: update via cron
+# ToDo: update via cron
+
+# check root user
+# https://stackoverflow.com/a/52586842/1004587
+# also see https://stackoverflow.com/q/3522341/1004587
+is_user_root () { [ "${EUID:-$(id -u)}" -eq 0 ]; }
+if is_user_root; then
+    # echo 'You must be root or user with sudo privilege to run this script. Exiting now.'; exit 1;
+    InstallDir=/usr/local/aws-cli
+    BinDir=/usr/local/bin
+else
+    InstallDir=~/.local/aws-cli
+    BinDir=~/.local/bin
+    # attempt to create InstallDir and BinDir
+    [ -d $InstallDir ] || mkdir -p $InstallDir
+    if [ "$?" -ne "0" ]; then
+        echo "InstallDir is not found at $InstallDir. This script can't create it, either!"
+        echo 'You may create it manually and re-run this script.'
+        exit 1
+    fi
+    [ -d $BinDir ] || mkdir -p $BinDir
+    if [ "$?" -ne "0" ]; then
+        echo "BinDir is not found at $BinDir. This script can't create it, either!"
+        echo 'You may create it manually and re-run this script.'
+        exit 1
+    fi
+fi
+
+export PATH=~/bin:~/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
 
 function install_awscli {
     #----- install AWS cli -----#
@@ -28,7 +63,7 @@ function install_awscli {
     # ref: https://docs.aws.amazon.com/cli/latest/userguide/install-bundle.html
     curl --silent "https://awscli.amazonaws.com/awscli-exe-linux-$(arch).zip" -o "/tmp/awscliv2.zip"
     unzip -qq -d /tmp/ /tmp/awscliv2.zip
-    sudo /tmp/aws/install --install-dir /usr/local/aws-cli --bin-dir /usr/local/bin &> /dev/null # for installation
+    /tmp/aws/install --install-dir $InstallDir --bin-dir $BinDir &> /dev/null # for installation
     if [ "$?" != "0" ]; then
         echo "Error installing aws cli!"
     fi
@@ -48,14 +83,17 @@ function update_awscli {
     printf '%-72s' "Updating awscli..."
 
     # remove the version #1 of aws cli, if exists
-    [ -d /usr/local/aws ] && sudo rm -rf /usr/local/aws
-    [ -f /usr/local/bin/aws ] && sudo rm /usr/local/bin/aws
+    [ -d /usr/local/aws ] && rm -rf /usr/local/aws
+    # [ -f /usr/local/bin/aws ] && rm /usr/local/bin/aws
 
     # for version #2
     # ref: https://docs.aws.amazon.com/cli/latest/userguide/install-bundle.html
     curl --silent "https://awscli.amazonaws.com/awscli-exe-linux-$(arch).zip" -o "/tmp/awscliv2.zip"
     unzip -qq -d /tmp/ /tmp/awscliv2.zip
-    sudo /tmp/aws/install --install-dir /usr/local/aws-cli --bin-dir /usr/local/bin --update &> /dev/null
+    /tmp/aws/install --install-dir $InstallDir --bin-dir $BinDir --update 1> /dev/null
+    if [ "$?" != "0" ]; then
+        echo "Error installing aws cli!"
+    fi
 
     # cleanup
     rm /tmp/awscliv2.zip
@@ -64,5 +102,8 @@ function update_awscli {
     echo done.
 }
 
-which aws && update_awscli
-which aws || install_awscli
+if [ $(which aws) ]; then
+    update_awscli
+else
+    install_awscli
+fi
