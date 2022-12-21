@@ -102,7 +102,7 @@ function update_awscli {
     echo done.
 }
 
-if [ $(which aws) ]; then
+if [ $(which aws 2> /dev/null) ]; then
     update_awscli
 else
     install_awscli
