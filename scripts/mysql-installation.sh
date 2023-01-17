@@ -13,7 +13,7 @@ echo 'Installing MySQL Server'
 
 sql_server=default-mysql-server
 
-apt-get install ${sql_server} -qq &> /dev/null
+apt-get install pwgen ${sql_server} -qq &> /dev/null
 
 # systemctl stop mysql
 # enable slow log and other tweaks
