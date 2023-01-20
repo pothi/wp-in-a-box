@@ -29,21 +29,17 @@ if [ $is_swap_enabled -eq 0 ]; then
 
     # check for swap file
     if [ ! -f $swap_file ]; then
+        # on a desktop, we may use fdisk to create a partition to be used as swap
         fallocate -l $swap_size $swap_file &> /dev/null
         if [ $? -ne 0 ]; then
             echo Could not create swap file using fallocate.
         fi
     fi
 
-    # only root should be able to read it
+    # only root should be able to read it or / and write into it
     chmod 600 $swap_file
 
-    # enable swap upon boot
-    fstab_entry="$swap_file none swap sw 0 0"
-    if ! $(grep -q "^${fstab_entry}$" /etc/fstab &> /dev/null) ; then
-        echo $fstab_entry >> /etc/fstab
-    fi
-
+    # mark a file / partition as swap
     mkswap $swap_file
     if [ $? != 0 ]; then
         echo 'Error running mkswap command while creating swap file. Exiting!'
@@ -51,9 +47,9 @@ if [ $is_swap_enabled -eq 0 ]; then
     fi
 
     # enable swap
-    printf '%-72s' "Waiting for swap file to get ready..."
+    # printf '%-72s' "Waiting for swap file to get ready..."
     sleep $sleep_time_between_tasks
-    echo done.
+    # echo done.
     swapon -a
     if [ $? -ne 0 ]; then
         echo Error enabling swap using the command "swapon -a". Exiting!
@@ -62,12 +58,18 @@ if [ $is_swap_enabled -eq 0 ]; then
     # display summary of swap (only for logging purpose)
     # swapon -s
 
+    # enable swap upon boot
+    fstab_entry="$swap_file none swap sw 0 0"
+    if ! $(grep -q "^${fstab_entry}$" /etc/fstab &> /dev/null) ; then
+        echo $fstab_entry >> /etc/fstab
+    fi
+
     # fine-tune swap
     if [ ! -f $swap_sysctl_file ]; then
-        echo '# Ref: https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-14-04' > $swap_sysctl_file
+        echo '# Ref: https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-18-04' > $swap_sysctl_file
         echo >> $swap_sysctl_file
-        echo 'nvm.swappiness=10' >> $swap_sysctl_file
-        echo 'nvm.vfs_cache_pressure = 50' >> $swap_sysctl_file
+        echo 'vm.swappiness=10' >> $swap_sysctl_file
+        echo 'vm.vfs_cache_pressure = 50' >> $swap_sysctl_file
     fi
 
     # apply changes
