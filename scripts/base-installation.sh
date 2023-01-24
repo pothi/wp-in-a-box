@@ -89,7 +89,7 @@ if [ "$current_time_zone" != "UTC" ] ; then
     echo done.
 fi
 
-# printf '%-72s' "Setting up timezone..."
+# printf '%-72s' "Setting up unattended upgrades..."
 #--- Unattended Upgrades ---#
 echo 'APT::Periodic::Update-Package-Lists "1";' >| /etc/apt/apt.conf.d/20auto-upgrades
 echo 'APT::Periodic::Unattended-Upgrade "1";' >> /etc/apt/apt.conf.d/20auto-upgrades

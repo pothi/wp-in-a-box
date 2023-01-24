@@ -3,13 +3,13 @@
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
 
-# Version: 1.0
+# Version: 1.1
 
 # to be run as root, probably as a user-script just after a server is installed
 # https://stackoverflow.com/a/52586842/1004587
 # also see https://stackoverflow.com/q/3522341/1004587
 is_user_root () { [ "${EUID:-$(id -u)}" -eq 0 ]; }
-[ is_user_root ] || { echo 'You must be root or user with sudo privilege to run this script. Exiting now.'; exit 1; }
+[ is_user_root ] || { echo 'You must be root or have sudo privilege to run this script. Exiting now.'; exit 1; }
 
 echo "Script started on (date & time): $(date +%c)"
 
@@ -355,6 +355,7 @@ restart_script=/etc/letsencrypt/renewal-hooks/deploy/nginx-restart.sh
 restart_script_url=https://github.com/pothi/snippets/raw/main/ssl/nginx-restart.sh
 [ ! -f "$restart_script" ] && {
     curl -sSL --create-dirs -o $restart_script $restart_script_url
+    check_result $? "Error downloading Nginx Restart Script for Certbot renewals."
     chmod +x $restart_script
 }
 
