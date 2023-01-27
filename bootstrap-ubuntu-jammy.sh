@@ -3,13 +3,16 @@
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
 
-# Version: 1.1
+# Version: 2.0
 
 # to be run as root, probably as a user-script just after a server is installed
 # https://stackoverflow.com/a/52586842/1004587
 # also see https://stackoverflow.com/q/3522341/1004587
 is_user_root () { [ "${EUID:-$(id -u)}" -eq 0 ]; }
 [ is_user_root ] || { echo 'You must be root or have sudo privilege to run this script. Exiting now.'; exit 1; }
+
+export PATH=~/bin:~/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
+export DEBIAN_FRONTEND=noninteractive
 
 echo "Script started on (date & time): $(date +%c)"
 
@@ -31,6 +34,8 @@ fi
 git_usermail=${EMAIL:-root@localhost}
 git_username=${NAME:-root}
 
+#--- apt tweaks ---#
+
 # Ref: https://wiki.debian.org/Multiarch/HOWTO
 # https://askubuntu.com/a/1336013/65814
 [ ! $(dpkg --get-selections | grep -q i386) ] && dpkg --remove-architecture i386 2>/dev/null
@@ -38,7 +43,10 @@ git_username=${NAME:-root}
 # Fix apt ipv4/6 issue
 echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/1000-force-ipv4-transport
 
-export DEBIAN_FRONTEND=noninteractive
+# Fix a warning related to dialog
+# run `debconf-show debconf` to see the current /default selections.
+echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+
 # the following runs when apt cache is older than 6 hours
 if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -360 2> /dev/null)" ]; then
         printf '%-72s' "Updating apt cache"
@@ -47,41 +55,23 @@ if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -360 2> /dev/null)" ]; then
 fi
 
 echo -------------------------- Prerequisites ------------------------------------
-required_packages="apt-transport-https \
-    bash-completion \
-    cron \
-    curl \
-    dnsutils \
-    git \
-    language-pack-en \
-    pwgen \
+# apt-utils to fix an annoying non-critical bug on minimal images. Ref: https://github.com/tianon/docker-brew-ubuntu-core/issues/59
+# powermgmt-base to fix a warning in unattended-upgrade.log
+required_packages="apt-utils \
     fail2ban \
-    python-is-python3 \
-    python3-venv \
-    software-properties-common \
-    sudo \
-    tzdata \
-    unzip \
-    vim \
-    wget"
+    powermgmt-base \
+    tzdata"
 
 for package in $required_packages
 do
-    if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
+    if dpkg-query -w -f='${status}' $package 2>/dev/null | grep -q "ok installed"
     then
         # echo "'$package' is already installed"
         :
     else
         printf '%-72s' "Installing '${package}' ..."
-        apt-get -qq install $package &> /dev/null
-
-        # fix for apt refresh on first run.
-        if [ "$?" -ne 0 ]; then
-            apt-get update &> /dev/null
-            apt-get -qq install $package &> /dev/null
-            check_result "Couldn't install $package."
-        fi
-
+        apt-get -qq install $package > /dev/null
+        check_result "Error: couldn't install $package."
         echo done.
     fi
 done
@@ -132,16 +122,18 @@ do
             :
         else
             printf '%-72s' "Installing '${package}' ..."
-            apt-get -qq install $package &> /dev/null
+            apt-get -qq install $package > /dev/null
             check_result $? "Error installing ${package}."
             echo done.
         fi
     fi
 done
 
-[ ! -d ~/git/wordpress-nginx ] && {
-    git clone -q https://github.com/pothi/wordpress-nginx ~/git/wordpress-nginx
-    cp -a ~/git/wordpress-nginx/{conf.d,errors,globals,sites-available} /etc/nginx/
+# Download WordPress Nginx repo
+[ ! -d ~/wp-nginx ] && {
+    mkdir ~/wp-nginx
+    wget -q -O- https://github.com/pothi/wordpress-nginx/tarball/main | tar -xz -C ~/wp-nginx --strip-components=1
+    cp -a ~/wp-nginx/{conf.d,errors,globals,sites-available} /etc/nginx/
     [ ! -d /etc/nginx/sites-enabled ] && mkdir /etc/nginx/sites-enabled
     ln -fs /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
 }
@@ -158,7 +150,7 @@ sed -i 's/^\s*ssl_/# &/' /etc/nginx/nginx.conf
 
 # create dhparam
 if [ ! -f /etc/nginx/dhparam.pem ]; then
-    $(which openssl) dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096 &> /dev/null
+    openssl dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096 > /dev/null
     sed -i 's:^# \(ssl_dhparam /etc/nginx/dhparam.pem;\)$:\1:' /etc/nginx/conf.d/ssl-common.conf
 fi
 
@@ -169,8 +161,9 @@ echo ---------------------------------------------------------------------------
 if [ "$ADMIN_USER" == "" ]; then
 printf '%-72s' "Creating a MySQL Admin User..."
     # create MYSQL username automatically
-    ADMIN_USER="sql_$(pwgen -Av 6 1)"
-    ADMIN_PASS=$(pwgen -cnsv 20 1)
+    # unique username / password generator: https://unix.stackexchange.com/q/230673/20241
+    ADMIN_USER="sql_$(openssl rand -base64 32 | tr -d /=+ | cut -c -10)"
+    ADMIN_PASS=$(openssl rand -base64 32 | tr -d /=+ | cut -c -20)
     echo "export ADMIN_USER=$ADMIN_USER" >> /root/.envrc
     echo "export ADMIN_PASS=$ADMIN_PASS" >> /root/.envrc
     mysql -e "CREATE USER ${ADMIN_USER} IDENTIFIED BY '${ADMIN_PASS}';"
@@ -182,8 +175,18 @@ fi
 wp_user=${WP_USERNAME:-""}
 if [ "$wp_user" == "" ]; then
 printf '%-72s' "Creating a WP User..."
-    wp_user="wp_$(pwgen -Av 9 1)"
+    wp_user="wp_$(openssl rand -base64 32 | tr -d /=+ | cut -c -10)"
     echo "export WP_USERNAME=$wp_user" >> /root/.envrc
+echo done.
+fi
+
+wp_pass=${WP_PASSWORD:-""}
+if [ "$wp_pass" == "" ]; then
+printf '%-72s' "Creating password for WP user..."
+    wp_pass=$(openssl rand -base64 32 | tr -d /=+ | cut -c -20)
+    echo "export WP_PASSWORD=$wp_pass" >> /root/.envrc
+
+    echo "$wp_user:$wp_pass" | chpasswd
 echo done.
 fi
 
@@ -196,17 +199,7 @@ if [ ! -d "/home/${home_basename}" ]; then
     chmod 755 /home/$home_basename
 
     groupadd ${home_basename}
-    gpasswd -a $wp_user ${home_basename} &> /dev/null
-fi
-
-wp_pass=${WP_PASSWORD:-""}
-if [ "$wp_pass" == "" ]; then
-printf '%-72s' "Creating password for WP user..."
-    wp_pass=$(pwgen -cns 12 1)
-    echo "export WP_PASSWORD=$wp_pass" >> /root/.envrc
-
-    echo "$wp_user:$wp_pass" | chpasswd
-echo done.
+    gpasswd -a $wp_user ${home_basename} > /dev/null
 fi
 
 # provide sudo access without passwd to WP Dev
@@ -357,7 +350,7 @@ snap install --classic certbot
 ln -fs /snap/bin/certbot /usr/bin/certbot
 
 # register certbot account if email is supplied
-if [ -n $CERTBOT_ADMIN_EMAIL ]; then
+if [ $CERTBOT_ADMIN_EMAIL ]; then
     certbot show_account &> /dev/null
     if [ "$?" != "0" ]; then
         certbot -m $CERTBOT_ADMIN_EMAIL --agree-tos --no-eff-email register
