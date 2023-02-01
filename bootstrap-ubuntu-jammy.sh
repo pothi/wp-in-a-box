@@ -3,7 +3,7 @@
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
 
-# Version: 2.0
+# Version: 2.3
 
 # to be run as root, probably as a user-script just after a server is installed
 # https://stackoverflow.com/a/52586842/1004587
@@ -48,11 +48,27 @@ echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/1000-force-ipv4-transpor
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 # the following runs when apt cache is older than 6 hours
-if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -360 2> /dev/null)" ]; then
-        printf '%-72s' "Updating apt cache"
-        apt-get -qq update
-        echo done.
+APT_UPDATE_SUCCESS_STAMP_PATH=/var/lib/apt/periodic/update-success-stamp
+APT_LISTS_PATH=/var/lib/apt/lists
+if [ -f "$APT_UPDATE_SUCCESS_STAMP_PATH" ]; then
+    if [ -z "$(find "$APT_UPDATE_SUCCESS_STAMP_PATH" -mmin -360 2> /dev/null)" ]; then
+            printf '%-72s' "Updating apt cache"
+            apt-get -qq update
+            echo done.
+    fi
+elif [ -d "$APT_LISTS_PATH" ]; then
+    if [ -z "$(find "$APT_LISTS_PATH" -mmin -360 2> /dev/null)" ]; then
+            printf '%-72s' "Updating apt cache"
+            apt-get -qq update
+            echo done.
+    fi
 fi
+# old method - to be removed in the future
+# if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -360 2> /dev/null)" ]; then
+        # printf '%-72s' "Updating apt cache"
+        # apt-get -qq update
+        # echo done.
+# fi
 
 echo -------------------------- Prerequisites ------------------------------------
 # apt-utils to fix an annoying non-critical bug on minimal images. Ref: https://github.com/tianon/docker-brew-ubuntu-core/issues/59
@@ -150,7 +166,7 @@ sed -i 's/^\s*ssl_/# &/' /etc/nginx/nginx.conf
 
 # create dhparam
 if [ ! -f /etc/nginx/dhparam.pem ]; then
-    openssl dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096 > /dev/null
+    openssl dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096 &> /dev/null
     sed -i 's:^# \(ssl_dhparam /etc/nginx/dhparam.pem;\)$:\1:' /etc/nginx/conf.d/ssl-common.conf
 fi
 
@@ -177,6 +193,16 @@ if [ "$wp_user" == "" ]; then
 printf '%-72s' "Creating a WP User..."
     wp_user="wp_$(openssl rand -base64 32 | tr -d /=+ | cut -c -10)"
     echo "export WP_USERNAME=$wp_user" >> /root/.envrc
+
+    # home_basename=$(echo $wp_user | awk -F _ '{print $1}')
+    # [ -z $home_basename ] && home_basename=web
+    home_basename=web
+
+    useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $wp_user
+    chmod 755 /home/$home_basename
+
+    groupadd ${home_basename}
+    gpasswd -a $wp_user ${home_basename} > /dev/null
 echo done.
 fi
 
@@ -188,18 +214,6 @@ printf '%-72s' "Creating password for WP user..."
 
     echo "$wp_user:$wp_pass" | chpasswd
 echo done.
-fi
-
-# home_basename=$(echo $wp_user | awk -F _ '{print $1}')
-# [ -z $home_basename ] && home_basename=web
-home_basename=web
-
-if [ ! -d "/home/${home_basename}" ]; then
-    useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $wp_user
-    chmod 755 /home/$home_basename
-
-    groupadd ${home_basename}
-    gpasswd -a $wp_user ${home_basename} > /dev/null
 fi
 
 # provide sudo access without passwd to WP Dev

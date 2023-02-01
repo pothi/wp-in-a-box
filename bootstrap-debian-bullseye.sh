@@ -3,7 +3,7 @@
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
 
-# Version: 1.1
+# Version: 2.3
 
 # to be run as root, probably as a user-script just after a server is installed
 # https://stackoverflow.com/a/52586842/1004587
@@ -11,6 +11,8 @@
 is_user_root () { [ "${EUID:-$(id -u)}" -eq 0 ]; }
 [ is_user_root ] || { echo 'You must be root or have sudo privilege to run this script. Exiting now.'; exit 1; }
 
+export PATH=~/bin:~/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
+export DEBIAN_FRONTEND=noninteractive
 echo "Script started on (date & time): $(date +%c)"
 
 # Defining return code check function
@@ -34,12 +36,21 @@ git_username=${NAME:-root}
 # Fix apt ipv4/6 issue
 echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/1000-force-ipv4-transport
 
-export DEBIAN_FRONTEND=noninteractive
 # the following runs when apt cache is older than 6 hours
-if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -360 2> /dev/null)" ]; then
-        printf '%-72s' "Updating apt cache"
-        apt-get -qq update
-        echo done.
+APT_UPDATE_SUCCESS_STAMP_PATH=/var/lib/apt/periodic/update-success-stamp
+APT_LISTS_PATH=/var/lib/apt/lists
+if [ -f "$APT_UPDATE_SUCCESS_STAMP_PATH" ]; then
+    if [ -z "$(find "$APT_UPDATE_SUCCESS_STAMP_PATH" -mmin -360 2> /dev/null)" ]; then
+            printf '%-72s' "Updating apt cache"
+            apt-get -qq update
+            echo done.
+    fi
+elif [ -d "$APT_LISTS_PATH" ]; then
+    if [ -z "$(find "$APT_LISTS_PATH" -mmin -360 2> /dev/null)" ]; then
+            printf '%-72s' "Updating apt cache"
+            apt-get -qq update
+            echo done.
+    fi
 fi
 
 # ref: https://www.server-world.info/en/note?os=Debian_10&p=locale
@@ -76,15 +87,8 @@ do
         :
     else
         printf '%-72s' "Installing '${package}' ..."
-        apt-get -qq install $package &> /dev/null
-
-        # fix for apt refresh on first run.
-        if [ "$?" -ne 0 ]; then
-            apt-get update &> /dev/null
-            apt-get -qq install $package &> /dev/null
-            check_result "Couldn't install $package."
-        fi
-
+        apt-get -qq install $package > /dev/null
+        check_result "Error: couldn't install $package."
         echo done.
     fi
 done
@@ -135,7 +139,7 @@ do
             :
         else
             printf '%-72s' "Installing '${package}' ..."
-            apt-get -qq install $package &> /dev/null
+            apt-get -qq install $package > /dev/null
             check_result $? "Error installing ${package}."
             echo done.
         fi
@@ -151,7 +155,7 @@ done
 
 # create dhparam
 if [ ! -f /etc/nginx/dhparam.pem ]; then
-    $(which openssl) dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096 &> /dev/null
+    openssl dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096 &> /dev/null
     sed -i 's:^# \(ssl_dhparam /etc/nginx/dhparam.pem;\)$:\1:' /etc/nginx/conf.d/ssl-common.conf
 fi
 
