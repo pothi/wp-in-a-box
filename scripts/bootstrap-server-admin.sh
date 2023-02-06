@@ -18,19 +18,21 @@ if ! grep -qF custom-aliases-envvars-custom ~/.bashrc ; then
 fi
 
 ###------------------------------ setup color for server-admin terminal ------------------------------###
-rootbashrc="~/.bashrc"
-entry='#red_color for root'
-if [ -f $rootbashrc ]; then
-    if ! $(grep -q "^${entry}$" "$rootbashrc") ; then
-        printf "\n${entry}\n" >> $rootbashrc
-        echo 'PS1="\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\u\[\033[01;33m\]@\[\033[01;36m\]\h \[\033[01;33m\]\w \[\033[01;35m\]\$ \[\033[00m\]"' >> $rootbashrc
-        printf '\n' >> $rootbashrc
-        . $rootbashrc
-    fi # test if the entry is found in file
-fi # test if file exists
+adminbashrc="~/.bashrc"
+entry='#color for server admin'
+# if [ -f $adminbashrc ]; then
+    # if ! $(grep -q "^${entry}$" "$adminbashrc") ; then
+        # printf "\n${entry}\n" >> $adminbashrc
+	# PS1 taken from Ubuntu Jammy (22.04)
+	# echo 'PS1="\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\#"' >> $adminbashrc
+        # echo 'PS1="\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\u\[\033[01;33m\]@\[\033[01;36m\]\h \[\033[01;33m\]\w \[\033[01;35m\]\$ \[\033[00m\]"' >> $adminbashrc
+        # printf '\n' >> $adminbashrc
+        # . $adminbashrc
+    # fi # test if the entry is found in file
+# fi # test if file exists
 
 ###------------------------------ VIM Tweaks ------------------------------###
-#TODO
+
 [ ! -d ~/.vim ] && mkdir ~/.vim
 [ ! -d ~/git/snippets ] && {
     git clone -q --depth 1 https://github.com/pothi/snippets ~/git/snippets
