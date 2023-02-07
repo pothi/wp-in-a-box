@@ -17,14 +17,19 @@ if ! grep -qF custom-aliases-envvars-custom ~/.bashrc ; then
     echo "[[ -f ~/.config/custom-aliases-envvars-custom ]] && . ~/.config/custom-aliases-envvars-custom" >> ~/.bashrc
 fi
 
+# Load ~/.envrc file if exists
+if ! grep -qF envrc ~/.bashrc ; then
+    echo "[ -f ~/.envrc ] && . ~/.envrc" >> ~/.bashrc
+fi
+
 ###------------------------------ setup color for server-admin terminal ------------------------------###
 adminbashrc="~/.bashrc"
 entry='#color for server admin'
 # if [ -f $adminbashrc ]; then
     # if ! $(grep -q "^${entry}$" "$adminbashrc") ; then
         # printf "\n${entry}\n" >> $adminbashrc
-	# PS1 taken from Ubuntu Jammy (22.04)
-	# echo 'PS1="\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\#"' >> $adminbashrc
+    # PS1 taken from Ubuntu Jammy (22.04)
+    # echo 'PS1="\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\#"' >> $adminbashrc
         # echo 'PS1="\[\e]0;\u@\h: \w\a\]${debian_chroot:+($debian_chroot)}\[\033[01;34m\]\u\[\033[01;33m\]@\[\033[01;36m\]\h \[\033[01;33m\]\w \[\033[01;35m\]\$ \[\033[00m\]"' >> $adminbashrc
         # printf '\n' >> $adminbashrc
         # . $adminbashrc

@@ -40,6 +40,11 @@ if ! grep -qF custom-aliases-envvars-custom ~/.bashrc ; then
     echo "[[ -f ~/.config/custom-aliases-envvars-custom ]] && . ~/.config/custom-aliases-envvars-custom" >> ~/.bashrc
 fi
 
+# Load ~/.envrc file if exists
+if ! grep -qF envrc ~/.bashrc ; then
+    echo "[ -f ~/.envrc ] && . ~/.envrc" >> ~/.bashrc
+fi
+
 #-------------------- Configure VIM --------------------#
 [ ! -d ~/.vim ] && mkdir ~/.vim
 [ ! -d ~/git/snippets ] && {
