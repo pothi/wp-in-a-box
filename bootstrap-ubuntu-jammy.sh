@@ -241,7 +241,7 @@ pool_file=/etc/php/${php_ver}/fpm/pool.d/${php_user}.conf
 PM_METHOD=ondemand
 
 user_mem_limit=${PHP_MEM_LIMIT:-""}
-[ -z "$user_mem_limit" ] && user_mem_limit=256
+[ -z "$user_mem_limit" ] && user_mem_limit=512
 
 max_children=${PHP_MAX_CHILDREN:-""}
 
