@@ -5,6 +5,9 @@
 
 # Version: 3.0
 
+# this is the PHP version that comes by default with the current Ubuntu LTS
+php_ver=8.1
+
 # to be run as root, probably as a user-script just after a server is installed
 # https://stackoverflow.com/a/52586842/1004587
 # also see https://stackoverflow.com/q/3522341/1004587
@@ -41,15 +44,14 @@ set_utc_timezone() {
     fi
 }
 
+# if ~/.envrc doesn't exist, create it
 if [ ! -f "$HOME/.envrc" ]; then
     touch ~/.envrc
     chmod 600 ~/.envrc
+# if exists, source it to apply the env variables
 else
     . ~/.envrc
 fi
-
-git_usermail=${EMAIL:-root@localhost}
-git_username=${NAME:-root}
 
 #--- apt tweaks ---#
 
@@ -58,6 +60,7 @@ git_username=${NAME:-root}
 [ ! $(dpkg --get-selections | grep -q i386) ] && dpkg --remove-architecture i386 2>/dev/null
 
 # Fix apt ipv4/6 issue
+[ ! -f /etc/apt/apt.conf.d/1000-force-ipv4-transport ] && \
 echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/1000-force-ipv4-transport
 
 # Fix a warning related to dialog
@@ -65,6 +68,7 @@ echo 'Acquire::ForceIPv4 "true";' > /etc/apt/apt.conf.d/1000-force-ipv4-transpor
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
 # the following runs when apt cache is older than 6 hours
+# Taken from Ansible - https://askubuntu.com/a/1362550/65814
 APT_UPDATE_SUCCESS_STAMP_PATH=/var/lib/apt/periodic/update-success-stamp
 APT_LISTS_PATH=/var/lib/apt/lists
 if [ -f "$APT_UPDATE_SUCCESS_STAMP_PATH" ]; then
@@ -189,7 +193,6 @@ fi
 echo -------------------------------- PHP ----------------------------------------
 # PHP is required by Nginx to configure the defaults. So, install it before Nginx
 
-php_ver=8.1
 lemp_packages="nginx-extras \
     php${php_ver}-fpm \
     php${php_ver}-mysql \
@@ -392,6 +395,8 @@ if [ $CERTBOT_ADMIN_EMAIL ]; then
     fi
 fi
 
+# Restart script upon renewal; it can also alert upon success or failure
+# See - https://github.com/pothi/snippets/blob/main/ssl/nginx-restart.sh
 [ ! -d /etc/letsencrypt/renewal-hooks/deploy/ ] && mkdir -p /etc/letsencrypt/renewal-hooks/deploy/
 restart_script=/etc/letsencrypt/renewal-hooks/deploy/nginx-restart.sh
 restart_script_url=https://github.com/pothi/snippets/raw/main/ssl/nginx-restart.sh
@@ -407,7 +412,7 @@ echo ---------------------------------------------------------------------------
 echo You may find the login credentials of SFTP/SSH user in /root/.envrc file.
 echo -----------------------------------------------------------------------------
 
-echo 'You may reboot only once to apply certain updates (ex: kernel updates)!'
+echo 'You may reboot (only once) to apply certain updates (ex: kernel updates)!'
 echo
 
 echo "Script ended on (date & time): $(date +%c)"
