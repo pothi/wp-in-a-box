@@ -3,7 +3,7 @@
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
 
-# Version: 2.3
+# Version: 3.0
 
 # to be run as root, probably as a user-script just after a server is installed
 # https://stackoverflow.com/a/52586842/1004587
@@ -16,11 +16,28 @@ export DEBIAN_FRONTEND=noninteractive
 
 echo "Script started on (date & time): $(date +%c)"
 
-# Defining return code check function
+# Function to exit with an error message
 check_result() {
     if [ $? -ne 0 ]; then
         echo; echo "Error: $1"; echo
         exit 1
+    fi
+}
+
+# function to configure timezone to UTC
+set_utc_timezone() {
+    if [ "$(date +\%Z)" != "UTC" ] ; then
+        [ ! -f /usr/sbin/tzconfig ] && apt-get -qq install tzdata > /dev/null
+        printf '%-72s' "Setting up timezone..."
+        ln -fs /usr/share/zoneinfo/UTC /etc/localtime
+        dpkg-reconfigure -f noninteractive tzdata
+        # timedatectl set-timezone UTC
+        check_result $? 'Error setting up timezone.'
+
+        # Recommended to restart cron after every change in timezone
+        systemctl restart cron
+        check_result $? 'Error restarting cron daemon after changing timezone.'
+        echo done.
     fi
 }
 
@@ -63,24 +80,18 @@ elif [ -d "$APT_LISTS_PATH" ]; then
             echo done.
     fi
 fi
-# old method - to be removed in the future
-# if [ -z "$(find /var/cache/apt/pkgcache.bin -mmin -360 2> /dev/null)" ]; then
-        # printf '%-72s' "Updating apt cache"
-        # apt-get -qq update
-        # echo done.
-# fi
 
-echo -------------------------- Prerequisites ------------------------------------
+# echo -------------------------- Prerequisites ------------------------------------
 # apt-utils to fix an annoying non-critical bug on minimal images. Ref: https://github.com/tianon/docker-brew-ubuntu-core/issues/59
+apt-get -qq install apt-utils &> /dev/null
+
 # powermgmt-base to fix a warning in unattended-upgrade.log
-required_packages="apt-utils \
-    fail2ban \
-    powermgmt-base \
-    tzdata"
+required_packages="fail2ban \
+    powermgmt-base"
 
 for package in $required_packages
 do
-    if dpkg-query -w -f='${status}' $package 2>/dev/null | grep -q "ok installed"
+    if dpkg-query -W -f='${status}' $package 2>/dev/null | grep -q "ok installed"
     then
         # echo "'$package' is already installed"
         :
@@ -93,23 +104,93 @@ do
 done
 
 #--- setup timezone ---#
-current_time_zone=$(date +\%Z)
-if [ "$current_time_zone" != "UTC" ] ; then
-    printf '%-72s' "Setting up timezone..."
-    ln -fs /usr/share/zoneinfo/UTC /etc/localtime
-    dpkg-reconfigure -f noninteractive tzdata
-    # timedatectl set-timezone UTC
-    check_result $? 'Error setting up timezone.'
-    systemctl restart cron
-    check_result $? 'Error restarting cron daemon.'
+set_utc_timezone
+
+# Create a WordPress user with /home/web as $HOME
+wp_user=${WP_USERNAME:-""}
+if [ "$wp_user" == "" ]; then
+printf '%-72s' "Creating a WP User..."
+    wp_user="wp_$(openssl rand -base64 32 | tr -d /=+ | cut -c -10)"
+    echo "export WP_USERNAME=$wp_user" >> /root/.envrc
+
+    # home_basename=$(echo $wp_user | awk -F _ '{print $1}')
+    # [ -z $home_basename ] && home_basename=web
+    home_basename=web
+
+    useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $wp_user
+    chmod 755 /home/$home_basename
+
+    groupadd ${home_basename}
+    gpasswd -a $wp_user ${home_basename} > /dev/null
+echo done.
+fi
+
+# Create password for WP User
+wp_pass=${WP_PASSWORD:-""}
+if [ "$wp_pass" == "" ]; then
+printf '%-72s' "Creating password for WP user..."
+    wp_pass=$(openssl rand -base64 32 | tr -d /=+ | cut -c -20)
+    echo "export WP_PASSWORD=$wp_pass" >> /root/.envrc
+
+    echo "$wp_user:$wp_pass" | chpasswd
+echo done.
+fi
+
+# provide sudo access without passwd to WP User
+if [ ! -f /etc/sudoers.d/$wp_user ]; then
+printf '%-72s' "Providing sudo privilege for WP user..."
+    echo "${wp_user} ALL=(ALL) NOPASSWD:ALL"> /etc/sudoers.d/$wp_user
+    chmod 400 /etc/sudoers.d/$wp_user
+echo done.
+fi
+
+# Enable password authentication for WP User
+cd /etc/ssh/sshd_config.d
+if [ ! -f enable-passwd-auth.conf ]; then
+printf '%-72s' "Enabling Password Authentication for WP user..."
+    echo "PasswordAuthentication yes" > enable-passwd-auth.conf
+    /usr/sbin/sshd -t && systemctl restart sshd
+    check_result $? 'Error restarting SSH daemon while enabling passwd auth.'
+echo done.
+fi
+cd - 1> /dev/null
+
+echo ---------------------------------- LEMP -------------------------------------
+# echo ------------------------------- MySQL ---------------------------------------
+# MySQL is required by PHP. So, install it before PHP
+
+package=default-mysql-server
+if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
+then
+    # echo "'$package' is already installed."
+    :
+else
+    printf '%-72s' "Installing '${package}' ..."
+    apt-get -qq install $package > /dev/null
+    check_result "Error: couldn't install $package."
     echo done.
 fi
 
-echo ---------------------------------- LEMP -------------------------------------
+# Create a MySQL admin user
+if [ "$MYSQL_ADMIN_USER" == "" ]; then
+printf '%-72s' "Creating a MySQL Admin User..."
+    # create MYSQL username automatically
+    # unique username / password generator: https://unix.stackexchange.com/q/230673/20241
+    MYSQL_ADMIN_USER="mysql_$(openssl rand -base64 32 | tr -d /=+ | cut -c -10)"
+    MYSQL_ADMIN_PASS=$(openssl rand -base64 32 | tr -d /=+ | cut -c -20)
+    echo "export MYSQL_ADMIN_USER=$MYSQL_ADMIN_USER" >> /root/.envrc
+    echo "export MYSQL_ADMIN_PASS=$MYSQL_ADMIN_PASS" >> /root/.envrc
+    mysql -e "CREATE USER ${MYSQL_ADMIN_USER} IDENTIFIED BY '${MYSQL_ADMIN_PASS}';"
+    mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${MYSQL_ADMIN_USER} WITH GRANT OPTION"
+echo done.
+fi
+
+
+echo -------------------------------- PHP ----------------------------------------
+# PHP is required by Nginx to configure the defaults. So, install it before Nginx
 
 php_ver=8.1
 lemp_packages="nginx-extras \
-    default-mysql-server \
     php${php_ver}-fpm \
     php${php_ver}-mysql \
     php${php_ver}-gd \
@@ -127,7 +208,7 @@ for package in $lemp_packages
 do
     if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
     then
-        echo "'$package' is already installed"
+        # echo "'$package' is already installed"
         :
     else
         # Remove ${php_ver} from package name to find if php-package is installed.
@@ -173,66 +254,6 @@ fi
 echo -----------------------------------------------------------------------------
 echo "Please check ~/.envrc for all the credentials."
 echo -----------------------------------------------------------------------------
-
-if [ "$ADMIN_USER" == "" ]; then
-printf '%-72s' "Creating a MySQL Admin User..."
-    # create MYSQL username automatically
-    # unique username / password generator: https://unix.stackexchange.com/q/230673/20241
-    ADMIN_USER="sql_$(openssl rand -base64 32 | tr -d /=+ | cut -c -10)"
-    ADMIN_PASS=$(openssl rand -base64 32 | tr -d /=+ | cut -c -20)
-    echo "export ADMIN_USER=$ADMIN_USER" >> /root/.envrc
-    echo "export ADMIN_PASS=$ADMIN_PASS" >> /root/.envrc
-    mysql -e "CREATE USER ${ADMIN_USER} IDENTIFIED BY '${ADMIN_PASS}';"
-    mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${ADMIN_USER} WITH GRANT OPTION"
-echo done.
-echo "Please check ~/.envrc for credentials."
-fi
-
-wp_user=${WP_USERNAME:-""}
-if [ "$wp_user" == "" ]; then
-printf '%-72s' "Creating a WP User..."
-    wp_user="wp_$(openssl rand -base64 32 | tr -d /=+ | cut -c -10)"
-    echo "export WP_USERNAME=$wp_user" >> /root/.envrc
-
-    # home_basename=$(echo $wp_user | awk -F _ '{print $1}')
-    # [ -z $home_basename ] && home_basename=web
-    home_basename=web
-
-    useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $wp_user
-    chmod 755 /home/$home_basename
-
-    groupadd ${home_basename}
-    gpasswd -a $wp_user ${home_basename} > /dev/null
-echo done.
-fi
-
-wp_pass=${WP_PASSWORD:-""}
-if [ "$wp_pass" == "" ]; then
-printf '%-72s' "Creating password for WP user..."
-    wp_pass=$(openssl rand -base64 32 | tr -d /=+ | cut -c -20)
-    echo "export WP_PASSWORD=$wp_pass" >> /root/.envrc
-
-    echo "$wp_user:$wp_pass" | chpasswd
-echo done.
-fi
-
-# provide sudo access without passwd to WP Dev
-if [ ! -f /etc/sudoers.d/$wp_user ]; then
-printf '%-72s' "Providing sudo privilege for WP user..."
-    echo "${wp_user} ALL=(ALL) NOPASSWD:ALL"> /etc/sudoers.d/$wp_user
-    chmod 400 /etc/sudoers.d/$wp_user
-echo done.
-fi
-
-cd /etc/ssh/sshd_config.d
-if [ ! -f enable-passwd-auth.conf ]; then
-printf '%-72s' "Enabling Password Authentication for WP user..."
-    echo "PasswordAuthentication yes" > enable-passwd-auth.conf
-    /usr/sbin/sshd -t && systemctl restart sshd
-    check_result $? 'Error restarting SSH daemon while enabling passwd auth.'
-echo done.
-fi
-cd - 1> /dev/null
 
 # . $local_wp_in_a_box_repo/scripts/php-installation.sh
 php_user=$wp_user
