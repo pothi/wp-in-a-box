@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-version=1.0
+version=2.0
 
 # Careful when rebooting a server, unattended!
 
@@ -12,12 +12,11 @@ set -o errexit -o pipefail -o noclobber -o nounset
 # variables
 REBOOT_TIME="03:45"
 
-is_user_root () { [ "${EUID:-$(id -u)}" -eq 0 ]; }
-[ is_user_root ] || { echo 'You must be root or have sudo privilege to run this script. Exiting now.'; exit 1; }
+[ "${EUID:-$(id -u)}" -eq 0 ] || { echo 'You must be root or have sudo privilege to run this script. Exiting now.'; exit 1; }
 
 # take a backup before making changes
 [ -d ~/backups ] || mkdir ~/backups
-[ -f "~/backups/apt.conf.d-$(date +%F)" ] || cp -a $/etc/apt/apt.conf.d ~/backups/apt.conf.d-$(date +%F)
+[ -f "$HOME/backups/apt.conf.d-$(date +%F)" ] || cp -a /etc/apt/apt.conf.d ~/backups/apt.conf.d-"$(date +%F)"
 
 # we used ":" in sed in unattended-upgrades.sh file.
 # here, since reboot time has ":" in it, we can't use ":" in sed as separator.

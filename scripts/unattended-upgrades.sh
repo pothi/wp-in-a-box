@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-version=1.1
+version=2.0
 
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
@@ -14,26 +14,25 @@ export DEBIAN_FRONTEND=noninteractive
 [ -f ~/.envrc ] && source ~/.envrc
 admin_email=${ADMIN_EMAIL:-"root@localhost"}
 
-is_user_root () { [ "${EUID:-$(id -u)}" -eq 0 ]; }
-[ is_user_root ] || { echo 'You must be root or have sudo privilege to run this script. Exiting now.'; exit 1; }
+[ "${EUID:-$(id -u)}" -eq 0 ] || { echo 'You must be root or have sudo privilege to run this script. Exiting now.'; exit 1; }
 
 # take a backup before making changes
 [ -d ~/backups ] || mkdir ~/backups
-[ -f "~/backups/apt.conf.d-$(date +%F)" ] || cp -a $/etc/apt/apt.conf.d ~/backups/apt.conf.d-$(date +%F)
+[ -f "$HOME/backups/apt.conf.d-$(date +%F)" ] || cp -a /etc/apt/apt.conf.d ~/backups/apt.conf.d-"$(date +%F)"
 
 printf '%-72s' "Setting up unattended upgrades..."
 
 #--- Changes in /etc/apt/apt.conf.d/20auto-upgrades ---#
 auto_up_file=/etc/apt/apt.conf.d/20auto-upgrades
-echo 'APT::Periodic::Update-Package-Lists "1";' >| /etc/apt/apt.conf.d/20auto-upgrades
-echo 'APT::Periodic::Unattended-Upgrade "1";' >> /etc/apt/apt.conf.d/20auto-upgrades
+echo 'APT::Periodic::Update-Package-Lists "1";' >| $auto_up_file
+echo 'APT::Periodic::Unattended-Upgrade "1";' >> $auto_up_file
 
 #--- Changes in /etc/apt/apt.conf.d/50unattended-upgrades ---#
 un_up_file=/etc/apt/apt.conf.d/50unattended-upgrades
 
 # Change #1 - Email address
 sed -i '/Mail / s:^//U:U:' $un_up_file
-sed -i '/Mail / s:".*":"'$admin_email'":' $un_up_file
+sed -i '/Mail / s:".*":"'"$admin_email"'":' $un_up_file
 
 # Change #2 - When to send the email report
 # Set this value to one of:
