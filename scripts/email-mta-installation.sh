@@ -29,7 +29,9 @@ echo 'Installing / setting up MTA...'
 
 # dependencies
 # https://serverfault.com/a/325975/102173
-apt-get install -qq $mta libsasl2-modules mailutils pflogsumm &> /dev/null
+# rsyslog is missing in Ubuntu minimal image
+# To have mail.log, rsyslog is required.
+apt-get install -qq $mta rsyslog libsasl2-modules mailutils pflogsumm &> /dev/null
 
 # setup mta to use only ipv4 to send emails
 #- why:

@@ -24,7 +24,7 @@ printf '%-72s' "Setting up unattended reboots..."
 
 un_up_file=/etc/apt/apt.conf.d/50unattended-upgrades
 sed -i '/Automatic\-Reboot/ s_^//U_U_' $un_up_file
-sed -i '/Automatic\-Reboot/ s_""_"true"_' $un_up_file
+sed -i '/Automatic\-Reboot/ s_".*"_"true"_' $un_up_file
 
 sed -i '/Automatic\-Reboot\-WithUsers/ s_^//U_U_' $un_up_file
 sed -i '/Automatic\-Reboot\-WithUsers/ s_".*"_"false"_' $un_up_file
