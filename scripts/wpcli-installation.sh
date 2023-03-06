@@ -21,28 +21,26 @@ else
     # attempt to create BinDir and bash_completion_dir
     [ -d $BinDir ] || mkdir -p $BinDir
     if [ "$?" -ne "0" ]; then
-        echo "BinDir is not found at $BinDir. This script can't create it, either!"
-        echo 'You may create it manually and re-run this script.'
+        echo >&2 "BinDir is not found at $BinDir. This script can't create it, either!"
+        echo >&2 'You may create it manually and re-run this script.'
         exit 1
     fi
-    [ -d $bash_completion_dir ] || mkdir -p $bash_completion_dir
+    [ -d "$bash_completion_dir" ] || mkdir -p "$bash_completion_dir"
     if [ "$?" -ne "0" ]; then
-        echo "bash_completion_dir is not found at $bash_completion_dir. This script can't create it, either!"
-        echo 'You may create it manually and re-run this script.'
-        exit 1
+        echo >&2 "[Warn] bash_completion_dir is not found at $bash_completion_dir. This script can't create it, either!"
+        echo >&2 'You may create it manually and re-run this script.'
     fi
 fi
 
 export PATH=~/bin:~/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
 
-wp_cli=${BinDir}/wp
+wp_cli="${BinDir}/wp"
 #--- Install wp cli ---#
 if [ ! -s "$wp_cli" ]; then
     printf '%-72s' "Downloading WP CLI..."
     wp_cli_url=https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-    curl -LSs -o "$wp_cli" $wp_cli_url
-    if [ "$?" -ne "0" ]; then
-        echo 'wp-cli: error downloading wp-cli.'
+    if ! curl -LSs -o "$wp_cli" $wp_cli_url; then
+        echo >&2 'wp-cli: error downloading wp-cli.'
         exit 1
     fi
     chmod +x "$wp_cli"
@@ -51,15 +49,17 @@ if [ ! -s "$wp_cli" ]; then
 fi
 
 # wp cli bash completion
-if [ ! -s $bash_completion_dir/wp-completion.bash ]; then
-    curl -LSs -o "${bash_completion_dir}/wp-completion.bash" https://github.com/wp-cli/wp-cli/raw/main/utils/wp-completion.bash
-    if [ "$?" -ne "0" ]; then
-        echo 'wp-cli: error downloading bash completion script.'
+if [ ! -s "$bash_completion_dir/wp-completion.bash" ]; then
+    if ! curl -LSs -o "${bash_completion_dir}/wp-completion.bash" https://github.com/wp-cli/wp-cli/raw/main/utils/wp-completion.bash; then
+        echo >&2 'wp-cli: error downloading bash completion script.'
     fi
 fi
 
 #--- cron: auto-update wp-cli ---#
-if ! grep -qF $wp_cli "/var/spool/cron/crontabs/$USER" 2>/dev/null
+if ! grep -qF "$wp_cli" "/var/spool/cron/crontabs/$USER" 2>/dev/null
 then
-    ( crontab -l 2>/dev/null; echo "@daily $wp_cli cli update --yes &> /dev/null" ) | crontab -
+    ( crontab -l 2>/dev/null; echo; echo "@daily $wp_cli cli update --yes > /dev/null" ) | crontab -
+    echo 'A new cron entry is created to update daily, if an update is available.'
+else
+    echo 'A cron entry is already in place!'
 fi
