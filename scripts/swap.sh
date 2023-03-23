@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-# based on https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-18-04
+version=2.0
+
+# based on https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-22-04
 
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
@@ -20,69 +22,121 @@ swap_size=${SWAP_SIZE:-'1G'}
 swap_sysctl_file='/etc/sysctl.d/60-swap-local.conf'
 sleep_time_between_tasks=2
 
+if ! $(type 'check_result' 2>/dev/null | grep -q 'function') ; then
+    check_result() {
+        if [ $1 -ne 0 ]; then
+            echo -e "\nError: $2. Exiting!\n"
+            exit $1
+        fi
+    }
+fi
+
+function create_swap {
+    return
+}
+
+function remove_swap {
+    swapoff "$swap_file"
+    # Remove swap file
+    [ -f "$swap_file" ] && rm "$swap_file"
+
+    # Remove fstab entry
+    if $(grep -q swap /etc/fstab >/dev/null) ; then
+        sed -i '/swap/d' /etc/fstab
+    fi
+
+    [ -f "$swap_sysctl_file" ] && rm "$swap_sysctl_file"
+    service procps force-reload
+    check_result $? "Error reloading procps!"
+}
+
+# Parse Flags
+parse_args() {
+  while [[ $# -gt 0 ]]; do
+    key="$1"
+
+    case $key in
+    -i | --install)
+      INSTALL_DIR="$2"
+      shift
+      ;;
+    --force-install | --force-no-brew)
+      FORCE_INSTALL="true"
+      shift
+      ;;
+    -r | --remove)
+      remove_swap
+      exit
+      ;;
+    -v | --version)
+      echo "Version: $version"
+      exit 0
+      ;;
+    *)
+      echo "Unrecognized argument $key"
+      exit 1
+      ;;
+    esac
+  done
+}
 
 # create swap if unavailable
 is_swap_enabled=$(free | grep -iw swap | awk {'print $2'}) # 0 means no swap
 if [ $is_swap_enabled -eq 0 ]; then
-    echo 'Creating and setting up Swap...'
-    echo -----------------------------------------------------------------------------
+    printf '%-72s' 'Creating and setting up Swap...'
+    # echo -----------------------------------------------------------------------------
 
     # check for swap file
     if [ ! -f $swap_file ]; then
         # on a desktop, we may use fdisk to create a partition to be used as swap
-        fallocate -l $swap_size $swap_file &> /dev/null
-        if [ $? -ne 0 ]; then
-            echo Could not create swap file using fallocate.
-        fi
+        fallocate -l $swap_size $swap_file >/dev/null
+        check_result $? "Error: fallocate failed!"
     fi
 
     # only root should be able to read it or / and write into it
     chmod 600 $swap_file
 
     # mark a file / partition as swap
-    mkswap $swap_file
-    if [ $? != 0 ]; then
-        echo 'Error running mkswap command while creating swap file. Exiting!'
-        exit 1
-    fi
+    mkswap $swap_file >/dev/null
+    check_result $? 'mkswap failed.'
 
     # enable swap
     # printf '%-72s' "Waiting for swap file to get ready..."
-    sleep $sleep_time_between_tasks
+    # sleep $sleep_time_between_tasks
     # echo done.
-    swapon -a
-    if [ $? -ne 0 ]; then
-        echo Error enabling swap using the command "swapon -a". Exiting!
-    fi
+
+    swapon "$swap_file"
+    check_result $? "Error executing 'swapon $swap_file'. Exiting!"
 
     # display summary of swap (only for logging purpose)
+    # swapon --show
     # swapon -s
 
     # enable swap upon boot
-    fstab_entry="$swap_file none swap sw 0 0"
-    if ! $(grep -q "^${fstab_entry}$" /etc/fstab &> /dev/null) ; then
-        echo $fstab_entry >> /etc/fstab
+    if ! $(grep -qw swap /etc/fstab) ; then
+        echo "$swap_file none swap sw 0 0" >> /etc/fstab
     fi
 
     # fine-tune swap
     if [ ! -f $swap_sysctl_file ]; then
-        echo '# Ref: https://www.digitalocean.com/community/tutorials/how-to-add-swap-on-ubuntu-18-04' > $swap_sysctl_file
+        echo '# Ref: https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-22-04' > $swap_sysctl_file
         echo >> $swap_sysctl_file
         echo 'vm.swappiness=10' >> $swap_sysctl_file
         echo 'vm.vfs_cache_pressure = 50' >> $swap_sysctl_file
     fi
 
     # apply changes
-    service procps restart
+    # as per /etc/sysctl.d/README.sysctl
+    if ! service procps force-reload ; then
+        echo Error reloading procps!
+    fi
     # alternative way
     # sysctl -p $swap_sysctl_file
-    if [ $? != 0 ]; then
-        echo Error restarting procps!
-    fi
 
-    echo -----------------------------------------------------------------------------
-    echo ... done setting up swap!
+    # echo -----------------------------------------------------------------------------
+    echo done!
 fi
 
 # TODO: Setup alert if swap is used
 # Not necessary when we use something like DO's built-in monitoring that can alert of memory goes beyond a limit.
+
