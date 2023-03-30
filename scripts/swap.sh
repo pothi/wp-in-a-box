@@ -13,35 +13,45 @@ version=2.0
 
 # what's done here
 
+
+is_user_root() { [ "${EUID:-$(id -u)}" -eq 0 ]; }
+[ is_user_root ] || { echo 'You must be root or have sudo privilege to run this script. Exiting now.'; exit 1; }
+
+[ -f "$HOME/.envrc" ] && source ~/.envrc
+
 # variables
-
-
-###   variables   ###
 swap_file='/swapfile'
 swap_size=${SWAP_SIZE:-'1G'}
 swap_sysctl_file='/etc/sysctl.d/60-swap-local.conf'
 sleep_time_between_tasks=2
 
+# take a backup before making changes
+[ -d ~/backups ] || mkdir ~/backups
+[ -f "$HOME/backups/fstab-$(date +%F)" ] || cp /etc/fstab ~/backups/fstab-"$(date +%F)"
+
+# helper function to exit upon non-zero exit code of a command
+# usage some_command; check_result $? 'some_command failed'
 if ! $(type 'check_result' 2>/dev/null | grep -q 'function') ; then
     check_result() {
-        if [ $1 -ne 0 ]; then
+        if [ "$1" -ne 0 ]; then
             echo -e "\nError: $2. Exiting!\n"
-            exit $1
+            exit "$1"
         fi
     }
 fi
 
-function create_swap {
+create_swap() {
     return
 }
 
-function remove_swap {
+remove_swap() {
     swapoff "$swap_file"
+
     # Remove swap file
     [ -f "$swap_file" ] && rm "$swap_file"
 
     # Remove fstab entry
-    if $(grep -q swap /etc/fstab >/dev/null) ; then
+    if grep -q swap /etc/fstab >/dev/null ; then
         sed -i '/swap/d' /etc/fstab
     fi
 
@@ -56,40 +66,42 @@ parse_args() {
     key="$1"
 
     case $key in
-    -i | --install)
-      INSTALL_DIR="$2"
-      shift
-      ;;
+    -s | --size)
+        swap_size=$2
+        shift
+        shift
+        ;;
     --force-install | --force-no-brew)
-      FORCE_INSTALL="true"
-      shift
-      ;;
+        shift
+        ;;
     -r | --remove)
-      remove_swap
-      exit
-      ;;
+        remove_swap
+        exit
+        ;;
     -v | --version)
-      echo "Version: $version"
-      exit 0
-      ;;
+        echo "Version: $version"
+        exit
+        ;;
     *)
-      echo "Unrecognized argument $key"
-      exit 1
-      ;;
+        echo "Unrecognized argument $key"
+        exit 1
+        ;;
     esac
   done
 }
 
+parse_args "$@"
+
 # create swap if unavailable
 is_swap_enabled=$(free | grep -iw swap | awk {'print $2'}) # 0 means no swap
-if [ $is_swap_enabled -eq 0 ]; then
+if [ "$is_swap_enabled" -eq 0 ]; then
     printf '%-72s' 'Creating and setting up Swap...'
     # echo -----------------------------------------------------------------------------
 
     # check for swap file
     if [ ! -f $swap_file ]; then
         # on a desktop, we may use fdisk to create a partition to be used as swap
-        fallocate -l $swap_size $swap_file >/dev/null
+        fallocate -l "$swap_size" "$swap_file" >/dev/null
         check_result $? "Error: fallocate failed!"
     fi
 
@@ -112,15 +124,15 @@ if [ $is_swap_enabled -eq 0 ]; then
     # swapon --show
     # swapon -s
 
+    # to make the above changes permanent
     # enable swap upon boot
-    if ! $(grep -qw swap /etc/fstab) ; then
+    if ! grep -qw swap /etc/fstab ; then
         echo "$swap_file none swap sw 0 0" >> /etc/fstab
     fi
 
     # fine-tune swap
     if [ ! -f $swap_sysctl_file ]; then
-        echo '# Ref: https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-22-04' > $swap_sysctl_file
-        echo >> $swap_sysctl_file
+        echo -e "# Ref: https://www.digitalocean.com/community/tutorials/how-to-add-swap-space-on-ubuntu-22-04\n" > $swap_sysctl_file
         echo 'vm.swappiness=10' >> $swap_sysctl_file
         echo 'vm.vfs_cache_pressure = 50' >> $swap_sysctl_file
     fi
