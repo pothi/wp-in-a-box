@@ -157,6 +157,13 @@ printf '%-72s' "Enabling Password Authentication for WP user..."
     check_result $? 'Error restarting SSH daemon while enabling passwd auth.'
 echo done.
 fi
+if [ ! -f rsa.conf ]; then
+printf '%-72s' "Enabling RSA SSH support"
+    echo "PubkeyAcceptedAlgorithms +ssh-rsa" > rsa.conf
+    /usr/sbin/sshd -t && systemctl restart sshd
+    check_result $? 'Failed to incorporate /etc/ssh/sshd_config.d/rsa.conf'
+echo done.
+fi
 cd - 1> /dev/null
 
 echo ---------------------------------- LEMP -------------------------------------
