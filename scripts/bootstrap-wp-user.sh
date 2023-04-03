@@ -33,11 +33,11 @@ echo '... done'
 . ~/.config/common-aliases-envvars
 
 if ! grep -q common-aliases-envvars ~/.bashrc ; then
-    echo '[[ -f ~/.config/common-aliases-envvars ]] && source ~/.config/common-aliases-envvars' >> ~/.bashrc
+    echo '[ -f ~/.config/common-aliases-envvars ] && source ~/.config/common-aliases-envvars' >> ~/.bashrc
 fi
 
 if ! grep -qF custom-aliases-envvars-custom ~/.bashrc ; then
-    echo "[[ -f ~/.config/custom-aliases-envvars-custom ]] && . ~/.config/custom-aliases-envvars-custom" >> ~/.bashrc
+    echo "[ -f ~/.config/custom-aliases-envvars-custom ] && . ~/.config/custom-aliases-envvars-custom" >> ~/.bashrc
 fi
 
 # Load ~/.envrc file if exists

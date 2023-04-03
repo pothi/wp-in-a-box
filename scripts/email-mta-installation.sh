@@ -33,6 +33,10 @@ echo 'Installing / setting up MTA...'
 # To have mail.log, rsyslog is required.
 apt-get install -qq $mta rsyslog libsasl2-modules mailutils pflogsumm &> /dev/null
 
+# take a backup before making changes
+[ -d ~/backups ] || mkdir ~/backups
+[ -f "$HOME/backups/postfix-default-$(date +%F)" ] || cp -a /etc/postfix ~/backups/postfix-default-"$(date +%F)"
+
 # setup mta to use only ipv4 to send emails
 #- why:
 #- https://support.google.com/mail/?p=IPv6AuthError
@@ -68,6 +72,8 @@ postconf -e 'inet_interfaces = 127.0.0.1'
 # look for spam
 # postconf -e 'header_checks = regexp:/etc/postfix/header_checks'
 # postconf -e 'smtp_header_checks = regexp:/etc/postfix/header_checks'
+
+[ -f "$HOME/backups/postfix-$(date +%F)" ] || cp -a /etc/postfix ~/backups/postfix-"$(date +%F)"
 
 /usr/sbin/postfix check && systemctl restart $mta
 
