@@ -116,18 +116,18 @@ if [ "$wp_user" == "" ]; then
 printf '%-72s' "Creating a WP User..."
     wp_user="wp_$(openssl rand -base64 32 | tr -d /=+ | cut -c -10)"
     echo "export WP_USERNAME=$wp_user" >> /root/.envrc
-
-    # home_basename=$(echo $wp_user | awk -F _ '{print $1}')
-    # [ -z $home_basename ] && home_basename=web
-    home_basename=web
-
-    useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $wp_user
-    chmod 755 /home/$home_basename
-
-    groupadd ${home_basename}
-    gpasswd -a $wp_user ${home_basename} > /dev/null
 echo done.
 fi
+
+# home_basename=$(echo $wp_user | awk -F _ '{print $1}')
+# [ -z $home_basename ] && home_basename=web
+home_basename=web
+
+useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $wp_user
+chmod 755 /home/$home_basename
+
+groupadd ${home_basename}
+gpasswd -a $wp_user ${home_basename} > /dev/null
 
 # Create password for WP User
 wp_pass=${WP_PASSWORD:-""}
@@ -135,10 +135,10 @@ if [ "$wp_pass" == "" ]; then
 printf '%-72s' "Creating password for WP user..."
     wp_pass=$(openssl rand -base64 32 | tr -d /=+ | cut -c -20)
     echo "export WP_PASSWORD=$wp_pass" >> /root/.envrc
-
-    echo "$wp_user:$wp_pass" | chpasswd
 echo done.
 fi
+
+echo "$wp_user:$wp_pass" | chpasswd
 
 # provide sudo access without passwd to WP User
 if [ ! -f /etc/sudoers.d/$wp_user ]; then
@@ -183,19 +183,24 @@ else
 fi
 
 # Create a MySQL admin user
-if [ "$MYSQL_ADMIN_USER" == "" ]; then
+sql_user=${MYSQL_ADMIN_USER:-""}
+if [ "$sql_user" == "" ]; then
 printf '%-72s' "Creating a MySQL Admin User..."
     # create MYSQL username automatically
     # unique username / password generator: https://unix.stackexchange.com/q/230673/20241
-    MYSQL_ADMIN_USER="mysql_$(openssl rand -base64 32 | tr -d /=+ | cut -c -10)"
-    MYSQL_ADMIN_PASS=$(openssl rand -base64 32 | tr -d /=+ | cut -c -20)
-    echo "export MYSQL_ADMIN_USER=$MYSQL_ADMIN_USER" >> /root/.envrc
-    echo "export MYSQL_ADMIN_PASS=$MYSQL_ADMIN_PASS" >> /root/.envrc
-    mysql -e "CREATE USER ${MYSQL_ADMIN_USER} IDENTIFIED BY '${MYSQL_ADMIN_PASS}';"
-    mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${MYSQL_ADMIN_USER} WITH GRANT OPTION"
+    sql_user="mysql_$(openssl rand -base64 32 | tr -d /=+ | cut -c -10)"
+    echo "export MYSQL_ADMIN_USER=$sql_user" >> /root/.envrc
 echo done.
 fi
 
+sql_pass=${MYSQL_ADMIN_PASS:-""}
+if [ "$sql_pass" == "" ]; then
+    sql_pass=$(openssl rand -base64 32 | tr -d /=+ | cut -c -20)
+    echo "export MYSQL_ADMIN_PASS=$sql_pass" >> /root/.envrc
+fi
+
+mysql -e "CREATE USER IF NOT EXISTS ${sql_user} IDENTIFIED BY '${sql_pass}';"
+mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${sql_user} WITH GRANT OPTION"
 
 echo -------------------------------- PHP ----------------------------------------
 # PHP is required by Nginx to configure the defaults. So, install it before Nginx
