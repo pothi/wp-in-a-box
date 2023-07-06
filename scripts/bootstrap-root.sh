@@ -38,6 +38,8 @@ fi # test if file exists
     cp -a ~/git/snippets/vim/* ~/.vim/
 }
 
+###------------------------------ ps_mem.py ------------------------------###
+apt-get -qq install python-is-python3 > /dev/null
 [ -d ~/.local/bin ] || mkdir -p ~/.local/bin
 ps_mem_file=~/.local/bin/ps_mem.py
 if [ ! -f "$ps_mem_file" ]; then
