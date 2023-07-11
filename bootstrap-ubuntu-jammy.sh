@@ -85,17 +85,19 @@ elif [ -d "$APT_LISTS_PATH" ]; then
     fi
 fi
 
-# echo -------------------------- Prerequisites ------------------------------------
+# -------------------------- Prerequisites ------------------------------------
+
 # apt-utils to fix an annoying non-critical bug on minimal images. Ref: https://github.com/tianon/docker-brew-ubuntu-core/issues/59
 apt-get -qq install apt-utils &> /dev/null
 
 # powermgmt-base to fix a warning in unattended-upgrade.log
 required_packages="fail2ban \
+    git \
     powermgmt-base"
 
 for package in $required_packages
 do
-    if dpkg-query -W -f='${status}' $package 2>/dev/null | grep -q "ok installed"
+    if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
     then
         # echo "'$package' is already installed"
         :
@@ -167,7 +169,8 @@ fi
 cd - 1> /dev/null
 
 echo ---------------------------------- LEMP -------------------------------------
-# echo ------------------------------- MySQL ---------------------------------------
+
+# ------------------------------- MySQL ---------------------------------------
 # MySQL is required by PHP. So, install it before PHP
 
 package=default-mysql-server
@@ -203,7 +206,8 @@ mysql -e "CREATE USER IF NOT EXISTS ${sql_user} IDENTIFIED BY '${sql_pass}';"
 mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${sql_user} WITH GRANT OPTION"
 
 echo -------------------------------- PHP ----------------------------------------
-# PHP is required by Nginx to configure the defaults. So, install it before Nginx
+
+# PHP is required by Nginx to configure the defaults. So, install it along with Nginx
 
 lemp_packages="nginx-extras \
     php${php_ver}-fpm \
