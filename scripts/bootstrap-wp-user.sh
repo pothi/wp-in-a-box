@@ -10,6 +10,16 @@
 #   - Install AWS CLI if needed.
 #   - Install GCloud utils if needed.
 
+# helper function to exit upon non-zero exit code of a command
+# usage some_command; check_result $? 'some_command failed'
+if ! $(type 'check_result' 2>/dev/null | grep -q 'function') ; then
+    check_result() {
+        if [ "$1" -ne 0 ]; then
+            echo -e "\nError: $2. Exiting!\n"
+            exit "$1"
+        fi
+    }
+fi
 
 #-------------------- Download backup scripts --------------------#
 [ ! -d ~/scripts ] && mkdir ~/scripts
@@ -18,12 +28,15 @@ echo 'Downloading backup scripts...'
 FULL_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/full-backup.sh
 DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/db-backup.sh
 FILES_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/files-backup-without-uploads.sh
-cd ~/scripts
-[ ! -s full-backup.sh ] && curl -LSsO $FULL_BACKUP_URL
-[ ! -s db-backup.sh ] && curl -LSsO $DB_BACKUP_URL
-[ ! -s files-backup-without-uploads.sh ] && curl -LSsO $FILES_BACKUP_URL
-chmod +x *.sh
-cd - 1>/dev/null
+# cd ~/scripts
+# [ ! -s full-backup.sh ] && curl -LSsO $FULL_BACKUP_URL
+# [ ! -s db-backup.sh ] && curl -LSsO $DB_BACKUP_URL
+# [ ! -s files-backup-without-uploads.sh ] && curl -LSsO $FILES_BACKUP_URL
+[ ! -s full-backup.sh ] && wget -P ~/scripts $FULL_BACKUP_URL
+[ ! -s db-backup.sh ] && wget -P ~/scripts $DB_BACKUP_URL
+[ ! -s files-backup-without-uploads.sh ] && wget -P ~/scripts $FILES_BACKUP_URL
+chmod +x ~/scripts/*.sh
+# cd - >/dev/null
 echo '... done'
 
 #-------------------- Configure common-aliases-envvars --------------------#
