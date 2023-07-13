@@ -32,9 +32,9 @@ FILES_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master
 # [ ! -s full-backup.sh ] && curl -LSsO $FULL_BACKUP_URL
 # [ ! -s db-backup.sh ] && curl -LSsO $DB_BACKUP_URL
 # [ ! -s files-backup-without-uploads.sh ] && curl -LSsO $FILES_BACKUP_URL
-[ ! -s full-backup.sh ] && wget -P ~/scripts $FULL_BACKUP_URL
-[ ! -s db-backup.sh ] && wget -P ~/scripts $DB_BACKUP_URL
-[ ! -s files-backup-without-uploads.sh ] && wget -P ~/scripts $FILES_BACKUP_URL
+[ ! -s full-backup.sh ] && wget -q -P ~/scripts $FULL_BACKUP_URL
+[ ! -s db-backup.sh ] && wget -q -P ~/scripts $DB_BACKUP_URL
+[ ! -s files-backup-without-uploads.sh ] && wget -q -P ~/scripts $FILES_BACKUP_URL
 chmod +x ~/scripts/*.sh
 # cd - >/dev/null
 echo '... done'
