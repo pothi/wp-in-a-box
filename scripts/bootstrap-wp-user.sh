@@ -52,6 +52,20 @@ fi
     cp -a ~/git/snippets/vim/* ~/.vim/
 }
 
+#-------------------- Install wp-cli --------------------#
+if ! command -v wp >/dev/null; then
+    wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/wpcli-installation.sh
+    bash wpcli-installation.sh && rm wpcli-installation.sh
+    check_result $? "Could not install wp-cli."
+fi
+
+#-------------------- Install aws-cli --------------------#
+if ! command -v aws >/dev/null; then
+    wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/awscli-install-update-script.sh
+    bash awscli-install-update-script.sh && rm awscli-install-update-script.sh
+    check_result $? "Could not install aws-cli."
+fi
+
 #-------------------- Unused --------------------#
 function configure_disk_usage_alert () {
     [ ! -f /home/${home_basename}/scripts/disk-usage-alert.sh ] && wget -O /home/${home_basename}/scripts/disk-usage-alert.sh https://github.com/pothi/snippets/raw/master/disk-usage-alert.sh
