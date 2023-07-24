@@ -15,6 +15,7 @@ Ubuntu
 
 Debian
 
++ [Debian Bookworm (12.x)](https://github.com/pothi/wp-in-a-box/blob/main/bookworm-deb-boot.sh)
 + [Debian Bullseye (11.x)](https://github.com/pothi/wp-in-a-box/blob/main/bootstrap-debian-bullseye.sh)
 + [Debian Buster (10.x)](https://github.com/pothi/wp-in-a-box/blob/main/bootstrap-debian-buster.sh)
 + Debian Stretch (9.x)

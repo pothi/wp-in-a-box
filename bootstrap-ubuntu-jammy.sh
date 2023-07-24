@@ -3,7 +3,7 @@
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
 
-# Version: 3.0
+# Version: 4.0
 
 # this is the PHP version that comes by default with the current Ubuntu LTS
 php_ver=8.1
@@ -17,15 +17,27 @@ is_user_root () { [ "${EUID:-$(id -u)}" -eq 0 ]; }
 export PATH=~/bin:~/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
 export DEBIAN_FRONTEND=noninteractive
 
+[ -d ~/backups ] || mkdir ~/backups
+[ -d ~/log ] || mkdir ~/log
+
+# logging everything
+log_file=${HOME}/log/wp-in-a-box.log
+exec > >(tee -a ${log_file} )
+exec 2> >(tee -a ${log_file} >&2)
+
 echo "Script started on (date & time): $(date +%c)"
 
-# Function to exit with an error message
-check_result() {
-    if [ $? -ne 0 ]; then
-        echo; echo "Error: $1"; echo
-        exit 1
-    fi
-}
+#--- Useful functions ---#
+# helper function to exit upon non-zero exit code of a command
+# usage some_command; check_result $? 'some_command failed'
+if ! $(type 'check_result' 2>/dev/null | grep -q 'function') ; then
+    check_result() {
+        if [ "$1" -ne 0 ]; then
+            echo -e "\nError: $2. Exiting!\n"
+            exit "$1"
+        fi
+    }
+fi
 
 # function to configure timezone to UTC
 set_utc_timezone() {
@@ -43,6 +55,7 @@ set_utc_timezone() {
         echo done.
     fi
 }
+#--- end of Useful functions ---#
 
 # if ~/.envrc doesn't exist, create it
 if [ ! -f "$HOME/.envrc" ]; then
@@ -51,6 +64,20 @@ if [ ! -f "$HOME/.envrc" ]; then
 # if exists, source it to apply the env variables
 else
     . ~/.envrc
+fi
+
+echo "export PHP_VERSION=$php_ver" >> /root/.envrc
+
+#--- swap ---#
+if free | awk '/^Swap:/ {exit !$2}'; then
+    # echo 'Swap already exists!'
+    :
+else
+    printf '%-72s' "Creating swap..."
+    wget -O /tmp/swap.sh -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/swap.sh
+    bash /tmp/swap.sh >/dev/null
+    rm /tmp/swap.sh
+    echo done.
 fi
 
 #--- apt tweaks ---#
@@ -91,9 +118,15 @@ fi
 apt-get -qq install apt-utils &> /dev/null
 
 # powermgmt-base to fix a warning in unattended-upgrade.log
-required_packages="fail2ban \
+required_packages="curl \
+    dnsutils \
+    fail2ban \
     git \
-    powermgmt-base"
+    powermgmt-base \
+    software-properties-common \
+    sudo \
+    unzip \
+    wget"
 
 for package in $required_packages
 do
@@ -104,13 +137,21 @@ do
     else
         printf '%-72s' "Installing '${package}' ..."
         apt-get -qq install $package > /dev/null
-        check_result "Error: couldn't install $package."
+        check_result $? "Couldn't install $package."
         echo done.
     fi
 done
 
+# configure some defaults for git and etckeeper
+git config --global user.name "root"
+git config --global user.email "root@localhost"
+git config --global init.defaultBranch main
+
 #--- setup timezone ---#
 set_utc_timezone
+
+# initial backup of /etc
+[ -d ~/backup/etc-init ] || cp -a /etc ~/backups/etc-init
 
 # Create a WordPress user with /home/web as $HOME
 wp_user=${WP_USERNAME:-""}
@@ -181,9 +222,12 @@ then
 else
     printf '%-72s' "Installing '${package}' ..."
     apt-get -qq install $package > /dev/null
-    check_result "Error: couldn't install $package."
+    check_result $? "Couldn't install $package."
     echo done.
 fi
+
+# take a backup of default MySQL configurations
+[ -d ~/backup/etc-mysql-default ] || cp -a /etc ~/backups/etc-mysql-default
 
 # Create a MySQL admin user
 sql_user=${MYSQL_ADMIN_USER:-""}
@@ -205,79 +249,44 @@ fi
 mysql -e "CREATE USER IF NOT EXISTS ${sql_user} IDENTIFIED BY '${sql_pass}';"
 mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${sql_user} WITH GRANT OPTION"
 
-echo -------------------------------- PHP ----------------------------------------
+# echo -------------------------------- PHP ----------------------------------------
 
-# PHP is required by Nginx to configure the defaults. So, install it along with Nginx
+# PHP is required by Nginx to configure the defaults. So, install it before Nginx
 
-lemp_packages="nginx-extras \
-    php${php_ver}-fpm \
-    php${php_ver}-mysql \
-    php${php_ver}-gd \
-    php${php_ver}-cli \
-    php${php_ver}-xml \
-    php${php_ver}-mbstring \
-    php${php_ver}-soap \
-    php${php_ver}-curl \
-    php${php_ver}-zip \
-    php${php_ver}-bcmath \
-    php${php_ver}-intl \
-    php${php_ver}-imagick"
-
-for package in $lemp_packages
-do
-    if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
-    then
-        # echo "'$package' is already installed"
-        :
-    else
-        # Remove ${php_ver} from package name to find if php-package is installed.
-        php_package=$(printf '%s' "$package" | sed 's/[.0-9]*//g')
-        if dpkg-query -W -f='${Status}' $php_package 2>/dev/null | grep -q "ok installed"
-        then
-            echo "'$package' is already installed as $php_package"
-            :
-        else
-            printf '%-72s' "Installing '${package}' ..."
-            apt-get -qq install $package > /dev/null
-            check_result $? "Error installing ${package}."
-            echo done.
-        fi
-    fi
-done
-
-# Download WordPress Nginx repo
-[ ! -d ~/wp-nginx ] && {
-    mkdir ~/wp-nginx
-    wget -q -O- https://github.com/pothi/wordpress-nginx/tarball/main | tar -xz -C ~/wp-nginx --strip-components=1
-    cp -a ~/wp-nginx/{conf.d,errors,globals,sites-available} /etc/nginx/
-    [ ! -d /etc/nginx/sites-enabled ] && mkdir /etc/nginx/sites-enabled
-    ln -fs /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
-}
-
-# Remove the default conf file supplied by OS
-[ -f /etc/nginx/sites-enabled/default ] && rm /etc/nginx/sites-enabled/default
-
-# Remove the default SSL conf to support latest SSL conf.
-# It should hide two lines starting with ssl_
-# ^ starting with...
-# \s* matches any number of space or tab elements before ssl_
-# when run more than once, it just doesn't do anything as the start of the line is '#' after the first execution.
-sed -i 's/^\s*ssl_/# &/' /etc/nginx/nginx.conf 
-
-# create dhparam
-if [ ! -f /etc/nginx/dhparam.pem ]; then
-    openssl dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096 &> /dev/null
-    sed -i 's:^# \(ssl_dhparam /etc/nginx/dhparam.pem;\)$:\1:' /etc/nginx/conf.d/ssl-common.conf
+package=php${php_ver}-fpm
+if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
+then
+    # echo "'$package' is already installed."
+    :
+else
+    printf '%-72s' "Installing php${php_ver} ..."
+    apt-get -qq install \
+        php${php_ver}-fpm \
+        php${php_ver}-mysql \
+        php${php_ver}-gd \
+        php${php_ver}-cli \
+        php${php_ver}-xml \
+        php${php_ver}-mbstring \
+        php${php_ver}-soap \
+        php${php_ver}-curl \
+        php${php_ver}-zip \
+        php${php_ver}-bcmath \
+        php${php_ver}-intl \
+        php${php_ver}-imagick \
+        > /dev/null
+    check_result $? "Couldn't install PHP."
+    echo done.
 fi
 
-echo -----------------------------------------------------------------------------
-echo "Please check ~/.envrc for all the credentials."
-echo -----------------------------------------------------------------------------
+echo -------------------------------- Configuring PHP ----------------------------------------
 
-# . $local_wp_in_a_box_repo/scripts/php-installation.sh
+# take a backup of default PHP configurations
+[ -d ~/backup/etc-php-default ] || cp -a /etc ~/backups/etc-php-default
+
 php_user=$wp_user
 fpm_ini_file=/etc/php/${php_ver}/fpm/php.ini
 pool_file=/etc/php/${php_ver}/fpm/pool.d/${php_user}.conf
+default_pool_file=/etc/php/${php_ver}/fpm/pool.d/www.conf
 PM_METHOD=ondemand
 
 user_mem_limit=${PHP_MEM_LIMIT:-""}
@@ -297,18 +306,9 @@ if [ -z "$max_children" ]; then
     elif (($sys_memory <= 10600)) ; then
         PM_METHOD=static
         max_children=20
-    elif (($sys_memory <= 20600)) ; then
-        PM_METHOD=static
-        max_children=40
-    elif (($sys_memory <= 30600)) ; then
-        PM_METHOD=static
-        max_children=60
-    elif (($sys_memory <= 40600)) ; then
-        PM_METHOD=static
-        max_children=80
     else
         PM_METHOD=static
-        max_children=100
+        max_children=50
     fi
 fi
 
@@ -338,18 +338,11 @@ export PHP_EXEC_FUNCTIONS='escapeshellarg,escapeshellcmd,exec,passthru,proc_clos
 sed -i "/disable_functions/c disable_functions = ${PHP_PCNTL_FUNCTIONS},${PHP_EXEC_FUNCTIONS}" $fpm_ini_file
 
 [ ! -f $pool_file ] && cp /etc/php/${php_ver}/fpm/pool.d/www.conf $pool_file
+[ -f /etc/php/${php_ver}/fpm/pool.d/www.conf ] && mv /etc/php/${php_ver}/fpm/pool.d/www.conf ~/backups/php-www.conf-$(date +%F)
 sed -i -e 's/^\[www\]$/['$php_user']/' $pool_file
 sed -i -e 's/www-data/'$php_user'/' $pool_file
 sed -i -e '/^;listen.\(owner\|group\|mode\)/ s/^;//' $pool_file
 sed -i -e '/^listen.mode = / s/[0-9]\{4\}/0666/' $pool_file
-
-php_ver_short=$(echo $php_ver | sed 's/\.//')
-socket=/run/php/fpm-${php_ver_short}-${php_user}.sock
-sed -i "/^listen =/ s:=.*:= $socket:" $pool_file
-# [ -f /etc/nginx/conf.d/lb.conf ] && sed -i "s:/var/lock/php-fpm.*;:$socket;:" /etc/nginx/conf.d/lb.conf
-[ -f /etc/nginx/conf.d/lb.conf ] && rm /etc/nginx/conf.d/lb.conf
-[ ! -f /etc/nginx/conf.d/fpm.conf ] && echo "upstream fpm { server unix:$socket; }" > /etc/nginx/conf.d/fpm.conf
-[ ! -f /etc/nginx/conf.d/fpm${php_ver_short}.conf ] && echo "upstream fpm${php_ver_short} { server unix:$socket; }" > /etc/nginx/conf.d/fpm${php_ver_short}.conf
 
 sed -i -e 's/^pm = .*/pm = '$PM_METHOD'/' $pool_file
 sed -i '/^pm.max_children/ s/=.*/= '$max_children'/' $pool_file
@@ -392,6 +385,57 @@ printf '%-72s' "Restarting PHP-FPM..."
 /usr/sbin/php-fpm${php_ver} -t 2>/dev/null && systemctl restart php${php_ver}-fpm
 echo done.
 
+# echo -------------------------------- Nginx ----------------------------------------
+
+package=nginx-extras
+if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
+then
+    # echo "'$package' is already installed."
+    :
+else
+    printf '%-72s' "Installing Nginx ..."
+    apt-get -qq install $package > /dev/null
+    check_result $? "Couldn't install Nginx."
+    echo done.
+fi
+
+# take a backup of default nginx configurations
+[ -d ~/backup/etc-nginx-default ] || cp -a /etc ~/backups/etc-nginx-default
+
+# Download WordPress Nginx repo
+[ ! -d ~/wp-nginx ] && {
+    mkdir ~/wp-nginx
+    wget -q -O- https://github.com/pothi/wordpress-nginx/tarball/main | tar -xz -C ~/wp-nginx --strip-components=1
+    cp -a ~/wp-nginx/{conf.d,errors,globals,sites-available} /etc/nginx/
+    [ ! -d /etc/nginx/sites-enabled ] && mkdir /etc/nginx/sites-enabled
+    ln -fs /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
+}
+
+# Remove the default conf file supplied by OS
+[ -f /etc/nginx/sites-enabled/default ] && rm /etc/nginx/sites-enabled/default
+
+# Remove the default SSL conf to support latest SSL conf.
+# It should hide two lines starting with ssl_
+# ^ starting with...
+# \s* matches any number of space or tab elements before ssl_
+# when run more than once, it just doesn't do anything as the start of the line is '#' after the first execution.
+sed -i 's/^\s*ssl_/# &/' /etc/nginx/nginx.conf 
+
+# create dhparam
+if [ ! -f /etc/nginx/dhparam.pem ]; then
+    openssl dhparam -dsaparam -out /etc/nginx/dhparam.pem 4096 &> /dev/null
+    sed -i 's:^# \(ssl_dhparam /etc/nginx/dhparam.pem;\)$:\1:' /etc/nginx/conf.d/ssl-common.conf
+fi
+
+# if php_ver is 6.0 then php_ver_short is 60
+php_ver_short=$(echo $php_ver | sed 's/\.//')
+socket=/run/php/fpm-${php_ver_short}-${php_user}.sock
+sed -i "/^listen =/ s:=.*:= $socket:" $pool_file
+# [ -f /etc/nginx/conf.d/lb.conf ] && sed -i "s:/var/lock/php-fpm.*;:$socket;:" /etc/nginx/conf.d/lb.conf
+[ -f /etc/nginx/conf.d/lb.conf ] && rm /etc/nginx/conf.d/lb.conf
+[ ! -f /etc/nginx/conf.d/fpm.conf ] && echo "upstream fpm { server unix:$socket; }" > /etc/nginx/conf.d/fpm.conf
+[ ! -f /etc/nginx/conf.d/fpm${php_ver_short}.conf ] && echo "upstream fpm${php_ver_short} { server unix:$socket; }" > /etc/nginx/conf.d/fpm${php_ver_short}.conf
+
 printf '%-72s' "Restarting Nginx..."
 /usr/sbin/nginx -t 2>/dev/null && systemctl restart nginx
 echo done.
@@ -418,9 +462,50 @@ restart_script=/etc/letsencrypt/renewal-hooks/deploy/nginx-restart.sh
 restart_script_url=https://github.com/pothi/snippets/raw/main/ssl/nginx-restart.sh
 [ ! -f "$restart_script" ] && {
     wget -q -O $restart_script $restart_script_url
-    check_result $? "Error downloading Nginx Restart Script for Certbot renewals."
+    check_result $? "Could not download Nginx Restart Script for Certbot renewals."
     chmod +x $restart_script
 }
+
+[ -d ~/backup/etc-certbot-default ] || cp -a /etc ~/backups/etc-certbot-default
+
+#--- Additional Steps ---#
+# ~/.ssh tweaks
+if [ ! -d /home/web/.ssh ]; then
+    mkdir /home/web/.ssh
+    chmod 700 /home/web/.ssh
+    chown ${WP_USERNAME}:${WP_USERNAME} /home/web/.ssh
+fi
+cp -a ~/.ssh/authorized_keys /home/web/.ssh
+chown ${WP_USERNAME}:${WP_USERNAME} /home/web/.ssh/*
+
+# bootstrap root user
+wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/bootstrap-root.sh
+bash bootstrap-root.sh && rm bootstrap-root.sh
+check_result $? "Could not bootstrap root."
+
+#-------------------- Install mta (postfix) --------------------#
+if ! command -v mail >/dev/null; then
+    printf '%-72s' "Installing MTA (postfix)..."
+    [ -f email-mta-installation.sh ] && rm email-mta-installation.sh
+    wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/email-mta-installation.sh
+    bash email-mta-installation.sh > /dev/null
+    check_result $? "Could not install MTA(postfix)."
+    [ -f email-mta-installation.sh ] && rm email-mta-installation.sh
+    echo done.
+fi
+
+# bootstrap unattended upgrades and reboots
+wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/unattended-upgrades.sh
+bash unattended-upgrades.sh && rm unattended-upgrades.sh
+check_result $? "Could not bootstrap Unattended Upgrades script."
+wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/unattended-reboots.sh
+bash unattended-reboots.sh && rm unattended-reboots.sh
+check_result $? "Could not bootstrap Unattended Reboot script."
+
+printf '%-72s' "Running apt upgrade... it may take sometime..."
+apt-get -qq upgrade > /dev/null
+check_result $? "Could not run 'apt upgrade'."
+echo done.
 
 echo All done.
 
