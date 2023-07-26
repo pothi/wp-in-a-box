@@ -10,6 +10,9 @@
 #   - Install AWS CLI if needed.
 #   - Install GCloud utils if needed.
 
+# To debug, use any value for "debug", otherwise please leave it empty
+debug=
+
 # helper function to exit upon non-zero exit code of a command
 # usage some_command; check_result $? 'some_command failed'
 if ! $(type 'check_result' 2>/dev/null | grep -q 'function') ; then
@@ -20,6 +23,8 @@ if ! $(type 'check_result' 2>/dev/null | grep -q 'function') ; then
         fi
     }
 fi
+
+[ "$debug" ] && set -x
 
 #-------------------- Download backup scripts --------------------#
 [ ! -d ~/scripts ] && mkdir ~/scripts
@@ -63,6 +68,11 @@ fi
 [ ! -d ~/git/snippets ] && {
     git clone -q --depth 1 https://github.com/pothi/snippets ~/git/snippets
     cp -a ~/git/snippets/vim/* ~/.vim/
+    # run the following only when not debugging!
+    if [ ! "$debug" ]; then
+        rm -rf ~/git/snippets
+        rmdir ~/git &> /dev/null
+    fi
 }
 
 #-------------------- Install wp-cli --------------------#
@@ -77,6 +87,17 @@ if ! command -v aws >/dev/null; then
     wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/awscli-install-update-script.sh
     bash awscli-install-update-script.sh && rm awscli-install-update-script.sh
     check_result $? "Could not install aws-cli."
+fi
+
+#-------------------- Create SSH keys --------------------#
+< /dev/zero ssh-keygen -q -N "" -t ed25519
+
+#-------------------- Bootstrap timers to alert upon auto-reboot --------------------#
+# TODO: Might not work if logged-in through root
+if ! command -v aws >/dev/null; then
+    wget -q https://github.com/pothi/snippets/blob/main/linux/alert-auto-reboot/bootstrap.sh
+    bash bootstrap.sh && rm bootstrap.sh
+    check_result $? "Could not bootstrap timers to alert upon auto-reboot."
 fi
 
 #-------------------- Unused --------------------#
