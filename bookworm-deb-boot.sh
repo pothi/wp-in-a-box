@@ -112,16 +112,19 @@ elif [ -d "$APT_LISTS_PATH" ]; then
     fi
 fi
 
-# ref: https://www.server-world.info/en/note?os=Debian_10&p=locale
+# ref: https://askubuntu.com/q/114759/65814 (use any one solution - the accepted answer and the other)
+# ref: https://www.server-world.info/en/note?os=Debian_10&p=locale - once you installed locales-all, you can not use the accepted solution from askubuntu.
 lang=$LANG
 if [ "$lang" != "en_US.UTF-8" ]; then
-    if dpkg-query -W -f='${Status}' locales-all 2>/dev/null | grep -q "ok installed" ; then :
+    if dpkg-query -W -f='${Status}' locales 2>/dev/null | grep -q "ok installed" ; then :
     else
         printf '%-72s' "Installing locale..."
-        apt-get -qq install locales-all
+        apt-get -qq install locales
         echo done.
     fi
-    localectl set-locale LANG=en_US.UTF-8
+    # localectl set-locale LANG=en_US.UTF-8
+    locale-gen en_US.UTF-8 >/dev/null
+    update-locale LANG=en_US.UTF-8
     source /etc/default/locale
 fi
 
