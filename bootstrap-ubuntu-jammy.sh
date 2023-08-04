@@ -142,6 +142,9 @@ do
     fi
 done
 
+# fail2ban needs to be started manually after installation.
+systemctl start fail2ban
+
 # configure some defaults for git and etckeeper
 git config --global user.name "root"
 git config --global user.email "root@localhost"
