@@ -53,3 +53,6 @@ fi
 
 # TODO: Download tuning-primer, mysqlturner scripts
 # have a cron to periodically run the above scripts with logs saved every day.
+# tuning-primer is available in two places
+# 1. https://launchpad.net/mysql-tuning-primer/
+# 2. https://github.com/BMDan/tuning-primer.sh

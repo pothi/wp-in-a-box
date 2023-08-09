@@ -96,6 +96,7 @@ if [ ! -s /root/scripts/mysqltuner.pl ]; then
     echo done.
 fi
 
+# Try https://github.com/BMDan/tuning-primer.sh
 if [ ! -s /root/scripts/tuning-primer.sh ]; then
     printf '%-72s' "Downloading tuning-primer script..."
     script_url=https://launchpad.net/mysql-tuning-primer/trunk/1.6-r1/+download/tuning-primer.sh
