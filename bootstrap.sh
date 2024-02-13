@@ -35,13 +35,16 @@ exec 2> >(tee -a ${log_file} >&2)
 
 echo "Script started on (date & time): $(date +%c)"
 
-# Defining return code check function
-check_result() {
-    if [ $1 -ne 0 ]; then
-        echo "Error: $2"
-        exit $1
-    fi
-}
+# helper function to exit upon non-zero exit code of a command
+# usage some_command; check_result $? 'some_command failed'
+if ! $(type 'check_result' 2>/dev/null | grep -q 'function') ; then
+    check_result() {
+        if [ "$1" -ne 0 ]; then
+            echo -e "\nError: $2. Exiting!\n"
+            exit "$1"
+        fi
+    }
+fi
 
 if ! $(type 'codename' 2>/dev/null | grep -q 'function')
 then
@@ -181,13 +184,14 @@ case "$codename" in
         ;;
 esac
 
+# configure some defaults for git and etckeeper
+git config --global user.name "root"
+git config --global user.email "root@localhost"
+git config --global init.defaultBranch main
+
 printf '%-72s' "Installing etckeeper..."
     if ! dpkg-query -W -f='${Status}' etckeeper 2> /dev/null | grep -q "ok installed"; then apt-get -qq install etckeeper &> /dev/null; fi
     sed -i 's/^GIT_COMMIT_OPTIONS=""$/GIT_COMMIT_OPTIONS="--quiet"/' /etc/etckeeper/etckeeper.conf
-    cd /etc/
-    git config user.name "root"
-    git config user.email "root@localhost"
-    cd - &> /dev/null
 echo done.
 
 # logout and then login to see the changes
