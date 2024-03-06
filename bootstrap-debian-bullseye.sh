@@ -3,7 +3,7 @@
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
 
-# Version: 3.0
+# Version: 3.1
 
 # this is the PHP version that comes by default with the current Ubuntu LTS
 php_ver=7.4
@@ -19,13 +19,18 @@ export DEBIAN_FRONTEND=noninteractive
 
 echo "Script started on (date & time): $(date +%c)"
 
-# Function to exit with an error message
-check_result() {
-    if [ $? -ne 0 ]; then
-        echo; echo "Error: $1"; echo
-        exit 1
-    fi
-}
+[ -d ~/backups ] || mkdir ~/backups
+
+# helper function to exit upon non-zero exit code of a command
+# usage some_command; check_result $? 'some_command failed'
+if ! $(type 'check_result' 2>/dev/null | grep -q 'function') ; then
+    check_result() {
+        if [ "$1" -ne 0 ]; then
+            echo -e "\nError: $2. Exiting!\n"
+            exit "$1"
+        fi
+    }
+fi
 
 # function to configure timezone to UTC
 set_utc_timezone() {
@@ -51,6 +56,20 @@ if [ ! -f "$HOME/.envrc" ]; then
 # if exists, source it to apply the env variables
 else
     . ~/.envrc
+fi
+
+echo "export PHP_VERSION=$php_ver" >> /root/.envrc
+
+#--- swap ---#
+if free | awk '/^Swap:/ {exit !$2}'; then
+    # echo 'Swap already exists!'
+    :
+else
+    printf '%-72s' "Creating swap..."
+    wget -O /tmp/swap.sh -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/swap.sh
+    bash /tmp/swap.sh
+    rm /tmp/swap.sh
+    echo done.
 fi
 
 #--- apt tweaks ---#
@@ -123,7 +142,7 @@ do
     else
         printf '%-72s' "Installing '${package}' ..."
         apt-get -qq install $package > /dev/null
-        check_result "Error: couldn't install $package."
+        check_result $? "Error: couldn't install $package."
         echo done.
     fi
 done
@@ -193,7 +212,7 @@ then
 else
     printf '%-72s' "Installing '${package}' ..."
     apt-get -qq install $package > /dev/null
-    check_result "Error: couldn't install $package."
+    check_result $? "Error: couldn't install $package."
     echo done.
 fi
 
@@ -350,6 +369,7 @@ export PHP_EXEC_FUNCTIONS='escapeshellarg,escapeshellcmd,exec,passthru,proc_clos
 sed -i "/disable_functions/c disable_functions = ${PHP_PCNTL_FUNCTIONS},${PHP_EXEC_FUNCTIONS}" $fpm_ini_file
 
 [ ! -f $pool_file ] && cp /etc/php/${php_ver}/fpm/pool.d/www.conf $pool_file
+[ -f /etc/php/${php_ver}/fpm/pool.d/www.conf ] && mv /etc/php/${php_ver}/fpm/pool.d/www.conf ~/backups/php-www.conf-$(date +%F)
 sed -i -e 's/^\[www\]$/['$php_user']/' $pool_file
 sed -i -e 's/www-data/'$php_user'/' $pool_file
 sed -i -e '/^;listen.\(owner\|group\|mode\)/ s/^;//' $pool_file
