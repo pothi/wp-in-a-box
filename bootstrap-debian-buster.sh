@@ -13,13 +13,16 @@ is_user_root () { [ "${EUID:-$(id -u)}" -eq 0 ]; }
 
 echo "Script started on (date & time): $(date +%c)"
 
-# Defining return code check function
-check_result() {
-    if [ $? -ne 0 ]; then
-        echo; echo "Error: $1"; echo
-        exit 1
-    fi
-}
+# helper function to exit upon non-zero exit code of a command
+# usage some_command; check_result $? 'some_command failed'
+if ! $(type 'check_result' 2>/dev/null | grep -q 'function') ; then
+    check_result() {
+        if [ "$1" -ne 0 ]; then
+            echo -e "\nError: $2. Exiting!\n"
+            exit "$1"
+        fi
+    }
+fi
 
 [ ! -f "$HOME/.envrc" ] && touch ~/.envrc
 . ~/.envrc
@@ -82,7 +85,7 @@ do
         if [ "$?" -ne 0 ]; then
             apt-get update &> /dev/null
             apt-get -qq install $package &> /dev/null
-            check_result "Couldn't install $package."
+            check_result $? "Couldn't install $package."
         fi
 
         echo done.
