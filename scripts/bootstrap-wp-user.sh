@@ -47,11 +47,13 @@ echo '... done'
 #-------------------- Configure common-aliases-envvars --------------------#
 [ ! -d ~/.config ] && mkdir ~/.config
 
+echo >> ~/.bashrc
+
 [ ! -s ~/.config/common-aliases-envvars ] && wget -q -O ~/.config/common-aliases-envvars https://raw.githubusercontent.com/pothi/snippets/main/linux/common-aliases-envvars
 . ~/.config/common-aliases-envvars
 
 if ! grep -q common-aliases-envvars ~/.bashrc ; then
-    echo '[ -f ~/.config/common-aliases-envvars ] && source ~/.config/common-aliases-envvars' >> ~/.bashrc
+    echo "[ -f ~/.config/common-aliases-envvars ] && source ~/.config/common-aliases-envvars" >> ~/.bashrc
 fi
 
 if ! grep -qF custom-aliases-envvars-custom ~/.bashrc ; then
@@ -62,6 +64,8 @@ fi
 if ! grep -qF envrc ~/.bashrc ; then
     echo "[ -f ~/.envrc ] && . ~/.envrc" >> ~/.bashrc
 fi
+
+echo >> ~/.bashrc
 
 #-------------------- Configure VIM --------------------#
 [ ! -d ~/.vim ] && mkdir ~/.vim
