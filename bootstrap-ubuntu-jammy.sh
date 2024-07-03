@@ -476,10 +476,10 @@ restart_script_url=https://github.com/pothi/snippets/raw/main/ssl/nginx-restart.
 if [ ! -d /home/web/.ssh ]; then
     mkdir /home/web/.ssh
     chmod 700 /home/web/.ssh
-    chown ${WP_USERNAME}:${WP_USERNAME} /home/web/.ssh
+    chown ${wp_user}:${wp_user} /home/web/.ssh
 fi
 cp -a ~/.ssh/authorized_keys /home/web/.ssh
-chown ${WP_USERNAME}:${WP_USERNAME} /home/web/.ssh/*
+chown ${wp_user}:${wp_user} /home/web/.ssh/*
 
 # bootstrap root user
 wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/bootstrap-root.sh
