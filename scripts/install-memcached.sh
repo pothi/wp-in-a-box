@@ -15,7 +15,7 @@ if [ "$MEMCACHED_MEM_LIMIT" == "" ]; then
     MEMCACHED_MEM_LIMIT=64
 fi
 
-PHP_VER=7.0
+PHP_VER=8.3
 PHP_INI=/etc/php/${PHP_VER}/fpm/php.ini
 
 # Memcached server
@@ -30,16 +30,16 @@ PHP_PACKAGES=''
 # if apt-cache show php-memcached &> /dev/null ; then
 #     PHP_PACKAGES=$(echo "$PHP_PACKAGES" 'php-memcached')
 # else
-#     PHP_PACKAGES=$(echo "$PHP_PACKAGES" "php${PHP_VER}-memcached")
+     PHP_PACKAGES=$(echo "$PHP_PACKAGES" "php${PHP_VER}-memcached")
 # fi
 
 # if apt-cache show php-memcache &> /dev/null ; then
 #     PHP_PACKAGES=$(echo "$PHP_PACKAGES" 'php-memcache')
 # else
-#     PHP_PACKAGES=$(echo "$PHP_PACKAGES" "php${PHP_VER}-memcache")
+     PHP_PACKAGES=$(echo "$PHP_PACKAGES" "php${PHP_VER}-memcache")
 # fi
 
-apt-get install -y ${PHP_PACKAGES}
+apt-get -qq install ${PHP_PACKAGES}
 
 # SESSION Handling
 sed -i -e '/^session.save_handler/ s/=.*/= memcached/' $PHP_INI
