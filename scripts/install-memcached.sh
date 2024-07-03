@@ -6,6 +6,13 @@
 export DEBIAN_FRONTEND=noninteractive
 
 # what's done here.
+# install php{ver}-memcached and php{ver}-memcache packages
+# update PHP session handling to memcache
+# configure memory for memcached server
+
+# Post install steps
+#   - install https://wordpress.org/plugins/memcached/#installation
+#   - configure WP_CACHE_KEY_SALT using the command... wp config set WP_CACHE_KEY_SALT $(openssl rand -base64 32)
 
 # variables
 
