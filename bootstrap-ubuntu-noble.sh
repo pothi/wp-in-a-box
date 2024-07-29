@@ -86,7 +86,7 @@ else
     . ~/.envrc
 fi
 
-echo "export PHP_VERSION=$php_ver" >> /root/.envrc
+[ -z "$PHP_VERSION" ] && echo "export PHP_VERSION=$php_ver" >> /root/.envrc
 
 #--- swap ---#
 if free | awk '/^Swap:/ {exit !$2}'; then
@@ -239,14 +239,14 @@ cd /etc/ssh/sshd_config.d
 if [ ! -f enable-passwd-auth.conf ]; then
 printf '%-72s' "Enabling Password Authentication for WP user..."
     echo "PasswordAuthentication yes" > enable-passwd-auth.conf
-    /usr/sbin/sshd -t && systemctl restart sshd
+    /usr/sbin/sshd -t && systemctl restart ssh
     check_result $? 'Error restarting SSH daemon while enabling passwd auth.'
 echo done.
 fi
 if [ ! -f rsa.conf ]; then
 printf '%-72s' "Enabling RSA SSH support"
     echo "PubkeyAcceptedAlgorithms +ssh-rsa" > rsa.conf
-    /usr/sbin/sshd -t && systemctl restart sshd
+    /usr/sbin/sshd -t && systemctl restart ssh
     check_result $? 'Failed to incorporate /etc/ssh/sshd_config.d/rsa.conf'
 echo done.
 fi
@@ -451,13 +451,13 @@ restart_script_url=https://github.com/pothi/snippets/raw/main/ssl/nginx-restart.
 
 #--- Additional Steps ---#
 # ~/.ssh tweaks
-if [ ! -d /home/web/.ssh ]; then
-    mkdir /home/web/.ssh
-    chmod 700 /home/web/.ssh
-    chown ${wp_user}:${wp_user} /home/web/.ssh
+if [ ! -d /home/${home_basename}/.ssh ]; then
+    mkdir /home/${home_basename}/.ssh
+    chmod 700 /home/${home_basename}/.ssh
+    chown ${wp_user}:${wp_user} /home/${home_basename}/.ssh
 fi
-cp -a ~/.ssh/authorized_keys /home/web/.ssh
-chown ${wp_user}:${wp_user} /home/web/.ssh/*
+cp -a ~/.ssh/authorized_keys /home/${home_basename}/.ssh
+chown ${wp_user}:${wp_user} /home/${home_basename}/.ssh/*
 
 # bootstrap root user
 wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/bootstrap-root.sh
