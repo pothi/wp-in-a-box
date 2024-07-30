@@ -12,6 +12,7 @@ export DEBIAN_FRONTEND=noninteractive
 
 # Post install steps
 #   - install https://wordpress.org/plugins/memcached/#installation
+#   - (or) download https://plugins.svn.wordpress.org/memcached/trunk/object-cache.php into wp-content dir.
 #   - configure WP_CACHE_KEY_SALT using the command... wp config set WP_CACHE_KEY_SALT $(openssl rand -base64 32)
 
 # variables

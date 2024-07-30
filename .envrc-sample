@@ -27,3 +27,8 @@ export web_developer_username=$DEV_USER # for backward compatibility
 export ADMIN_EMAIL=
 export CERTBOT_ADMIN_EMAIL=
 export CLIENT_EMAIL=
+
+# End of predefined values
+
+# The following are generated automatically by wp-in-a-box bootstrap script...
+
