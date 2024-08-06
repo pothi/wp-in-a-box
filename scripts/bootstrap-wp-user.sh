@@ -37,14 +37,15 @@ FILES_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master
 # [ ! -s full-backup.sh ] && curl -LSsO $FULL_BACKUP_URL
 # [ ! -s db-backup.sh ] && curl -LSsO $DB_BACKUP_URL
 # [ ! -s files-backup-without-uploads.sh ] && curl -LSsO $FILES_BACKUP_URL
-[ ! -s full-backup.sh ] && wget -q -P ~/scripts $FULL_BACKUP_URL
-[ ! -s db-backup.sh ] && wget -q -P ~/scripts $DB_BACKUP_URL
-[ ! -s files-backup-without-uploads.sh ] && wget -q -P ~/scripts $FILES_BACKUP_URL
+[ ! -s ~/scripts/full-backup.sh ] && wget -q -P ~/scripts $FULL_BACKUP_URL
+[ ! -s ~/scripts/db-backup.sh ] && wget -q -P ~/scripts $DB_BACKUP_URL
+[ ! -s ~/scripts/files-backup-without-uploads.sh ] && wget -q -P ~/scripts $FILES_BACKUP_URL
 chmod +x ~/scripts/*.sh
 # cd - >/dev/null
-echo '... done'
+# echo '... done'
 
 #-------------------- Configure common-aliases-envvars --------------------#
+echo 'Tweaking bash config...'
 [ ! -d ~/.config ] && mkdir ~/.config
 
 echo >> ~/.bashrc
@@ -68,6 +69,7 @@ fi
 echo >> ~/.bashrc
 
 #-------------------- Configure VIM --------------------#
+echo 'Tweaking VIM config...'
 [ ! -d ~/.vim ] && mkdir ~/.vim
 [ ! -d ~/git/snippets ] && {
     git clone -q --depth 1 https://github.com/pothi/snippets ~/git/snippets
@@ -80,6 +82,7 @@ echo >> ~/.bashrc
 }
 
 #-------------------- Install wp-cli --------------------#
+echo 'Installing wp-cli...'
 if ! command -v wp >/dev/null; then
     wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/wpcli-installation.sh
     bash wpcli-installation.sh && rm wpcli-installation.sh
@@ -87,6 +90,7 @@ if ! command -v wp >/dev/null; then
 fi
 
 #-------------------- Install aws-cli --------------------#
+echo 'Installing aws-cli...'
 if ! command -v aws >/dev/null; then
     wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/awscli-install-update-script.sh
     bash awscli-install-update-script.sh && rm awscli-install-update-script.sh
@@ -94,10 +98,12 @@ if ! command -v aws >/dev/null; then
 fi
 
 #-------------------- Create SSH keys --------------------#
+echo 'Creating local SSH keys...'
 < /dev/zero ssh-keygen -q -N "" -t ed25519
 
 #-------------------- Bootstrap timers to alert upon auto-reboot --------------------#
 # TODO: Might not work if logged-in through root
+echo 'Configuring alerts upon auto-reboot...'
 if ! command -v aws >/dev/null; then
     wget -q https://github.com/pothi/snippets/blob/main/linux/alert-auto-reboot/bootstrap.sh
     bash bootstrap.sh && rm bootstrap.sh
