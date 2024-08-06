@@ -132,10 +132,26 @@ elif [ -d "$APT_LISTS_PATH" ]; then
     fi
 fi
 
+# ref: https://askubuntu.com/q/114759/65814 (use any one solution - the accepted answer and the other)
+# ref: https://www.server-world.info/en/note?os=Debian_10&p=locale - once you installed locales-all, you can not use the accepted solution from askubuntu.
+lang=$LANG
+if [ "$lang" != "en_US.UTF-8" ]; then
+    if dpkg-query -W -f='${Status}' locales 2>/dev/null | grep -q "ok installed" ; then :
+    else
+        printf '%-72s' "Installing locale..."
+        apt-get -qq install locales
+        echo done.
+    fi
+    # localectl set-locale LANG=en_US.UTF-8
+    locale-gen en_US.UTF-8 >/dev/null
+    update-locale LANG=en_US.UTF-8
+    source /etc/default/locale
+fi
+
 # -------------------------- Prerequisites ------------------------------------
 
 # apt-utils to fix an annoying non-critical bug on minimal images. Ref: https://github.com/tianon/docker-brew-ubuntu-core/issues/59
-apt-get -qq install apt-utils &> /dev/null
+install_package apt-utils
 
 # powermgmt-base to fix a warning in unattended-upgrade.log
 required_packages="curl \
@@ -196,7 +212,7 @@ set_utc_timezone
 # initial backup of /etc
 [ -d ~/backup/etc-init ] || cp -a /etc ~/backups/etc-init
 
-# Create a WordPress user with /home/web as $HOME
+# Create a WordPress user with /home/wp as $HOME
 wp_user=${WP_USERNAME:-""}
 if [ "$wp_user" == "" ]; then
 printf '%-72s' "Creating a WP User..."
@@ -494,7 +510,7 @@ echo ---------------------------------------------------------------------------
 echo You may find the login credentials of SFTP/SSH user in /root/.envrc file.
 echo -----------------------------------------------------------------------------
 
-echo 'You may reboot (only once) to apply certain updates (ex: kernel updates)!'
+echo 'You may run "apt upgrade" and then reboot (only) once to apply certain updates (ex: kernel updates)!'
 echo
 
 echo "Script ended on (date & time): $(date +%c)"
