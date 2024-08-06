@@ -84,16 +84,16 @@ echo 'Tweaking VIM config...'
 #-------------------- Install wp-cli --------------------#
 echo 'Installing wp-cli...'
 if ! command -v wp >/dev/null; then
-    wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/wpcli-installation.sh
-    bash wpcli-installation.sh && rm wpcli-installation.sh
+    wget -q -P ~/ https://github.com/pothi/wp-in-a-box/raw/main/scripts/wpcli-installation.sh
+    bash ~/wpcli-installation.sh && rm ~/wpcli-installation.sh
     check_result $? "Could not install wp-cli."
 fi
 
 #-------------------- Install aws-cli --------------------#
 echo 'Installing aws-cli...'
 if ! command -v aws >/dev/null; then
-    wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/awscli-install-update-script.sh
-    bash awscli-install-update-script.sh && rm awscli-install-update-script.sh
+    wget -q -P ~/ https://github.com/pothi/wp-in-a-box/raw/main/scripts/awscli-install-update-script.sh
+    bash ~/awscli-install-update-script.sh && rm ~/awscli-install-update-script.sh
     check_result $? "Could not install aws-cli."
 fi
 
@@ -105,8 +105,8 @@ echo 'Creating local SSH keys...'
 # TODO: Might not work if logged-in through root
 echo 'Configuring alerts upon auto-reboot...'
 if ! command -v aws >/dev/null; then
-    wget -q https://github.com/pothi/snippets/blob/main/linux/alert-auto-reboot/bootstrap.sh
-    bash bootstrap.sh && rm bootstrap.sh
+    wget -q -P ~/ https://github.com/pothi/snippets/blob/main/linux/alert-auto-reboot/bootstrap.sh
+    bash ~/bootstrap.sh && rm ~/bootstrap.sh
     check_result $? "Could not bootstrap timers to alert upon auto-reboot."
 fi
 
