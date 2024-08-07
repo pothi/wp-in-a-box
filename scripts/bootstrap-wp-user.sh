@@ -82,7 +82,7 @@ echo 'Tweaking VIM config...'
 }
 
 #-------------------- Install wp-cli --------------------#
-echo 'Installing wp-cli...'
+# echo 'Installing wp-cli...'
 if ! command -v wp >/dev/null; then
     wget -q -P ~/ https://github.com/pothi/wp-in-a-box/raw/main/scripts/wpcli-installation.sh
     bash ~/wpcli-installation.sh && rm ~/wpcli-installation.sh
@@ -90,7 +90,7 @@ if ! command -v wp >/dev/null; then
 fi
 
 #-------------------- Install aws-cli --------------------#
-echo 'Installing aws-cli...'
+# echo 'Installing aws-cli...'
 if ! command -v aws >/dev/null; then
     wget -q -P ~/ https://github.com/pothi/wp-in-a-box/raw/main/scripts/awscli-install-update-script.sh
     bash ~/awscli-install-update-script.sh && rm ~/awscli-install-update-script.sh
@@ -100,18 +100,19 @@ fi
 #-------------------- Create SSH keys --------------------#
 echo 'Creating local SSH keys...'
 < /dev/zero ssh-keygen -q -N "" -t ed25519
+echo
 
 #-------------------- Bootstrap timers to alert upon auto-reboot --------------------#
 # TODO: Might not work if logged-in through root
 echo 'Configuring alerts upon auto-reboot...'
 if ! command -v aws >/dev/null; then
-    wget -q -P ~/ https://github.com/pothi/snippets/blob/main/linux/alert-auto-reboot/bootstrap.sh
+    wget -q -P ~/ https://github.com/pothi/snippets/raw/main/linux/alert-auto-reboot/bootstrap.sh
     bash ~/bootstrap.sh && rm ~/bootstrap.sh
     check_result $? "Could not bootstrap timers to alert upon auto-reboot."
 fi
 
 #-------------------- Unused --------------------#
-function configure_disk_usage_alert () {
+function configure_disk_usage_alert() {
     [ ! -f /home/${home_basename}/scripts/disk-usage-alert.sh ] && wget -O /home/${home_basename}/scripts/disk-usage-alert.sh https://github.com/pothi/snippets/raw/master/disk-usage-alert.sh
     chown $wp_user:$wp_user /home/${home_basename}/scripts/disk-usage-alert.sh
     chmod +x /home/${home_basename}/scripts/disk-usage-alert.sh
