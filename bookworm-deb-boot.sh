@@ -55,6 +55,23 @@ set_utc_timezone() {
         echo done.
     fi
 }
+
+if ! $(type 'install_package' 2>/dev/null | grep -q 'function') ; then
+    install_package() {
+        package=$1
+        if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
+        then
+            # echo "'$package' is already installed"
+            :
+        else
+            printf '%-72s' "Installing '${package}' ..."
+            apt-get -qq install $package > /dev/null
+            check_result $? "Couldn't install $package."
+            echo done.
+        fi
+    }
+fi
+
 #--- end of Useful functions ---#
 
 # if ~/.envrc doesn't exist, create it
@@ -66,13 +83,10 @@ else
     . ~/.envrc
 fi
 
-echo "export PHP_VERSION=$php_ver" >> /root/.envrc
+[ -z "$PHP_VERSION" ] && echo "export PHP_VERSION=$php_ver" >> /root/.envrc
 
 #--- swap ---#
-if free | awk '/^Swap:/ {exit !$2}'; then
-    # echo 'Swap already exists!'
-    :
-else
+if free | awk '/^Swap:/ {exit $2}'; then
     printf '%-72s' "Creating swap..."
     wget -O /tmp/swap.sh -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/swap.sh
     bash /tmp/swap.sh >/dev/null
@@ -116,12 +130,8 @@ fi
 # ref: https://www.server-world.info/en/note?os=Debian_10&p=locale - once you installed locales-all, you can not use the accepted solution from askubuntu.
 lang=$LANG
 if [ "$lang" != "en_US.UTF-8" ]; then
-    if dpkg-query -W -f='${Status}' locales 2>/dev/null | grep -q "ok installed" ; then :
-    else
-        printf '%-72s' "Installing locale..."
-        apt-get -qq install locales
-        echo done.
-    fi
+    install_package locales
+
     # localectl set-locale LANG=en_US.UTF-8
     locale-gen en_US.UTF-8 >/dev/null
     update-locale LANG=en_US.UTF-8
@@ -131,14 +141,14 @@ fi
 # -------------------------- Prerequisites ------------------------------------
 
 # apt-utils to fix an annoying non-critical bug on minimal images. Ref: https://github.com/tianon/docker-brew-ubuntu-core/issues/59
-apt-get -qq install apt-utils &> /dev/null
+install_package apt-utils
 
 required_packages="apt-transport-https \
     curl \
     dnsutils \
     fail2ban \
     git \
-    pwgen \
+    memcached \
     python3-venv \
     snapd \
     software-properties-common \
@@ -148,17 +158,39 @@ required_packages="apt-transport-https \
 
 for package in $required_packages
 do
-    if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
-    then
-        # echo "'$package' is already installed"
-        :
-    else
-        printf '%-72s' "Installing '${package}' ..."
-        apt-get -qq install $package > /dev/null
-        check_result $? "Couldn't install $package."
-        echo done.
-    fi
+    install_package $package
 done
+
+# MySQL is required by PHP.
+install_package default-mysql-server
+
+# PHP is required by Nginx to configure the defaults.
+php_packages="php${php_ver}-fpm \
+        php${php_ver}-mysql \
+        php${php_ver}-gd \
+        php${php_ver}-cli \
+        php${php_ver}-xml \
+        php${php_ver}-mbstring \
+        php${php_ver}-soap \
+        php${php_ver}-curl \
+        php${php_ver}-zip \
+        php${php_ver}-bcmath \
+        php${php_ver}-intl \
+        php${php_ver}-imagick \
+        php${php_ver}-memcache \
+        php${php_ver}-memcached"
+
+# package=php${php_ver}-fpm
+for package in $php_packages
+do
+    install_package $package
+done
+
+# nginx
+install_package nginx-extras
+
+# fail2ban needs to be started manually after installation.
+systemctl start fail2ban
 
 # configure some defaults for git and etckeeper
 git config --global user.name "root"
@@ -180,9 +212,8 @@ printf '%-72s' "Creating a WP User..."
 echo done.
 fi
 
-# home_basename=$(echo $wp_user | awk -F _ '{print $1}')
-# [ -z $home_basename ] && home_basename=web
-home_basename=web
+home_basename=$(echo $wp_user | awk -F _ '{print $1}')
+[ -z $home_basename ] && home_basename=web
 
 useradd --shell=/bin/bash -m --home-dir /home/${home_basename} $wp_user
 chmod 755 /home/$home_basename
@@ -223,22 +254,6 @@ cd - >/dev/null
 echo ---------------------------------- LEMP -------------------------------------
 
 # ------------------------------- MySQL ---------------------------------------
-# MySQL is required by PHP. So, install it before PHP
-
-package=default-mysql-server
-if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
-then
-    # echo "'$package' is already installed."
-    :
-else
-    printf '%-72s' "Installing '${package}' ..."
-    apt-get -qq install $package > /dev/null
-    check_result $? "Couldn't install $package."
-    echo done.
-fi
-
-# take a backup of default MySQL configurations
-[ -d ~/backup/etc-mysql-default ] || cp -a /etc ~/backups/etc-mysql-default
 
 # Create a MySQL admin user
 sql_user=${MYSQL_ADMIN_USER:-""}
@@ -261,38 +276,7 @@ mysql -e "CREATE USER IF NOT EXISTS ${sql_user} IDENTIFIED BY '${sql_pass}';"
 mysql -e "GRANT ALL PRIVILEGES ON *.* TO ${sql_user} WITH GRANT OPTION"
 
 # echo -------------------------------- PHP ----------------------------------------
-
-# PHP is required by Nginx to configure the defaults. So, install it before Nginx
-
-package=php${php_ver}-fpm
-if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
-then
-    # echo "'$package' is already installed."
-    :
-else
-    printf '%-72s' "Installing php${php_ver} ..."
-    apt-get -qq install \
-        php${php_ver}-fpm \
-        php${php_ver}-mysql \
-        php${php_ver}-gd \
-        php${php_ver}-cli \
-        php${php_ver}-xml \
-        php${php_ver}-mbstring \
-        php${php_ver}-soap \
-        php${php_ver}-curl \
-        php${php_ver}-zip \
-        php${php_ver}-bcmath \
-        php${php_ver}-intl \
-        php${php_ver}-imagick \
-        > /dev/null
-    check_result $? "Couldn't install PHP."
-    echo done.
-fi
-
 echo -------------------------------- Configuring PHP ----------------------------------------
-
-# take a backup of default PHP configurations
-[ -d ~/backup/etc-php-default ] || cp -a /etc ~/backups/etc-php-default
 
 php_user=$wp_user
 fpm_ini_file=/etc/php/${php_ver}/fpm/php.ini
@@ -398,21 +382,6 @@ echo done.
 
 # echo -------------------------------- Nginx ----------------------------------------
 
-package=nginx-extras
-if dpkg-query -W -f='${Status}' $package 2>/dev/null | grep -q "ok installed"
-then
-    # echo "'$package' is already installed."
-    :
-else
-    printf '%-72s' "Installing Nginx ..."
-    apt-get -qq install $package > /dev/null
-    check_result $? "Couldn't install Nginx."
-    echo done.
-fi
-
-# take a backup of default nginx configurations
-[ -d ~/backup/etc-nginx-default ] || cp -a /etc ~/backups/etc-nginx-default
-
 # Download WordPress Nginx repo
 [ ! -d ~/wp-nginx ] && {
     mkdir ~/wp-nginx
@@ -473,7 +442,7 @@ restart_script=/etc/letsencrypt/renewal-hooks/deploy/nginx-restart.sh
 restart_script_url=https://github.com/pothi/snippets/raw/main/ssl/nginx-restart.sh
 [ ! -f "$restart_script" ] && {
     curl -sSL --create-dirs -o $restart_script $restart_script_url
-    check_result $? "Error downloading Nginx Restart Script for Certbot renewals."
+    check_result $? "Could not download Nginx Restart Script for Certbot renewals."
     chmod +x $restart_script
 }
 
@@ -481,13 +450,13 @@ restart_script_url=https://github.com/pothi/snippets/raw/main/ssl/nginx-restart.
 
 #--- Additional Steps ---#
 # ~/.ssh tweaks
-if [ ! -d /home/web/.ssh ]; then
-    mkdir /home/web/.ssh
-    chmod 700 /home/web/.ssh
-    chown ${WP_USERNAME}:${WP_USERNAME} /home/web/.ssh
+if [ ! -d /home/${home_basename}/.ssh ]; then
+    mkdir /home/${home_basename}/.ssh
+    chmod 700 /home/${home_basename}/.ssh
+    chown ${wp_user}:${wp_user} /home/${home_basename}/.ssh
 fi
-cp -a ~/.ssh/authorized_keys /home/web/.ssh
-chown ${WP_USERNAME}:${WP_USERNAME} /home/web/.ssh/*
+cp -a ~/.ssh/authorized_keys /home/${home_basename}/.ssh
+chown ${wp_user}:${wp_user} /home/${home_basename}/.ssh/*
 
 # bootstrap root user
 wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/bootstrap-root.sh
@@ -499,7 +468,7 @@ if ! command -v mail >/dev/null; then
     printf '%-72s' "Installing MTA (postfix)..."
     [ -f email-mta-installation.sh ] && rm email-mta-installation.sh
     wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/email-mta-installation.sh
-    bash email-mta-installation.sh >/dev/null
+    bash email-mta-installation.sh > /dev/null
     check_result $? "Could not install MTA(postfix)."
     [ -f email-mta-installation.sh ] && rm email-mta-installation.sh
     echo done.
@@ -521,10 +490,10 @@ echo done.
 # bootstrap WP user, install wp-cli, aws-cli, etc.
 # TODO: goes through with warnings and errors!
 wget -q https://github.com/pothi/wp-in-a-box/raw/main/scripts/bootstrap-wp-user.sh
-chown ${WP_USERNAME} bootstrap-wp-user.sh
+chown ${wp_user} bootstrap-wp-user.sh
 chmod +x bootstrap-wp-user.sh
-mv bootstrap-wp-user.sh /home/web/
-sudo -H -u "${WP_USERNAME}" bash /home/web/bootstrap-wp-user.sh && rm /home/web/bootstrap-wp-user.sh
+mv bootstrap-wp-user.sh /home/${home_basename}/
+sudo -H -u "${wp_user}" /home/${home_basename}/bootstrap-wp-user.sh && rm /home/${home_basename}/bootstrap-wp-user.sh
 check_result $? "Could not bootstrap WP user."
 
 echo All done.
