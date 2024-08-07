@@ -50,7 +50,7 @@ echo 'Tweaking bash config...'
 
 echo >> ~/.bashrc
 
-[ ! -s ~/.config/common-aliases-envvars ] && wget -q -O ~/.config/common-aliases-envvars https://raw.githubusercontent.com/pothi/snippets/main/linux/common-aliases-envvars
+[ ! -s ~/.config/common-aliases-envvars ] && curl -s --output-dir ~/.config -o https://github.com/pothi/snippets/raw/main/linux/common-aliases-envvars
 . ~/.config/common-aliases-envvars
 
 if ! grep -q common-aliases-envvars ~/.bashrc ; then
@@ -84,7 +84,7 @@ echo 'Tweaking VIM config...'
 #-------------------- Install wp-cli --------------------#
 # echo 'Installing wp-cli...'
 if ! command -v wp >/dev/null; then
-    wget -q -P ~/ https://github.com/pothi/wp-in-a-box/raw/main/scripts/wpcli-installation.sh
+    curl -s --output-dir ~/ https://github.com/pothi/wp-in-a-box/raw/main/scripts/wpcli-installation.sh
     bash ~/wpcli-installation.sh && rm ~/wpcli-installation.sh
     check_result $? "Could not install wp-cli."
 fi
@@ -92,7 +92,7 @@ fi
 #-------------------- Install aws-cli --------------------#
 # echo 'Installing aws-cli...'
 if ! command -v aws >/dev/null; then
-    wget -q -P ~/ https://github.com/pothi/wp-in-a-box/raw/main/scripts/awscli-install-update-script.sh
+    curl -s --output-dir ~/ https://github.com/pothi/wp-in-a-box/raw/main/scripts/awscli-install-update-script.sh
     bash ~/awscli-install-update-script.sh && rm ~/awscli-install-update-script.sh
     check_result $? "Could not install aws-cli."
 fi
@@ -106,7 +106,7 @@ echo
 # TODO: Might not work if logged-in through root
 echo 'Configuring alerts upon auto-reboot...'
 if ! command -v aws >/dev/null; then
-    wget -q -P ~/ https://github.com/pothi/snippets/raw/main/linux/alert-auto-reboot/bootstrap.sh
+    curl -s --output-dir ~/ https://github.com/pothi/snippets/raw/main/linux/alert-auto-reboot/bootstrap.sh
     bash ~/bootstrap.sh && rm ~/bootstrap.sh
     check_result $? "Could not bootstrap timers to alert upon auto-reboot."
 fi
