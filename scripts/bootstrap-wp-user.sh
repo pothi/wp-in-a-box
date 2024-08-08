@@ -13,6 +13,8 @@
 # To debug, use any value for "debug", otherwise please leave it empty
 debug=
 
+[ ! -d ~/scripts ] && mkdir ~/scripts
+
 # helper function to exit upon non-zero exit code of a command
 # usage some_command; check_result $? 'some_command failed'
 if ! $(type 'check_result' 2>/dev/null | grep -q 'function') ; then
@@ -25,10 +27,10 @@ if ! $(type 'check_result' 2>/dev/null | grep -q 'function') ; then
 fi
 
 #-------------------- Unused --------------------#
-function configure_disk_usage_alert {
-    [ ! -f /home/${home_basename}/scripts/disk-usage-alert.sh ] && wget -O /home/${home_basename}/scripts/disk-usage-alert.sh https://github.com/pothi/snippets/raw/master/disk-usage-alert.sh
-    chown $wp_user:$wp_user /home/${home_basename}/scripts/disk-usage-alert.sh
-    chmod +x /home/${home_basename}/scripts/disk-usage-alert.sh
+configure_disk_usage_alert() {
+    [ ! -f ~/scripts/disk-usage-alert.sh ] && wget -O ~/scripts/disk-usage-alert.sh https://github.com/pothi/snippets/raw/master/disk-usage-alert.sh
+    chown $wp_user:$wp_user ~/scripts/disk-usage-alert.sh
+    chmod +x ~/scripts/disk-usage-alert.sh
 
     #--- cron for disk-usage-alert ---#
     crontab -l | grep -qw disk-usage-alert
@@ -41,7 +43,6 @@ function configure_disk_usage_alert {
 [ "$debug" ] && set -x
 
 #-------------------- Download backup scripts --------------------#
-[ ! -d ~/scripts ] && mkdir ~/scripts
 # Download backup scripts
 echo 'Downloading backup scripts...'
 FULL_BACKUP_URL=https://github.com/pothi/backup-wordpress/raw/main/full-backup.sh
