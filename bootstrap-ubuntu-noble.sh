@@ -174,7 +174,7 @@ done
 install_package default-mysql-server
 
 # PHP is required by Nginx to configure the defaults.
-php_packages="php${php_ver}-fpm \
+php_packages="php${php_ver}-common \
         php${php_ver}-mysql \
         php${php_ver}-gd \
         php${php_ver}-cli \
@@ -187,7 +187,8 @@ php_packages="php${php_ver}-fpm \
         php${php_ver}-intl \
         php${php_ver}-imagick \
         php${php_ver}-memcache \
-        php${php_ver}-memcached"
+        php${php_ver}-memcached \
+        php${php_ver}-fpm"
 
 # package=php${php_ver}-fpm
 for package in $php_packages
