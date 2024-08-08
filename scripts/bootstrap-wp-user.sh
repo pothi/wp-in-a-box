@@ -30,16 +30,16 @@ fi
 [ ! -d ~/scripts ] && mkdir ~/scripts
 # Download backup scripts
 echo 'Downloading backup scripts...'
-FULL_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/full-backup.sh
-DB_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/db-backup.sh
-FILES_BACKUP_URL=https://raw.githubusercontent.com/pothi/backup-wordpress/master/files-backup-without-uploads.sh
+FULL_BACKUP_URL=https://github.com/pothi/backup-wordpress/raw/main/full-backup.sh
+DB_BACKUP_URL=https://github.com/pothi/backup-wordpress/raw/main/db-backup.sh
+FILES_BACKUP_URL=https://github.com/pothi/backup-wordpress/raw/main/files-backup-without-uploads.sh
 # cd ~/scripts
 # [ ! -s full-backup.sh ] && curl -LSsO $FULL_BACKUP_URL
 # [ ! -s db-backup.sh ] && curl -LSsO $DB_BACKUP_URL
 # [ ! -s files-backup-without-uploads.sh ] && curl -LSsO $FILES_BACKUP_URL
-[ ! -s ~/scripts/full-backup.sh ] && wget -q -P ~/scripts $FULL_BACKUP_URL
-[ ! -s ~/scripts/db-backup.sh ] && wget -q -P ~/scripts $DB_BACKUP_URL
-[ ! -s ~/scripts/files-backup-without-uploads.sh ] && wget -q -P ~/scripts $FILES_BACKUP_URL
+[ ! -s ~/scripts/full-backup.sh ] && curl -s --output-dir ~/scripts -O $FULL_BACKUP_URL
+[ ! -s ~/scripts/db-backup.sh ] && curl -s --output-dir ~/scripts -O $DB_BACKUP_URL
+[ ! -s ~/scripts/files-backup-without-uploads.sh ] && curl -s --output-dir ~/scripts -O $FILES_BACKUP_URL
 chmod +x ~/scripts/*.sh
 # cd - >/dev/null
 # echo '... done'
@@ -112,7 +112,7 @@ if ! command -v aws >/dev/null; then
 fi
 
 #-------------------- Unused --------------------#
-function configure_disk_usage_alert() {
+function configure_disk_usage_alert {
     [ ! -f /home/${home_basename}/scripts/disk-usage-alert.sh ] && wget -O /home/${home_basename}/scripts/disk-usage-alert.sh https://github.com/pothi/snippets/raw/master/disk-usage-alert.sh
     chown $wp_user:$wp_user /home/${home_basename}/scripts/disk-usage-alert.sh
     chmod +x /home/${home_basename}/scripts/disk-usage-alert.sh
