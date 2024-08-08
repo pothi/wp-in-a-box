@@ -24,6 +24,20 @@ if ! $(type 'check_result' 2>/dev/null | grep -q 'function') ; then
     }
 fi
 
+#-------------------- Unused --------------------#
+function configure_disk_usage_alert {
+    [ ! -f /home/${home_basename}/scripts/disk-usage-alert.sh ] && wget -O /home/${home_basename}/scripts/disk-usage-alert.sh https://github.com/pothi/snippets/raw/master/disk-usage-alert.sh
+    chown $wp_user:$wp_user /home/${home_basename}/scripts/disk-usage-alert.sh
+    chmod +x /home/${home_basename}/scripts/disk-usage-alert.sh
+
+    #--- cron for disk-usage-alert ---#
+    crontab -l | grep -qw disk-usage-alert
+    if [ "$?" -ne "0" ]; then
+        ( crontab -l; echo '@daily ~/scripts/disk-usage-alert.sh &> /dev/null' ) | crontab -
+    fi
+}
+# configure_disk_usage_alert
+
 [ "$debug" ] && set -x
 
 #-------------------- Download backup scripts --------------------#
@@ -111,17 +125,4 @@ if ! command -v aws >/dev/null; then
     check_result $? "Could not bootstrap timers to alert upon auto-reboot."
 fi
 
-#-------------------- Unused --------------------#
-function configure_disk_usage_alert {
-    [ ! -f /home/${home_basename}/scripts/disk-usage-alert.sh ] && wget -O /home/${home_basename}/scripts/disk-usage-alert.sh https://github.com/pothi/snippets/raw/master/disk-usage-alert.sh
-    chown $wp_user:$wp_user /home/${home_basename}/scripts/disk-usage-alert.sh
-    chmod +x /home/${home_basename}/scripts/disk-usage-alert.sh
-
-    #--- cron for disk-usage-alert ---#
-    crontab -l | grep -qw disk-usage-alert
-    if [ "$?" -ne "0" ]; then
-        ( crontab -l; echo '@daily ~/scripts/disk-usage-alert.sh &> /dev/null' ) | crontab -
-    fi
-}
-# configure_disk_usage_alert
 
