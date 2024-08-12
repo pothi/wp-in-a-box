@@ -13,6 +13,7 @@ export system_admin_username=$ADMIN_USERNAME # for backward compatibility
 # WP user is provided with SFTP access (at least)
 # if empty, a random username will be created
 export WP_USERNAME=
+export WP_PASSWORD=
 export DEV_USER=$WP_USERNAME # for backward compatibility
 export web_developer_username=$DEV_USER # for backward compatibility
 

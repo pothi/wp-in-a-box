@@ -511,7 +511,7 @@ echo ---------------------------------------------------------------------------
 echo You may find the login credentials of SFTP/SSH user in /root/.envrc file.
 echo -----------------------------------------------------------------------------
 
-echo 'You may run "apt upgrade" and then reboot (only) once to apply certain updates (ex: kernel updates)!'
+echo 'You may reboot (only) once to apply certain updates (ex: kernel updates)!'
 echo
 
 echo "Script ended on (date & time): $(date +%c)"

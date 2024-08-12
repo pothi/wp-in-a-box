@@ -8,6 +8,7 @@ There are a number of similar scripts available on the internet. The unique feat
 
 Ubuntu
 
++ [Ubuntu Noble Numbat (24.04.x)](https://github.com/pothi/wp-in-a-box/blob/main/bootstrap-ubuntu-noble.sh)
 + [Ubuntu Jammy Jellyfish (22.04.x)](https://github.com/pothi/wp-in-a-box/blob/main/bootstrap-ubuntu-jammy.sh)
 + [Ubuntu Focal Fossa (20.04.x)](https://github.com/pothi/wp-in-a-box/blob/main/bootstrap-ubuntu-focal.sh)
 + Ubuntu Bionic Beaver (18.04.x)
