@@ -49,9 +49,9 @@ optional_packages="apt-file \
     logwatch \
     mailutils \
     members \
-    mlocate \
     molly-guard \
     nmap \
+    plocate \
     tree \
     uptimed \
     vim-scripts \
