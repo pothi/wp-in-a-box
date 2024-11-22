@@ -42,6 +42,10 @@ configure_disk_usage_alert() {
 
 [ "$debug" ] && set -x
 
+#-------------------- Git config --------------------#
+
+git config --global init.defaultBranch main
+
 #-------------------- Download backup scripts --------------------#
 # Download backup scripts
 echo 'Downloading backup scripts...'
