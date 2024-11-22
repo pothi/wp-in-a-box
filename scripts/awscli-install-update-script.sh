@@ -83,8 +83,8 @@ function update_awscli {
     printf '%-72s' "Updating awscli..."
 
     # remove the version #1 of aws cli, if exists
-    [ -d /usr/local/aws ] && rm -rf /usr/local/aws
-    # [ -f /usr/local/bin/aws ] && rm /usr/local/bin/aws
+    [ -d /usr/local/aws ] && rm -rf /usr/local/aws &> /dev/null
+    [ -f /usr/local/bin/aws ] && rm /usr/local/bin/aws &> /dev/null
 
     # for version #2
     # ref: https://docs.aws.amazon.com/cli/latest/userguide/install-bundle.html
