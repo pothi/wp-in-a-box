@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+VERSION=2.0
+
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
 
@@ -9,6 +11,9 @@
 # DEV_USER
 
 ###---------- Please do not edit below this line ----------###
+
+export PATH=~/bin:~/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
+export DEBIAN_FRONTEND=noninteractive
 
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
 [ -f /root/.envrc ] && . /root/.envrc
@@ -29,6 +34,10 @@ export PMA_TMP=${PMA_HOME}/phpmyadmin/tmp
 
 useradd --home-dir $PMA_HOME $PMA_USER &> /dev/null
 chown ${PMA_USER} $PMA_HOME
+
+if ! command -v pwgen >/dev/null; then
+    apt-get -qq install pwgen > /dev/null
+fi
 
 if [ ! -f "${PMA_ENV}" ]; then
     dbuser=pma$(pwgen -cns 5 1)
