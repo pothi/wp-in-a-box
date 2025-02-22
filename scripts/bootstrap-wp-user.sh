@@ -103,8 +103,8 @@ echo 'Tweaking VIM config...'
 #-------------------- Install wp-cli --------------------#
 # echo 'Installing wp-cli...'
 if ! command -v wp >/dev/null; then
-    curl -s --output-dir ~/ -O https://github.com/pothi/wp-in-a-box/raw/main/scripts/wpcli-installation.sh
-    bash ~/wpcli-installation.sh && rm ~/wpcli-installation.sh
+    curl -s --output-dir ~/ -O https://github.com/pothi/wp-in-a-box/raw/main/scripts/wp-cli-install.bash
+    bash ~/wp-cli-install.bash && rm ~/wp-cli-install.bash
     check_result $? "Could not install wp-cli."
 fi
 
