@@ -5,12 +5,17 @@
 
 export DEBIAN_FRONTEND=noninteractive
 
-check_result() {
-    if [ $1 -ne 0 ]; then
-        echo "Error: $2"
-        exit $1
-    fi
-}
+# helper function to exit upon non-zero exit code of a command
+# usage some_command; check_result $? 'some_command failed'
+if ! $(type 'check_result' 2>/dev/null | grep -q 'function') ; then
+    check_result() {
+        if [ "$1" -ne 0 ]; then
+            echo -e "\nError: $2. Exiting!\n"
+            exit "$1"
+        fi
+    }
+fi
+
 # TODO
 # get FQDN and configure myhostname in postfix
 
