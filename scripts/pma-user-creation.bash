@@ -36,7 +36,7 @@ useradd --home-dir $PMA_HOME $PMA_USER >/dev/null
 # chown ${PMA_USER} $PMA_HOME
 
 if [ ! -f "${PMA_ENV}" ]; then
-    dbuser=pma_$(random 1000 9999)
+    dbuser=pma_$RANDOM
     dbpass=$(openssl rand -base64 32 | tr -d /=+ | cut -c -30)
     echo "export pma_db_user=$dbuser" > ${PMA_ENV}
     echo "export pma_db_pass=$dbpass" >> ${PMA_ENV}
