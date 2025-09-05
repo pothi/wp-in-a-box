@@ -18,12 +18,11 @@ chmod +x ~/pma-auto-update.sh
 ~/pma-auto-update.sh
 
 # setup cron to self-update phpmyadmin
-crontab -l 2>/dev/null | grep -qw phpmyadmin
+crontab -l 2>/dev/null | grep -qw pma-auto-update
 if test $status -ne 0
     set min $(random 0 59)
     set hour $(random 0 59)
-    ( crontab -l; echo; echo "# auto-update phpmyadmin - nightly" ) | crontab -
-    ( crontab -l; echo "$min $hour * * * ~/pma-auto-update.sh >/dev/null" ) | crontab -
+    begin; crontab -l 2>/dev/null; echo; echo "$min $hour * * * ~/pma-auto-update.sh >/dev/null"; end | crontab -
 else
     echo A cron entry is already in place.
 end

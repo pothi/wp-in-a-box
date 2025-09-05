@@ -25,15 +25,15 @@ if [ -z "$php_user" ]; then
     echo 'Developer env variable is not found. Exiting prematurely!'; exit
 fi
 
-export PMA_USER=pma
-export PMA_HOME=/var/www/pma
-export PMA_ENV=${PMA_HOME}/.envrc
-export PMA_TMP=${PMA_HOME}/phpmyadmin/tmp
+PMA_USER=pma
+PMA_HOME=/var/www/pma
+PMA_ENV=${PMA_HOME}/.envrc
+PMA_TMP=${PMA_HOME}/phpmyadmin/tmp
 
 [ ! -d /var/www/pma ] && mkdir -p /var/www/pma
 
 useradd --home-dir $PMA_HOME $PMA_USER >/dev/null
-# chown ${PMA_USER} $PMA_HOME
+chown ${PMA_USER} $PMA_HOME
 
 if [ ! -f "${PMA_ENV}" ]; then
     dbuser=pma_$RANDOM
@@ -52,12 +52,12 @@ mysql -e "GRANT ALL PRIVILEGES ON phpmyadmin.* TO $pma_db_user@localhost WITH GR
 # [ -z $local_wp_in_a_box_repo ] && local_wp_in_a_box_repo=/root/git/wp-in-a-box
 # sudo -H -u $PMA_USER bash $local_wp_in_a_box_repo/scripts/pma-installation.sh
 # cp $local_wp_in_a_box_repo/scripts/pma-installation.sh $PMA_HOME/
-curl -sSLO --output-dir $PMA_HOME https://github.com/pothi/wp-in-a-box/raw/refs/heads/main/scripts/pma-installation.sh
-chown $PMA_USER $PMA_HOME/pma-installation.sh
-runuser -u $PMA_USER bash ${PMA_HOME}/pma-installation.sh
-rm ${PMA_HOME}/pma-installation.sh
+curl -sSLO --output-dir $PMA_HOME https://github.com/pothi/wp-in-a-box/raw/refs/heads/main/scripts/pma-installation.fish
+chown $PMA_USER $PMA_HOME/pma-installation.fish
+runuser -u $PMA_USER fish ${PMA_HOME}/pma-installation.fish
+rm ${PMA_HOME}/pma-installation.fish
 
-[ ! -d ${PMA_TMP} ] && mkdir ${PMA_TMP}
+[ ! -d ${PMA_TMP} ] && mkdir -p ${PMA_TMP}
 # PMA_TMP must be owned by the user that runs PHP.
 # In our case, PHP runs as $WP_USERNAME
 chown ${php_user}:${php_user} ${PMA_TMP}
