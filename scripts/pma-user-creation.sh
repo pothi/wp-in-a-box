@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VERSION=2.0
+VERSION=3.0
 
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
@@ -8,7 +8,7 @@ VERSION=2.0
 # what's done here
 
 # variables
-# DEV_USER
+# WP_USERNAME / DEV_USER
 
 ###---------- Please do not edit below this line ----------###
 
@@ -32,35 +32,32 @@ export PMA_TMP=${PMA_HOME}/phpmyadmin/tmp
 
 [ ! -d /var/www/pma ] && mkdir -p /var/www/pma
 
-useradd --home-dir $PMA_HOME $PMA_USER &> /dev/null
-chown ${PMA_USER} $PMA_HOME
-
-if ! command -v pwgen >/dev/null; then
-    apt-get -qq install pwgen > /dev/null
-fi
+useradd --home-dir $PMA_HOME $PMA_USER >/dev/null
+# chown ${PMA_USER} $PMA_HOME
 
 if [ ! -f "${PMA_ENV}" ]; then
-    dbuser=pma$(pwgen -cns 5 1)
-    dbpass=$(pwgen -cnsv 8 1)
+    dbuser=pma_$(random 1000 9999)
+    dbpass=$(openssl rand -base64 32 | tr -d /=+ | cut -c -30)
     echo "export pma_db_user=$dbuser" > ${PMA_ENV}
     echo "export pma_db_pass=$dbpass" >> ${PMA_ENV}
     chmod 600 ${PMA_ENV}
     chown $PMA_USER ${PMA_ENV}
-    . ${PMA_ENV}
+    source ${PMA_ENV}
 fi
 
-mysql -e "CREATE DATABASE phpmyadmin" &> /dev/null
-mysql -e "CREATE USER $pma_db_user@localhost IDENTIFIED BY '$pma_db_pass'" &> /dev/null
-mysql -e "GRANT ALL PRIVILEGES ON phpmyadmin.* TO $pma_db_user@localhost" &> /dev/null
+mysql -e "CREATE DATABASE phpmyadmin" > /dev/null
+mysql -e "CREATE USER $pma_db_user@localhost IDENTIFIED BY '$pma_db_pass'" > /dev/null
+mysql -e "GRANT ALL PRIVILEGES ON phpmyadmin.* TO $pma_db_user@localhost WITH GRANT OPTION" > /dev/null
 
-[ -z $local_wp_in_a_box_repo ] && local_wp_in_a_box_repo=/root/git/wp-in-a-box
+# [ -z $local_wp_in_a_box_repo ] && local_wp_in_a_box_repo=/root/git/wp-in-a-box
 # sudo -H -u $PMA_USER bash $local_wp_in_a_box_repo/scripts/pma-installation.sh
-cp $local_wp_in_a_box_repo/scripts/pma-installation.sh $PMA_HOME/
+# cp $local_wp_in_a_box_repo/scripts/pma-installation.sh $PMA_HOME/
+curl -sSLO --output-dir $PMA_HOME https://github.com/pothi/wp-in-a-box/raw/refs/heads/main/scripts/pma-installation.sh
 chown $PMA_USER $PMA_HOME/pma-installation.sh
 runuser -u $PMA_USER bash ${PMA_HOME}/pma-installation.sh
 rm ${PMA_HOME}/pma-installation.sh
 
 [ ! -d ${PMA_TMP} ] && mkdir ${PMA_TMP}
 # PMA_TMP must be owned by the user that runs PHP.
-# In our case, PHP is run as $DEV_USER
+# In our case, PHP runs as $WP_USERNAME
 chown ${php_user}:${php_user} ${PMA_TMP}
