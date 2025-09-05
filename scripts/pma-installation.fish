@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env fish
 
 # programming env: these switches turn some bugs into errors
 # set -o errexit -o pipefail -o noclobber -o nounset
@@ -12,7 +12,7 @@
 
 mkdir ~/{phpmyadmin,log} &> /dev/null
 
-curl -sL https://github.com/pothi/snippets/raw/main/misc/pma-auto-update.sh -o ~/pma-auto-update.sh
+curl -sSL https://github.com/pothi/snippets/raw/main/misc/pma-auto-update.sh -o ~/pma-auto-update.sh
 chmod +x ~/pma-auto-update.sh
 
 ~/pma-auto-update.sh
