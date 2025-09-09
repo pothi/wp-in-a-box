@@ -18,22 +18,27 @@ export DEBIAN_FRONTEND=noninteractive
 local_wp_in_a_box_repo=/root/git/wp-in-a-box
 [ -f /root/.envrc ] && . /root/.envrc
 
-php_user=${WP_USERNAME:-""}
-if [ -z "$php_user" ]; then
-    echo 'WP_USERNAME environmental variable is not found.'
-    echo 'If you use a different variable name for your developer, please update the script or /root/.envrc file and re-run.'
-    echo 'Developer env variable is not found. Exiting prematurely!'; exit
-fi
+# php_user=${WP_USERNAME:-""}
+# if [ -z "$php_user" ]; then
+    # echo 'WP_USERNAME environmental variable is not found.'
+    # echo 'If you use a different variable name for your developer, please update the script or /root/.envrc file and re-run.'
+    # echo 'Developer env variable is not found. Exiting prematurely!'; exit
+# fi
 
 PMA_USER=pma
 PMA_HOME=/var/www/pma
 PMA_ENV=${PMA_HOME}/.envrc
-PMA_TMP=${PMA_HOME}/phpmyadmin/tmp
+# PMA_TMP=${PMA_HOME}/phpmyadmin/tmp
 
-[ ! -d /var/www/pma ] && mkdir -p /var/www/pma
+[ ! -d ${PMA_TMP} ] && mkdir -p ${PMA_TMP}
 
 useradd --home-dir $PMA_HOME $PMA_USER >/dev/null
-chown ${PMA_USER} $PMA_HOME
+
+chown -R ${PMA_USER} ${PMA_HOME}
+chmod 755 ${PMA_HOME}
+# PMA_TMP must be owned by the user that runs PHP.
+# In our case, PHP runs as $WP_USERNAME
+# chown ${php_user}:${php_user} ${PMA_TMP}
 
 if [ ! -f "${PMA_ENV}" ]; then
     dbuser=pma_$RANDOM
@@ -57,7 +62,3 @@ chown $PMA_USER $PMA_HOME/pma-installation.fish
 runuser -u $PMA_USER fish ${PMA_HOME}/pma-installation.fish
 rm ${PMA_HOME}/pma-installation.fish
 
-[ ! -d ${PMA_TMP} ] && mkdir -p ${PMA_TMP}
-# PMA_TMP must be owned by the user that runs PHP.
-# In our case, PHP runs as $WP_USERNAME
-chown ${php_user}:${php_user} ${PMA_TMP}

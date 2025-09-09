@@ -10,7 +10,7 @@
 # variables
 
 
-mkdir ~/{phpmyadmin,log} &> /dev/null
+# mkdir ~/{phpmyadmin,log} &> /dev/null
 
 curl -sSL https://github.com/pothi/snippets/raw/main/misc/pma-auto-update.sh -o ~/pma-auto-update.sh
 chmod +x ~/pma-auto-update.sh
