@@ -90,7 +90,13 @@ fi
 if [[ $env_type = "local" ]]; then
     sudo apt-get install software-properties-common
     sudo add-apt-repository --yes --update ppa:ondrej/php
+
     user_mem_limit=2048
+
+    APT_ORIGIN=LP-PPA-ondrej-php
+    APT_ARCHIVE=$(lsb_release -sc)
+    APT_FILE=/etc/apt/apt.conf.d/51unattended-upgrades-php
+    echo "Unattended-Upgrade::Allowed-Origins { \"$APT_ORIGIN:$APT_ARCHIVE\"; };" > $APT_FILE
 fi
 
 php_user=${DEV_USER:-""}
