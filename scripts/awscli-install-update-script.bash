@@ -3,6 +3,8 @@
 # programming env: these switches turn some bugs into errors
 set -o errexit -o pipefail -o noclobber -o nounset
 
+# TODO: Clear old versions periodically to reduce the disk usage. Probably, once in three months.
+
 # set -x
 
 # to capture non-zero exit code in the pipeline
