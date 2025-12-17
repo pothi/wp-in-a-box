@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# TODO: use 51unattended-upgrades file, instead of modifying 50unattended-upgrades
+# also use 21auto-upgrades instead of 20auto-upgrades
+
+# ref: https://github.com/mvo5/unattended-upgrades
+# for external packages: https://askubuntu.com/a/1211880/65814
+
 version=2.0
 
 # programming env: these switches turn some bugs into errors
